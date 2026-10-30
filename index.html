@@ -108,7 +108,7 @@
             <i class="fa-solid fa-copy"></i> ცხრილის კოპირება (Ctrl+V)
           </button>
           <button onclick="exportToExcelOfficial()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-lg">
-            <i class="fa-solid fa-file-arrow-down"></i> Excel შაბლონის ჩამოტვირთვა (.xlsx)
+            <i class="fa-solid fa-file-arrow-down"></i> Excel შაბლონის ჩამოტვირთვა (.xls)
           </button>
         </div>
       </div>
@@ -190,31 +190,73 @@
   </div>
 
   <script>
-    // საწყისი ბაზა თქვენი ფაილიდან ამოღებული რეალური აპარატების ნომრებით:
-    let appData = JSON.parse(localStorage.getItem('sf_app_data_v5')) || {
+    // საწყისი სრული ბაზა: მოთი, იმპერია, გრინ ლაინი, მელო
+    const defaultData = {
       activeCompanyId: 1,
       companies: [
         { id: 1, name: 'შპს მოთი' },
-        { id: 2, name: 'კომპანია 2' },
-        { id: 3, name: 'კომპანია 3' },
-        { id: 4, name: 'კომპანია 4' }
+        { id: 2, name: 'შპს იმპერია' },
+        { id: 3, name: 'შპს გრინ ლაინი' },
+        { id: 4, name: 'შპს მელო' }
       ],
       devices: [
-        { id: 1, companyId: 1, sn: '70848152', name: 'ლევილი', debit: '1110', credit: '1410\\001' },
-        { id: 2, companyId: 1, sn: '70847638', name: 'დიღომი', debit: '1110', credit: '1410\\002' },
-        { id: 3, companyId: 1, sn: '70850260', name: 'ელიავა', debit: '1110', credit: '1410\\003' },
-        { id: 4, companyId: 1, sn: '70850114', name: 'პეპელა', debit: '1110', credit: '1410\\004' },
-        { id: 5, companyId: 1, sn: '58027860', name: 'ბელიაშვილი', debit: '1110', credit: '1410\\005' },
-        { id: 6, companyId: 1, sn: '70848510', name: 'ირაჯაული', debit: '1110', credit: '1410\\006' },
-        { id: 7, companyId: 1, sn: '70851633', name: 'დიდი დიღომი', debit: '1110', credit: '1410\\007' }
+        // 1. მოთი
+        { id: 101, companyId: 1, sn: '70850260', name: 'რეალიზაცია ელიავა DY00222361', debit: '1110', credit: '1410\\001' },
+        { id: 102, companyId: 1, sn: '70848152', name: 'რეალიზაცია ლევილი DY00222359', debit: '1110', credit: '1410\\006' },
+        { id: 103, companyId: 1, sn: '70850114', name: 'რეალიზაცია ქიზიყი DY00229761', debit: '1110', credit: '1410\\008' },
+        { id: 104, companyId: 1, sn: '70847638', name: 'რეალიზაცია დიღომი DY00229989', debit: '1110', credit: '1410\\009' },
+        { id: 105, companyId: 1, sn: '70847456, 58027860', name: 'რეალიზაცია ბელიაშვილი DY00229988', debit: '1110', credit: '1410\\010' },
+        { id: 106, companyId: 1, sn: '70848510', name: 'რეალიზაცია იარაჯაული DY00222358', debit: '1110', credit: '1410\\013' },
+        { id: 107, companyId: 1, sn: '70851633', name: 'რეალიზაცია დიდი დიღომი DY00222360', debit: '1110', credit: '1410\\014' },
+
+        // 2. იმპერია
+        { id: 201, companyId: 2, sn: '70847603', name: 'რეალიზაცია ავშანი', debit: '1110', credit: '1410\\001' },
+        { id: 202, companyId: 2, sn: '58027522', name: 'რეალიზაცია გალონი გზატკეცილი', debit: '1110', credit: '1410\\002' },
+        { id: 203, companyId: 2, sn: '54256605', name: 'რეალიზაცია გარდაბანი', debit: '1110', credit: '1410\\003' },
+        { id: 204, companyId: 2, sn: '57687492, 70852835', name: 'რეალიზაცია გლდანი', debit: '1110', credit: '1410\\004' },
+        { id: 205, companyId: 2, sn: '54254509', name: 'რეალიზაცია გმირები', debit: '1110', credit: '1410\\005' },
+        { id: 206, companyId: 2, sn: '54384257', name: 'რეალიზაცია ირემაშვილი', debit: '1110', credit: '1410\\006' },
+        { id: 207, companyId: 2, sn: '55914140', name: 'რეალიზაცია ლილო', debit: '1110', credit: '1410\\007' },
+        { id: 208, companyId: 2, sn: '55627302', name: 'რეალიზაცია ლისი', debit: '1110', credit: '1410\\008' },
+        { id: 209, companyId: 2, sn: '70851818', name: 'რეალიზაცია მშვიდობა', debit: '1110', credit: '1410\\009' },
+        { id: 210, companyId: 2, sn: '70853021', name: 'რეალიზაცია ნატახტარი', debit: '1110', credit: '1410\\010' },
+        { id: 211, companyId: 2, sn: '70036082', name: 'რეალიზაცია პლატო', debit: '1110', credit: '1410\\011' },
+        { id: 212, companyId: 2, sn: '70852542', name: 'რეალიზაცია პლიაჟი', debit: '1110', credit: '1410\\012' },
+        { id: 213, companyId: 2, sn: '70851668', name: 'რეალიზაცია საგურამო', debit: '1110', credit: '1410\\013' },
+        { id: 214, companyId: 2, sn: '54218797', name: 'რეალიზაცია საკალმახე', debit: '1110', credit: '1410\\014' },
+        { id: 215, companyId: 2, sn: '70849505', name: 'რეალიზაცია სეუ', debit: '1110', credit: '1410\\015' },
+        { id: 216, companyId: 2, sn: '70846402', name: 'რეალიზაცია ნარეკვავი', debit: '1110', credit: '1410\\017' },
+        { id: 217, companyId: 2, sn: '70848077', name: 'სარაჯიშვილის 39', debit: '1110', credit: '1410\\018' },
+
+        // 3. გრინ ლაინი
+        { id: 301, companyId: 3, sn: '70851870', name: 'რეალიზაცია აირი', debit: '1110', credit: '1410\\001' },
+        { id: 302, companyId: 3, sn: '70848499', name: 'რეალიზაცია გოგილო', debit: '1110', credit: '1410\\002' },
+        { id: 303, companyId: 3, sn: '70847390', name: 'რეალიზაცია ზღაპარი', debit: '1110', credit: '1410\\003' },
+        { id: 304, companyId: 3, sn: '70850774', name: 'რეალიზაცია თელეთი', debit: '1110', credit: '1410\\004' },
+        { id: 305, companyId: 3, sn: '55642089', name: 'რეალიზაცია ნავთლუღი', debit: '1110', credit: '1410\\005' },
+        { id: 306, companyId: 3, sn: '55639960', name: 'რეალიზაცია ორთაჭალა', debit: '1110', credit: '1410\\006' },
+        { id: 307, companyId: 3, sn: '54697761', name: 'რეალიზაცია სამგორი', debit: '1110', credit: '1410\\007' },
+        { id: 308, companyId: 3, sn: '54372198', name: 'რეალიზაცია ფონიჭალა გორგასლის 54', debit: '1110', credit: '1410\\008' },
+
+        // 4. მელო
+        { id: 401, companyId: 4, sn: '70848137', name: 'რეალიზაცია გაჩიანი DY00224744', debit: '1110', credit: '1410\\001' },
+        { id: 402, companyId: 4, sn: '70847691', name: 'რეალიზაცია ფონიჭალა DY00224774', debit: '1110', credit: '1410\\006' },
+        { id: 403, companyId: 4, sn: '70846386', name: 'რეალიზაცია ლოჭინი DY00230001', debit: '1110', credit: '1410\\008' },
+        { id: 404, companyId: 4, sn: '70847570', name: 'რეალიზაცია მარტყოფი DY00230000', debit: '1110', credit: '1410\\009' },
+        { id: 405, companyId: 4, sn: '70845751', name: 'რეალიზაცია გაჩი 2 DY00224762', debit: '1110', credit: '1410\\010' },
+        { id: 406, companyId: 4, sn: '70848253', name: 'რელიზაცია ძვ. რუსთავი DY00224759', debit: '1110', credit: '1410\\011' },
+        { id: 407, companyId: 4, sn: '70851679', name: 'რეალიზაცია რუსთავი DY00224765', debit: '1110', credit: '1410\\012' },
+        { id: 408, companyId: 4, sn: '70847731', name: 'რეალიზაცია ლომოური DY00224768', debit: '1110', credit: '1410\\014' },
+        { id: 409, companyId: 4, sn: '70847904', name: 'რეალიზაცია ჭირნახული (მოლი) DY00224769', debit: '1110', credit: '1410\\015' }
       ]
     };
 
+    let appData = JSON.parse(localStorage.getItem('sf_app_data_v7')) || defaultData;
     let uploadedRegistryRows = [];
     let generatedRows = [];
 
     function saveData() {
-      localStorage.setItem('sf_app_data_v5', JSON.stringify(appData));
+      localStorage.setItem('sf_app_data_v7', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -255,20 +297,20 @@
         div.className = 'p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs items-center';
         div.innerHTML = `
           <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">აპარატის N:</span>
-            <input type="text" value="${d.sn || ''}" placeholder="სერიული N (მაგ. 70848152)" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold" id="dev_sn_${d.id}">
+            <span class="text-[10px] text-slate-400 block mb-0.5">სერიული N (მძიმით):</span>
+            <input type="text" value="${d.sn || ''}" placeholder="მაგ. 70848152" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold" id="dev_sn_${d.id}">
           </div>
           <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">ობიექტის სახელი:</span>
-            <input type="text" value="${d.name || ''}" placeholder="ლევილი, დიღომი..." class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100" id="dev_name_${d.id}">
+            <span class="text-[10px] text-slate-400 block mb-0.5">ობიექტის დასახელება:</span>
+            <input type="text" value="${d.name || ''}" placeholder="ობიექტი" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100" id="dev_name_${d.id}">
           </div>
           <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">დებეტი (SuperFin):</span>
+            <span class="text-[10px] text-slate-400 block mb-0.5">დებეტი:</span>
             <input type="text" value="${d.debit || '1110'}" placeholder="დებეტი" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="dev_deb_${d.id}">
           </div>
           <div>
             <span class="text-[10px] text-slate-400 block mb-0.5">კრედიტი (SuperFin):</span>
-            <input type="text" value="${d.credit || '1410\\001'}" placeholder="კრედიტი (მაგ. 1410\\001)" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold text-amber-300" id="dev_crd_${d.id}">
+            <input type="text" value="${d.credit || '1410\\001'}" placeholder="კრედიტი" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold text-amber-300" id="dev_crd_${d.id}">
           </div>
           <div class="flex justify-end pt-3 sm:pt-0">
             <button onclick="removeDeviceRowItem(${d.id})" class="text-rose-400 hover:text-rose-300 font-bold p-1"><i class="fa-solid fa-trash-can"></i></button>
@@ -284,7 +326,7 @@
         id: Date.now(),
         companyId: activeComp.id,
         sn: '',
-        name: 'ახალი აპარატი',
+        name: 'ახალი ობიექტი',
         debit: '1110',
         credit: '1410\\001'
       });
@@ -486,6 +528,17 @@
       return entries;
     }
 
+    // დამხმარე ფუნქცია აპარატის SN-ით მოძებნისთვის
+    function findDeviceBySN(compDevices, rawSN) {
+      if (!rawSN) return null;
+      const cleanTarget = String(rawSN).trim();
+      return compDevices.find(d => {
+        if (!d.sn) return false;
+        const snList = String(d.sn).split(/[,;|\s]+/).map(s => s.trim());
+        return snList.includes(cleanTarget);
+      });
+    }
+
     // შედარების და შაბლონის აწყობის ფუნქცია
     function processZReports() {
       const sfText = document.getElementById('superfinInput').value;
@@ -536,13 +589,11 @@
 
       generatedRows = [];
       missingRows.forEach(item => {
-        // ვპოულობთ აპარატს სერიული ნომრით
-        let matchedDev = compDevices.find(d => d.sn && item.deviceSN && String(d.sn).trim() === String(item.deviceSN).trim());
-        
-        // თუ ზუსტად ვერ იპოვა, ნაგულისხმევად ვიღებთ პირველს
+        let matchedDev = findDeviceBySN(compDevices, item.deviceSN);
+
         const debitAcc = matchedDev ? matchedDev.debit : '1110';
         const creditAcc = matchedDev ? matchedDev.credit : '1410\\001';
-        const devLabel = matchedDev ? `${matchedDev.name} (${item.deviceSN})` : item.deviceSN;
+        const devLabel = matchedDev ? matchedDev.name : (item.deviceSN || 'სალარო');
 
         generatedRows.push({
           date: item.date || new Date().toISOString().slice(0, 10),
