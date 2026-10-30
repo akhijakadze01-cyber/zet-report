@@ -20,9 +20,10 @@
     <!-- Header -->
     <header class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-wrap items-center justify-between gap-4 shadow-lg">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xl shadow-md">
+        <!-- კალკულატორის ღილაკი: დაჭერისას ასუფთავებს ყველაფერს -->
+        <button onclick="resetAllData()" title="ყველა ველის გასუფთავება (Reset)" class="w-12 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 flex items-center justify-center text-white text-xl shadow-md transition cursor-pointer">
           <i class="fa-solid fa-calculator"></i>
-        </div>
+        </button>
         <div>
           <h1 class="text-xl font-bold text-white tracking-wide">SuperFin Z-ანგარიშების ფილტრი & იმპორტიორი</h1>
           <p class="text-xs text-slate-400">თითოეული სალარო აპარატის ინდივიდუალური ქვეანგარიშების ავტომატური მორგება</p>
@@ -32,7 +33,7 @@
       <!-- ზედა მარჯვენა ღილაკები -->
       <div class="flex items-center gap-2">
         <button onclick="openCompanyModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
-          <i class="fa-solid fa-building"></i> <span id="headerCompanyText">კომპანიის არჩევა</span>
+          <i class="fa-solid fa-building"></i> <span id="headerCompanyText">შპს მოთი</span>
         </button>
         <button onclick="openDeviceMapModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl border border-amber-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-cash-register"></i> აპარატების ქვეანგარიშები
@@ -190,7 +191,6 @@
   </div>
 
   <script>
-    // საწყისი სრული ბაზა: მოთი, იმპერია, გრინ ლაინი, მელო
     const defaultData = {
       activeCompanyId: 1,
       companies: [
@@ -251,12 +251,12 @@
       ]
     };
 
-    let appData = JSON.parse(localStorage.getItem('sf_app_data_v7')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_app_data_v8')) || defaultData;
     let uploadedRegistryRows = [];
     let generatedRows = [];
 
     function saveData() {
-      localStorage.setItem('sf_app_data_v7', JSON.stringify(appData));
+      localStorage.setItem('sf_app_data_v8', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -267,6 +267,30 @@
       const activeComp = getActiveCompany();
       if (!activeComp) return;
       document.getElementById('headerCompanyText').innerText = activeComp.name;
+    }
+
+    // ყველა სამუშაო ველის გასუფთავება (Reset)
+    function resetAllData() {
+      document.getElementById('superfinInput').value = '';
+      document.getElementById('registryInput').value = '';
+      document.getElementById('excelFileInput').value = '';
+      document.getElementById('fileNameLabel').innerText = 'აირჩიეთ ფაილი კომპიუტერიდან';
+      document.getElementById('existingCount').innerText = '0 ჩანაწერი';
+      document.getElementById('registryCount').innerText = '0 ჩანაწერი';
+      document.getElementById('missingCount').innerText = '0';
+      document.getElementById('resultsBody').innerHTML = '';
+      document.getElementById('resultsCard').classList.add('hidden');
+      uploadedRegistryRows = [];
+      generatedRows = [];
+    }
+
+    // კომპანიის შერჩევა: არჩევისთანავე ასუფთავებს ძველ მონაცემებს
+    function selectCompany(id) {
+      appData.activeCompanyId = id;
+      saveData();
+      initUI();
+      closeCompanyModal();
+      resetAllData(); // მონაცემების გასუფთავება ახალ კომპანიაზე გადასვლისას
     }
 
     // აპარატების ქვეანგარიშების მოდალი
@@ -399,13 +423,6 @@
       });
     }
 
-    function selectCompany(id) {
-      appData.activeCompanyId = id;
-      saveData();
-      initUI();
-      closeCompanyModal();
-    }
-
     function addNewCompany() {
       const nameInput = document.getElementById('newCompanyName');
       const name = nameInput.value.trim();
@@ -418,6 +435,7 @@
       nameInput.value = '';
       initUI();
       closeCompanyModal();
+      resetAllData();
     }
 
     function deleteCompany(id) {
@@ -436,6 +454,7 @@
       saveData();
       initUI();
       renderCompaniesList();
+      resetAllData();
     }
 
     // EXCEL ფაილის ატვირთვა
@@ -528,7 +547,6 @@
       return entries;
     }
 
-    // დამხმარე ფუნქცია აპარატის SN-ით მოძებნისთვის
     function findDeviceBySN(compDevices, rawSN) {
       if (!rawSN) return null;
       const cleanTarget = String(rawSN).trim();
@@ -539,7 +557,6 @@
       });
     }
 
-    // შედარების და შაბლონის აწყობის ფუნქცია
     function processZReports() {
       const sfText = document.getElementById('superfinInput').value;
       const regText = document.getElementById('registryInput').value;
