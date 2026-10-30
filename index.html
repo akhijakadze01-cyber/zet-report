@@ -594,25 +594,38 @@
 
       const headers = ["თარიღი", "დებეტი ანგარიში", "დებეტი ვალუტა", "კრედიტი ანგარიში", "კრედიტი ვალუტა", "რაოდენობა", "თანხა", "ვალუტა", "თანხა ლარში", "ნომერი", "შინაარსი"];
       
-      const rows = generatedRows.map(r => [
-        r.date,
-        r.debitAcc,
-        r.debitCur,
-        r.creditAcc,
-        r.creditCur,
-        r.qty,
-        parseFloat(r.amount),
-        r.currency,
-        parseFloat(r.amountGel),
-        r.docNum,
-        r.comment
-      ]);
+      const rows = generatedRows.map(r => {
+        const dParts = r.date.split('-');
+        const dateObj = new Date(parseInt(dParts[0], 10), parseInt(dParts[1], 10) - 1, parseInt(dParts[2], 10));
 
-      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+        return [
+          dateObj,
+          r.debitAcc,
+          r.debitCur,
+          r.creditAcc,
+          r.creditCur,
+          null,
+          parseFloat(r.amount),
+          r.currency,
+          parseFloat(r.amountGel),
+          parseInt(r.docNum, 10) || r.docNum,
+          r.comment
+        ];
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows], { cellDates: true });
+      
+      for (let i = 1; i <= rows.length; i++) {
+        const cellRef = XLSX.utils.encode_cell({ r: i, c: 0 });
+        if (ws[cellRef]) {
+          ws[cellRef].z = 'yyyy-mm-dd';
+        }
+      }
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "საბუღალტრო ოპერაციები");
 
-      XLSX.writeFile(wb, `SuperFin_Import_Z_${new Date().toISOString().slice(0, 10)}.xls`, { bookType: 'biff8' });
+      XLSX.writeFile(wb, `SuperFin_Import_Z_${new Date().toISOString().slice(0, 10)}.xls`, { bookType: 'biff8', cellDates: true });
     }
 
     function copyTableToClipboard() {
