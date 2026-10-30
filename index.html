@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SuperFin Z-ანგარიშების იმპორტიორი</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Excel ფაილების პირდაპირ წამკითხველი SheetJS ბიბლიოთეკა -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -24,11 +26,11 @@
         </div>
         <div>
           <h1 class="text-xl font-bold text-white tracking-wide">SuperFin Z-ანგარიშების ფილტრი & იმპორტიორი</h1>
-          <p class="text-xs text-slate-400">ზუსტად მორგებული SuperFin-ის ოფიციალურ შაბლონზე (საბუღალტრო ოპერაციები)</p>
+          <p class="text-xs text-slate-400">შედარება თარიღით, თანხით და აპარატით — ავტომატური ექსპორტი სუპერფინის შაბლონში</p>
         </div>
       </div>
       
-      <!-- მხოლოდ ერთი ღილაკი მარჯვენა კუთხეში: კომპანიის არჩევა -->
+      <!-- ზედა მარჯვენა ღილაკი: კომპანიის არჩევა -->
       <div>
         <button onclick="openCompanyModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-building"></i> <span id="headerCompanyText">კომპანიის არჩევა</span>
@@ -36,12 +38,12 @@
       </div>
     </header>
 
-    <!-- არჩეული კომპანიის აპარატები და ანგარიშები -->
+    <!-- კომპანიის აპარატები და ანგარიშები -->
     <div class="bg-slate-800 rounded-2xl p-4 border border-slate-700 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
       <div>
         <div class="flex justify-between items-center mb-1.5">
           <label class="font-semibold text-slate-300">სალარო აპარატი:</label>
-          <button onclick="promptNewDevice()" class="text-[11px] text-indigo-400 hover:text-indigo-300 font-bold">+ აპარატის დამატება</button>
+          <button onclick="promptNewDevice()" class="text-[11px] text-indigo-400 hover:text-indigo-300 font-bold">+ აპარატი</button>
         </div>
         <select id="selectedDevice" onchange="loadDeviceSettings()" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
         </select>
@@ -60,33 +62,49 @@
       </div>
     </div>
 
-    <!-- შეტანის ველები -->
+    <!-- შეტანის ველები: მარცხნივ SuperFin, მარჯვნივ Excel-ის ატვირთვა -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
       
-      <!-- ველი 1: სუპერფინის ჟურნალი -->
+      <!-- ველი 1: SuperFin-ის ჟურნალი -->
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-col shadow-sm">
         <div class="flex items-center justify-between mb-2">
           <label class="font-bold text-slate-200 flex items-center gap-1.5">
             <span class="w-5 h-5 rounded-full bg-indigo-900/60 text-indigo-400 flex items-center justify-center text-[10px]">1</span>
             SuperFin-ის ბოლო გატარებები (უკვე გატარებული):
           </label>
-          <span id="existingCount" class="text-[11px] text-slate-400">0 გატარებული Z</span>
+          <span id="existingCount" class="text-[11px] text-slate-400">0 ჩანაწერი</span>
         </div>
-        <textarea id="superfinInput" placeholder="ჩააკოპირეთ აქ SuperFin-ის ჟურნალიდან (Ctrl+V)... აპი ავტომატურად ამოკრებს Z-ნომრებს" 
-                  class="w-full flex-1 min-h-[160px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-[11px] leading-relaxed"></textarea>
+        <textarea id="superfinInput" placeholder="ჩასვით აქ SuperFin-ის ჟურნალიდან მონიშნული გატარებები (Ctrl+V)... პროგრამა თვითონ ამოიკითხავს თარიღებს, თანხებს და Z-ნომრებს (ასეთის არსებობისას)" 
+                  class="w-full flex-1 min-h-[180px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-[11px] leading-relaxed"></textarea>
       </div>
 
-      <!-- ველი 2: რეესტრი (RS.ge / Excel) -->
+      <!-- ველი 2: Excel რეესტრი (ფაილის პირდაპირი ატვირთვა) -->
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-col shadow-sm">
         <div class="flex items-center justify-between mb-2">
           <label class="font-bold text-slate-200 flex items-center gap-1.5">
             <span class="w-5 h-5 rounded-full bg-emerald-900/60 text-emerald-400 flex items-center justify-center text-[10px]">2</span>
-            აპარატის სრული რეესტრი (RS.ge / Excel):
+            აპარატების სრული რეესტრი (Export.xls / RS.ge):
           </label>
           <span id="registryCount" class="text-[11px] text-slate-400">0 ჩანაწერი</span>
         </div>
-        <textarea id="registryInput" placeholder="ჩააკოპირეთ რეესტრი Excel-იდან ან RS.ge-დან (თარიღი | Z-ნომერი | თანხა)..." 
-                  class="w-full flex-1 min-h-[160px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-[11px] leading-relaxed"></textarea>
+
+        <!-- Excel ფაილის ატვირთვის ზონა -->
+        <div class="mb-3 p-3 rounded-xl border border-dashed border-emerald-600/60 bg-emerald-950/20 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-file-excel text-emerald-400 text-xl"></i>
+            <div>
+              <span class="font-bold text-emerald-200 block text-[11px]">ატვირთეთ Export.xls ფაილი</span>
+              <span id="fileNameLabel" class="text-[10px] text-slate-400">ან ჩააკოპირეთ ტექსტი ქვემოთ</span>
+            </div>
+          </div>
+          <label class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition flex items-center gap-1.5 text-xs">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i> ფაილის არჩევა
+            <input type="file" id="excelFileInput" accept=".xls,.xlsx" class="hidden" onchange="handleExcelUpload(event)">
+          </label>
+        </div>
+
+        <textarea id="registryInput" placeholder="ან ჩააკოპირეთ რეესტრი აქ (თუ ფაილის ატვირთვა არ გსურთ)..." 
+                  class="w-full flex-1 min-h-[110px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-[11px] leading-relaxed"></textarea>
       </div>
 
     </div>
@@ -108,11 +126,12 @@
           <p class="text-xs text-slate-400">მზადაა SuperFin-ის «საბუღალტრო ოპერაციები»-ში ჩასასმელად</p>
         </div>
         <div class="flex gap-2">
-          <button onclick="copyTableToClipboard()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+          <button onclick="copyTableToClipboard()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow">
             <i class="fa-solid fa-copy"></i> ცხრილის კოპირება (Ctrl+V)
           </button>
-          <button onclick="exportToExcelTsv()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-file-excel"></i> Excel შაბლონის გადმოწერა
+          <!-- გამზადებული Excel შაბლონის ჩამოტვირთვის ღილაკი -->
+          <button onclick="exportToExcelOfficial()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-lg">
+            <i class="fa-solid fa-file-arrow-down"></i> Excel შაბლონის ჩამოტვირთვა (.xls)
           </button>
         </div>
       </div>
@@ -142,7 +161,7 @@
 
   </div>
 
-  <!-- კომპანიის არჩევისა და დამატების მოდალი -->
+  <!-- კომპანიის მოდალი -->
   <div id="companyModal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
     <div class="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-700">
@@ -152,7 +171,6 @@
         <button onclick="closeCompanyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- ახალი კომპანიის დამატება -->
       <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700 space-y-2">
         <span class="text-xs font-bold text-slate-300 block">+ ახალი კომპანიის დამატება</span>
         <div class="flex gap-2">
@@ -163,15 +181,13 @@
         </div>
       </div>
 
-      <!-- არსებული კომპანიების ჩამონათვალი ასარჩევად -->
-      <div class="space-y-1.5 max-h-[260px] overflow-y-auto custom-scroll pr-1" id="companiesList">
-      </div>
+      <div class="space-y-1.5 max-h-[260px] overflow-y-auto custom-scroll pr-1" id="companiesList"></div>
     </div>
   </div>
 
   <script>
     // მონაცემთა ბაზა
-    let appData = JSON.parse(localStorage.getItem('sf_app_data_v3')) || {
+    let appData = JSON.parse(localStorage.getItem('sf_app_data_v4')) || {
       activeCompanyId: 1,
       companies: [
         { id: 1, name: 'შპს მოთი' },
@@ -180,18 +196,21 @@
         { id: 4, name: 'შპს კომპანია 4' }
       ],
       devices: [
-        { id: 101, companyId: 1, deviceName: 'მოთი — 70850260', debit: '1110', credit: '1410\\001' },
-        { id: 102, companyId: 1, deviceName: 'მოთი — ტერმინალი', debit: '1220\\001', credit: '1410\\001' },
-        { id: 201, companyId: 2, deviceName: 'სალარო N1', debit: '1210\\002', credit: '6110\\001' },
-        { id: 301, companyId: 3, deviceName: 'სალარო N1', debit: '1210\\003', credit: '6110\\001' },
-        { id: 401, companyId: 4, deviceName: 'სალარო N1', debit: '1210\\004', credit: '6110\\001' }
+        { id: 101, companyId: 1, deviceName: 'მოთი — 70850260', debit: '1110', credit: '1410\\001', sn: '70850260' },
+        { id: 102, companyId: 1, deviceName: 'ლევილი — 70848152', debit: '1110', credit: '1410\\001', sn: '70848152' },
+        { id: 103, companyId: 1, deviceName: 'დიღომი — 70847638', debit: '1110', credit: '1410\\001', sn: '70847638' },
+        { id: 104, companyId: 1, deviceName: 'ირაჯაული — 70848510', debit: '1110', credit: '1410\\001', sn: '70848510' },
+        { id: 105, companyId: 1, deviceName: 'პეპელა — 70850114', debit: '1110', credit: '1410\\001', sn: '70850114' },
+        { id: 106, companyId: 1, deviceName: 'ბელიაშვილი — 58027860', debit: '1110', credit: '1410\\001', sn: '58027860' },
+        { id: 107, companyId: 1, deviceName: 'დიდი დიღომი — 70851633', debit: '1110', credit: '1410\\001', sn: '70851633' }
       ]
     };
 
+    let uploadedRegistryRows = [];
     let generatedRows = [];
 
     function saveData() {
-      localStorage.setItem('sf_app_data_v3', JSON.stringify(appData));
+      localStorage.setItem('sf_app_data_v4', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -204,7 +223,6 @@
 
       document.getElementById('headerCompanyText').innerText = activeComp.name;
 
-      // მხოლოდ ამ კომპანიის აპარატების ჩატვირთვა
       const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
       const select = document.getElementById('selectedDevice');
       select.innerHTML = '';
@@ -246,21 +264,24 @@
       }
     }
 
-    // ახალი აპარატის დამატება არჩეული კომპანიისთვის
     function promptNewDevice() {
       const activeComp = getActiveCompany();
-      const devName = prompt(`შეიყვანეთ ახალი აპარატის დასახელება/ნომერი (${activeComp.name}-ისთვის):`, 'სალარო N2');
+      const devName = prompt(`შეიყვანეთ ახალი აპარატის დასახელება და ნომერი (${activeComp.name}-ისთვის):`, 'სალარო 70850260');
       if (!devName) return;
 
       const deb = prompt('დებეტის ანგარიში SuperFin-ში:', '1110') || '1110';
       const crd = prompt('კრედიტის ანგარიში SuperFin-ში:', '1410\\001') || '1410\\001';
+
+      const snMatch = devName.match(/\d{5,10}/);
+      const sn = snMatch ? snMatch[0] : '';
 
       const newDev = {
         id: Date.now(),
         companyId: activeComp.id,
         deviceName: devName.trim(),
         debit: deb.trim(),
-        credit: crd.trim()
+        credit: crd.trim(),
+        sn: sn
       };
 
       appData.devices.push(newDev);
@@ -323,8 +344,7 @@
 
       const newId = Date.now();
       appData.companies.push({ id: newId, name: name });
-      // ავტომატური პირველი სალარო
-      appData.devices.push({ id: Date.now() + 1, companyId: newId, deviceName: `${name} — სალარო N1`, debit: '1110', credit: '1410\\001' });
+      appData.devices.push({ id: Date.now() + 1, companyId: newId, deviceName: `${name} — სალარო N1`, debit: '1110', credit: '1410\\001', sn: '' });
 
       appData.activeCompanyId = newId;
       saveData();
@@ -351,23 +371,68 @@
       renderCompaniesList();
     }
 
-    // Z-ნომრების ამოკრება SuperFin-ის ჟურნალიდან
-    function extractZNumbers(text) {
-      const set = new Set();
-      const matches = text.match(/(?:Z[\s\-_]*)?(\d{1,7})/gi);
-      if (matches) {
-        matches.forEach(m => {
-          const num = m.replace(/\D/g, '');
-          if (num && parseInt(num, 10) > 0) {
-            set.add(parseInt(num, 10));
-          }
-        });
-      }
-      return set;
+    // EXCEL ფაილის ატვირთვა და წაკითხვა
+    function handleExcelUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('fileNameLabel').innerText = `ატვირთულია: ${file.name}`;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[firstSheet];
+          const json = XLSX.utils.sheet_to_json(sheet);
+
+          uploadedRegistryRows = [];
+          json.forEach(row => {
+            // სვეტების ამოცნობა: აპარატი, თარიღი, თანხა, Z ნომერი
+            let deviceSN = row['აპარატი'] || row['აპარატის ნომერი'] || row['ს/ნ'] || '';
+            let rawDate = row['თარიღი'] || row['Date'] || '';
+            let amount = row['თანხა'] || row['ნაღდი'] || row['Amount'] || 0;
+            let zNum = row['Z ნომერი'] || row['Z'] || row['Z-ნომერი'] || row['Z No'] || '';
+
+            // თარიღის ფორმატირება
+            let dateStr = '';
+            if (rawDate instanceof Date) {
+              dateStr = rawDate.toISOString().slice(0, 10);
+            } else if (typeof rawDate === 'string') {
+              const parts = rawDate.split(/[-./\s]/);
+              if (parts.length >= 3) {
+                if (parts[0].length === 4) dateStr = `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+                else dateStr = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+              }
+            } else if (typeof rawDate === 'number') {
+              // Excel date serial
+              const d = new Date((rawDate - (25567 + 2)) * 86400 * 1000);
+              dateStr = d.toISOString().slice(0, 10);
+            }
+
+            if (amount) {
+              uploadedRegistryRows.push({
+                deviceSN: String(deviceSN).trim(),
+                date: dateStr,
+                amount: Math.abs(parseFloat(amount)),
+                z: String(zNum).trim()
+              });
+            }
+          });
+
+          document.getElementById('registryCount').innerText = `${uploadedRegistryRows.length} ჩანაწერი Excel-იდან`;
+          alert(`Excel ფაილი წარმატებით ჩაიტვირთა: ${uploadedRegistryRows.length} ჩანაწერი!`);
+        } catch (err) {
+          console.error(err);
+          alert('ფაილის წაკითხვა ვერ მოხერხდა.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
     }
 
-    // რეესტრის დაპარსვა
-    function parseRegistry(text) {
+    // SuperFin-ის ტექსტის დაპარსვა (თარიღი და თანხა)
+    function parseSuperfinEntries(text) {
       const lines = text.split('\n');
       const entries = [];
 
@@ -375,95 +440,119 @@
         const clean = line.trim();
         if (!clean) return;
 
-        const parts = clean.split(/[\t;,|]+/).map(p => p.trim()).filter(Boolean);
-
-        if (parts.length >= 2) {
-          let date = null;
-          let zNum = null;
-          let amount = null;
-
-          parts.forEach(p => {
-            if (/^\d{4}[-./]\d{2}[-./]\d{2}$/.test(p)) {
-              date = p.replace(/\//g, '-').replace(/\./g, '-');
-            } else if (/^\d{2}[-./]\d{2}[-./]\d{4}$/.test(p)) {
-              const segs = p.split(/[-./]/);
-              date = `${segs[2]}-${segs[1]}-${segs[0]}`;
-            } else if (/^\d+[.,]\d{2}$/.test(p)) {
-              amount = parseFloat(p.replace(',', '.'));
-            } else if (/(?:Z[\s\-_]*)?\d+/i.test(p) && !zNum) {
-              const parsed = parseInt(p.replace(/\D/g, ''), 10);
-              if (parsed > 0) zNum = parsed;
-            }
-          });
-
-          if (amount === null) {
-            for (let i = parts.length - 1; i >= 0; i--) {
-              const num = parseFloat(parts[i].replace(',', '.'));
-              if (!isNaN(num) && num !== zNum) {
-                amount = num;
-                break;
-              }
-            }
+        // ვეძებთ თარიღს: 27/10/2026 ან 2026-10-27
+        const dateMatch = clean.match(/(\d{2})[-./](\d{2})[-./](\d{4})/) || clean.match(/(\d{4})[-./](\d{2})[-./](\d{2})/);
+        let dateStr = '';
+        if (dateMatch) {
+          if (dateMatch[1].length === 4) {
+            dateStr = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+          } else {
+            dateStr = `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`;
           }
+        }
 
-          if (zNum) {
-            entries.push({
-              date: date || new Date().toISOString().slice(0, 10),
-              z: zNum,
-              amount: amount !== null ? amount.toFixed(2) : '0.00'
-            });
-          }
+        // ვეძებთ თანხას (უარყოფითს ან დადებითს, მაგ. -759.66 ან 759.66)
+        const amountMatches = clean.match(/-?\d+\.\d{2}/g);
+        let amount = null;
+        if (amountMatches && amountMatches.length > 0) {
+          // ვიღებთ პირველ შესაბამის თანხას
+          amount = Math.abs(parseFloat(amountMatches[0]));
+        }
+
+        if (dateStr && amount !== null && amount > 0) {
+          entries.push({ date: dateStr, amount: amount, raw: clean });
         }
       });
 
       return entries;
     }
 
+    // შედარებისა და შაბლონის აწყობის მთავარი ფუნქცია
     function processZReports() {
       const sfText = document.getElementById('superfinInput').value;
       const regText = document.getElementById('registryInput').value;
 
-      if (!regText.trim()) {
-        alert('გთხოვთ, ჩააკოპიროთ რეესტრი მეორე ველში.');
+      // 1. SuperFin-ის ჩანაწერები (თარიღი + თანხა)
+      const sfEntries = parseSuperfinEntries(sfText);
+      document.getElementById('existingCount').innerText = `${sfEntries.length} გატარება ნაპოვნია`;
+
+      // 2. რეესტრი: ან ატვირთული Excel-იდან, ან ტექსტური ველიდან
+      let allRegistry = [...uploadedRegistryRows];
+      if (allRegistry.length === 0 && regText.trim()) {
+        const lines = regText.split('\n');
+        lines.forEach(l => {
+          const parts = l.trim().split(/[\t;,|]+/).map(p => p.trim()).filter(Boolean);
+          if (parts.length >= 2) {
+            let d = '', amt = 0, z = '', sn = '';
+            parts.forEach(p => {
+              if (/^\d{4}[-./]\d{2}[-./]\d{2}$/.test(p)) d = p.replace(/\//g, '-').replace(/\./g, '-');
+              else if (/^\d{2}[-./]\d{2}[-./]\d{4}$/.test(p)) {
+                const s = p.split(/[-./]/);
+                d = `${s[2]}-${s[1]}-${s[0]}`;
+              } else if (/^\d+[.,]\d{2}$/.test(p)) amt = Math.abs(parseFloat(p.replace(',', '.')));
+              else if (/^\d{6,10}$/.test(p)) sn = p;
+              else if (/(?:Z[\s\-_]*)?\d+/i.test(p) && !z) z = p.replace(/\D/g, '');
+            });
+            if (amt > 0) allRegistry.push({ deviceSN: sn, date: d, amount: amt, z: z });
+          }
+        });
+      }
+
+      if (allRegistry.length === 0) {
+        alert('გთხოვთ, ატვირთოთ Export.xls ფაილი ან ჩააკოპიროთ რეესტრი მეორე ველში.');
         return;
       }
 
-      const existingZs = extractZNumbers(sfText);
-      document.getElementById('existingCount').innerText = `${existingZs.size} გატარებული Z ამოცნობილია`;
+      // 3. შედარება თარიღით და თანხით:
+      // SuperFin-ის გატარებების ასლი შესადარებლად
+      let availableSf = [...sfEntries];
 
-      const allRegistry = parseRegistry(regText);
-      document.getElementById('registryCount').innerText = `${allRegistry.length} ჩანაწერი რეესტრში`;
-
-      const devId = Number(document.getElementById('selectedDevice').value);
-      const dev = appData.devices.find(d => d.id === devId);
-      const debitAcc = document.getElementById('curDebit').value.trim() || (dev ? dev.debit : '1110');
-      const creditAcc = document.getElementById('curCredit').value.trim() || (dev ? dev.credit : '1410\\001');
-
-      generatedRows = [];
+      const missingRows = [];
       allRegistry.forEach(item => {
-        if (!existingZs.has(item.z)) {
-          generatedRows.push({
-            date: item.date,
-            debitAcc: debitAcc,
-            debitCur: 'GEL',
-            creditAcc: creditAcc,
-            creditCur: 'GEL',
-            qty: '',
-            amount: item.amount,
-            currency: 'GEL',
-            amountGel: item.amount,
-            docNum: item.z,
-            comment: `Z-ანგარიში ${item.z}`
-          });
+        // ვეძებთ ზუსტად იგივე თარიღსა და თანხას SuperFin-ის გატარებებში
+        const matchIdx = availableSf.findIndex(sf => sf.date === item.date && Math.abs(sf.amount - item.amount) < 0.01);
+        if (matchIdx !== -1) {
+          // ნაპოვნია — ეს Z უკვე გატარებულია ბუღალტრის მიერ! ვშლით, რომ დუბლიკატი არ შეცდეს
+          availableSf.splice(matchIdx, 1);
+        } else {
+          // ვერ მოიძებნა — ეს Z აკლია SuperFin-ს!
+          missingRows.push(item);
         }
       });
 
+      // 4. მიბმა კომპანიის შესაბამის დებეტ/კრედიტზე
+      const activeComp = getActiveCompany();
+      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
+      const defaultDev = compDevices[0] || { debit: '1110', credit: '1410\\001' };
+
+      generatedRows = [];
+      missingRows.forEach(item => {
+        // ვპოულობთ აპარატს სერიული ნომრის მიხედვით
+        let matchedDev = compDevices.find(d => d.sn && item.deviceSN && d.sn.includes(item.deviceSN));
+        if (!matchedDev) matchedDev = defaultDev;
+
+        generatedRows.push({
+          date: item.date || new Date().toISOString().slice(0, 10),
+          debitAcc: matchedDev.debit,
+          debitCur: 'GEL',
+          creditAcc: matchedDev.credit,
+          creditCur: 'GEL',
+          qty: '',
+          amount: item.amount.toFixed(2),
+          currency: 'GEL',
+          amountGel: item.amount.toFixed(2),
+          docNum: item.z || '',
+          comment: `Z-ანგარიში #${item.z} (${item.deviceSN || matchedDev.deviceName})`
+        });
+      });
+
+      // 5. შედეგების გამოტანა ცხრილში
       const tbody = document.getElementById('resultsBody');
       tbody.innerHTML = '';
       document.getElementById('missingCount').innerText = generatedRows.length;
 
       if (generatedRows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-emerald-400 font-sans">ყველა Z-ანგარიში უკვე გატარებულია SuperFin-ში!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-emerald-400 font-sans font-bold">ყველა Z-ანგარიში უკვე გატარებულია SuperFin-ში!</td></tr>`;
       } else {
         generatedRows.forEach(r => {
           const tr = document.createElement('tr');
@@ -488,33 +577,44 @@
       document.getElementById('resultsCard').classList.remove('hidden');
     }
 
+    // SuperFin-ის ოფიციალური Excel შაბლონის გადმოწერა (.xls / .xlsx)
+    function exportToExcelOfficial() {
+      if (generatedRows.length === 0) return;
+
+      const headers = ["თარიღი", "დებეტი ანგარიში", "დებეტი ვალუტა", "კრედიტი ანგარიში", "კრედიტი ვალუტა", "რაოდენობა", "თანხა", "ვალუტა", "თანხა ლარში", "ნომერი", "შინაარსი"];
+      
+      const rows = generatedRows.map(r => [
+        r.date,
+        r.debitAcc,
+        r.debitCur,
+        r.creditAcc,
+        r.creditCur,
+        r.qty,
+        parseFloat(r.amount),
+        r.currency,
+        parseFloat(r.amountGel),
+        r.docNum,
+        r.comment
+      ]);
+
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "საბუღალტრო ოპერაციები");
+
+      XLSX.writeFile(wb, `SuperFin_Import_Z_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    // ცხრილის კოპირება SuperFin-ში პირდაპირ ჩასასმელად
     function copyTableToClipboard() {
       if (generatedRows.length === 0) return;
-      
+
       const lines = generatedRows.map(r => 
         `${r.date}\t${r.debitAcc}\t${r.debitCur}\t${r.creditAcc}\t${r.creditCur}\t\t${r.amount}\t${r.currency}\t${r.amountGel}\t${r.docNum}\t${r.comment}`
       );
 
       navigator.clipboard.writeText(lines.join('\n')).then(() => {
-        alert('ცხრილი დაკოპირდა SuperFin-ის ზუსტი ფორმატით!\nშეგიძლიათ პირდაპირ ჩასვათ (Ctrl+V) სუპერფინში ან Excel-ში.');
+        alert('ცხრილი დაკოპირდა SuperFin-ის ზუსტი ფორმატით!\nშეგიძლიათ პირდაპირ ჩასვათ (Ctrl+V) სუპერფინში.');
       });
-    }
-
-    function exportToExcelTsv() {
-      if (generatedRows.length === 0) return;
-      
-      const headers = ["თარიღი", "დებეტი ანგარიში", "დებეტი ვალუტა", "კრედიტი ანგარიში", "კრედიტი ვალუტა", "რაოდენობა", "თანხა", "ვალუტა", "თანხა ლარში", "ნომერი", "შინაარსი"];
-      let content = "\uFEFF" + headers.join("\t") + "\n";
-      
-      generatedRows.forEach(r => {
-        content += `${r.date}\t${r.debitAcc}\t${r.debitCur}\t${r.creditAcc}\t${r.creditCur}\t\t${r.amount}\t${r.currency}\t${r.amountGel}\t${r.docNum}\t${r.comment}\n`;
-      });
-
-      const blob = new Blob([content], { type: 'text/tab-separated-values;charset=utf-8;' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `SuperFin_Operaciebi_Z_${new Date().toISOString().slice(0,10)}.xls`;
-      a.click();
     }
 
     initUI();
