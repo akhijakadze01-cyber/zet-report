@@ -28,34 +28,31 @@
         </div>
       </div>
       
-      <!-- მარჯვენა ზედა კუთხის ღილაკები -->
-      <div class="flex items-center gap-2">
-        <button onclick="openCompanyModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl border border-indigo-500 flex items-center gap-2 transition shadow">
+      <!-- მხოლოდ ერთი ღილაკი მარჯვენა კუთხეში: კომპანიის არჩევა -->
+      <div>
+        <button onclick="openCompanyModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-building"></i> <span id="headerCompanyText">კომპანიის არჩევა</span>
-        </button>
-        <button onclick="openConfigModal()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-xl border border-slate-600 flex items-center gap-2 transition" title="აპარატების და ანგარიშების მართვა">
-          <i class="fa-solid fa-cash-register text-amber-400"></i> აპარატების მართვა
         </button>
       </div>
     </header>
 
-    <!-- აქტიური კომპანიის სალარო აპარატის შერჩევა & ანგარიშები -->
+    <!-- არჩეული კომპანიის აპარატები და ანგარიშები -->
     <div class="bg-slate-800 rounded-2xl p-4 border border-slate-700 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
       <div>
-        <label class="block font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-          <span>სალარო აპარატი:</span>
-          <span id="activeCompanyNameBadge" class="text-[10px] text-indigo-400 font-bold bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-800/40"></span>
-        </label>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="font-semibold text-slate-300">სალარო აპარატი:</label>
+          <button onclick="promptNewDevice()" class="text-[11px] text-indigo-400 hover:text-indigo-300 font-bold">+ აპარატის დამატება</button>
+        </div>
         <select id="selectedDevice" onchange="loadDeviceSettings()" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
         </select>
       </div>
       <div>
         <label class="block font-semibold text-slate-300 mb-1.5">დებეტი ანგარიში:</label>
-        <input type="text" id="curDebit" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono focus:outline-none">
+        <input type="text" id="curDebit" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono focus:outline-none" oninput="updateCurrentDeviceAccs()">
       </div>
       <div>
         <label class="block font-semibold text-slate-300 mb-1.5">კრედიტი ანგარიში:</label>
-        <input type="text" id="curCredit" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono focus:outline-none">
+        <input type="text" id="curCredit" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono focus:outline-none" oninput="updateCurrentDeviceAccs()">
       </div>
       <div>
         <label class="block font-semibold text-slate-300 mb-1.5">ვალუტა:</label>
@@ -145,9 +142,9 @@
 
   </div>
 
-  <!-- კომპანიების შერჩევისა და დამატების მოდალი -->
+  <!-- კომპანიის არჩევისა და დამატების მოდალი -->
   <div id="companyModal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-    <div class="bg-slate-800 rounded-2xl max-w-lg w-full p-6 border border-slate-700 shadow-2xl space-y-4">
+    <div class="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-700">
         <h3 class="text-sm font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-building text-indigo-400"></i> კომპანიის არჩევა & დამატება
@@ -157,50 +154,24 @@
 
       <!-- ახალი კომპანიის დამატება -->
       <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700 space-y-2">
-        <span class="text-xs font-bold text-slate-300 block">+ ახალი კომპანიის შექმნა</span>
+        <span class="text-xs font-bold text-slate-300 block">+ ახალი კომპანიის დამატება</span>
         <div class="flex gap-2">
-          <input type="text" id="newCompanyName" placeholder="კომპანიის დასახელება..." class="flex-1 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+          <input type="text" id="newCompanyName" placeholder="კომპანიის სახელი..." class="flex-1 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
           <button onclick="addNewCompany()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition">
             დამატება
           </button>
         </div>
       </div>
 
-      <!-- კომპანიების სია -->
-      <div class="space-y-1.5 max-h-[250px] overflow-y-auto custom-scroll pr-1" id="companiesList">
-      </div>
-    </div>
-  </div>
-
-  <!-- აპარატების კონფიგურაციის მოდალი -->
-  <div id="configModal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-    <div class="bg-slate-800 rounded-2xl max-w-3xl w-full p-6 border border-slate-700 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-700">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-cash-register text-amber-400"></i> <span id="configModalTitle">აპარატებისა და ანგარიშების მართვა</span>
-        </h3>
-        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <p class="text-xs text-slate-400">მიუთითეთ ამ კომპანიის სალარო აპარატები და შესაბამისი SuperFin-ის ქვეანგარიშები:</p>
-
-      <div class="max-h-[350px] overflow-y-auto space-y-3 pr-1 custom-scroll" id="devicesListContainer">
-      </div>
-
-      <div class="pt-3 flex justify-between items-center border-t border-slate-700">
-        <button onclick="addNewDeviceRow()" class="px-3.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg font-bold">
-          + სალარო აპარატის დამატება
-        </button>
-        <button onclick="saveDevicesConfig()" class="px-5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg shadow">
-          შენახვა
-        </button>
+      <!-- არსებული კომპანიების ჩამონათვალი ასარჩევად -->
+      <div class="space-y-1.5 max-h-[260px] overflow-y-auto custom-scroll pr-1" id="companiesList">
       </div>
     </div>
   </div>
 
   <script>
-    // მონაცემთა საწყისი ბაზა კომპანიებისა და აპარატების
-    let appData = JSON.parse(localStorage.getItem('sf_app_data')) || {
+    // მონაცემთა ბაზა
+    let appData = JSON.parse(localStorage.getItem('sf_app_data_v3')) || {
       activeCompanyId: 1,
       companies: [
         { id: 1, name: 'შპს მოთი' },
@@ -209,9 +180,9 @@
         { id: 4, name: 'შპს კომპანია 4' }
       ],
       devices: [
-        { id: 101, companyId: 1, deviceName: 'სალარო 70850260', debit: '1110', credit: '1410\\001' },
-        { id: 102, companyId: 1, deviceName: 'ტერმინალი #1', debit: '1220\\001', credit: '1410\\001' },
-        { id: 201, companyId: 2, deviceName: 'მთავარი აპარატი', debit: '1210\\002', credit: '6110\\001' },
+        { id: 101, companyId: 1, deviceName: 'მოთი — 70850260', debit: '1110', credit: '1410\\001' },
+        { id: 102, companyId: 1, deviceName: 'მოთი — ტერმინალი', debit: '1220\\001', credit: '1410\\001' },
+        { id: 201, companyId: 2, deviceName: 'სალარო N1', debit: '1210\\002', credit: '6110\\001' },
         { id: 301, companyId: 3, deviceName: 'სალარო N1', debit: '1210\\003', credit: '6110\\001' },
         { id: 401, companyId: 4, deviceName: 'სალარო N1', debit: '1210\\004', credit: '6110\\001' }
       ]
@@ -220,7 +191,7 @@
     let generatedRows = [];
 
     function saveData() {
-      localStorage.setItem('sf_app_data', JSON.stringify(appData));
+      localStorage.setItem('sf_app_data_v3', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -232,9 +203,8 @@
       if (!activeComp) return;
 
       document.getElementById('headerCompanyText').innerText = activeComp.name;
-      document.getElementById('activeCompanyNameBadge').innerText = activeComp.name;
 
-      // ვტვირთავთ მხოლოდ აქტიური კომპანიის აპარატებს
+      // მხოლოდ ამ კომპანიის აპარატების ჩატვირთვა
       const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
       const select = document.getElementById('selectedDevice');
       select.innerHTML = '';
@@ -242,7 +212,7 @@
       if (compDevices.length === 0) {
         const opt = document.createElement('option');
         opt.value = "";
-        opt.innerText = "აპარატები არ არის (დაამატეთ მენიუდან)";
+        opt.innerText = "აპარატები არ არის (დაამატეთ + ღილაკით)";
         select.appendChild(opt);
         document.getElementById('curDebit').value = '';
         document.getElementById('curCredit').value = '';
@@ -266,7 +236,41 @@
       }
     }
 
-    // კომპანიების მოდალი
+    function updateCurrentDeviceAccs() {
+      const devId = Number(document.getElementById('selectedDevice').value);
+      const dev = appData.devices.find(d => d.id === devId);
+      if (dev) {
+        dev.debit = document.getElementById('curDebit').value.trim();
+        dev.credit = document.getElementById('curCredit').value.trim();
+        saveData();
+      }
+    }
+
+    // ახალი აპარატის დამატება არჩეული კომპანიისთვის
+    function promptNewDevice() {
+      const activeComp = getActiveCompany();
+      const devName = prompt(`შეიყვანეთ ახალი აპარატის დასახელება/ნომერი (${activeComp.name}-ისთვის):`, 'სალარო N2');
+      if (!devName) return;
+
+      const deb = prompt('დებეტის ანგარიში SuperFin-ში:', '1110') || '1110';
+      const crd = prompt('კრედიტის ანგარიში SuperFin-ში:', '1410\\001') || '1410\\001';
+
+      const newDev = {
+        id: Date.now(),
+        companyId: activeComp.id,
+        deviceName: devName.trim(),
+        debit: deb.trim(),
+        credit: crd.trim()
+      };
+
+      appData.devices.push(newDev);
+      saveData();
+      initUI();
+      document.getElementById('selectedDevice').value = newDev.id;
+      loadDeviceSettings();
+    }
+
+    // კომპანიის მოდალი
     function openCompanyModal() {
       renderCompaniesList();
       document.getElementById('companyModal').classList.remove('hidden');
@@ -289,8 +293,8 @@
           isCurrent ? 'bg-indigo-950/50 border-indigo-500 text-indigo-200 ring-1 ring-indigo-500' : 'bg-slate-900/60 border-slate-700 hover:border-slate-600 text-slate-200'
         }`;
         div.innerHTML = `
-          <div onclick="selectActiveCompany(${comp.id})" class="flex-1 flex items-center gap-2">
-            <i class="fa-solid fa-building text-sm ${isCurrent ? 'text-indigo-400' : 'text-slate-500'}"></i>
+          <div onclick="selectCompany(${comp.id})" class="flex-1 flex items-center gap-2">
+            <i class="fa-solid fa-building ${isCurrent ? 'text-indigo-400' : 'text-slate-500'}"></i>
             <div>
               <span class="font-bold block">${comp.name}</span>
               <span class="text-[10px] text-slate-400">${devCount} სალარო აპარატი</span>
@@ -305,7 +309,7 @@
       });
     }
 
-    function selectActiveCompany(id) {
+    function selectCompany(id) {
       appData.activeCompanyId = id;
       saveData();
       initUI();
@@ -319,14 +323,14 @@
 
       const newId = Date.now();
       appData.companies.push({ id: newId, name: name });
-      // ნაგულისხმევი პირველი სალარო
-      appData.devices.push({ id: Date.now() + 1, companyId: newId, deviceName: 'სალარო N1', debit: '1210\\001', credit: '6110\\001' });
+      // ავტომატური პირველი სალარო
+      appData.devices.push({ id: Date.now() + 1, companyId: newId, deviceName: `${name} — სალარო N1`, debit: '1110', credit: '1410\\001' });
 
       appData.activeCompanyId = newId;
       saveData();
       nameInput.value = '';
       initUI();
-      renderCompaniesList();
+      closeCompanyModal();
     }
 
     function deleteCompany(id) {
@@ -334,7 +338,7 @@
         alert('მინიმუმ ერთი კომპანია უნდა დარჩეს!');
         return;
       }
-      if (!confirm('ნამდვილად გსურთ კომპანიისა და მისი აპარატების წაშლა?')) return;
+      if (!confirm('ნამდვილად გსურთ კომპანიის წაშლა?')) return;
 
       appData.companies = appData.companies.filter(c => c.id !== id);
       appData.devices = appData.devices.filter(d => d.companyId !== id);
@@ -345,79 +349,6 @@
       saveData();
       initUI();
       renderCompaniesList();
-    }
-
-    // აპარატების მართვის მოდალი
-    function openConfigModal() {
-      const activeComp = getActiveCompany();
-      document.getElementById('configModalTitle').innerText = `${activeComp.name} — აპარატების მართვა`;
-      renderDeviceConfigRows();
-      document.getElementById('configModal').classList.remove('hidden');
-    }
-
-    function closeConfigModal() {
-      document.getElementById('configModal').classList.add('hidden');
-    }
-
-    function renderDeviceConfigRows() {
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
-      const cont = document.getElementById('devicesListContainer');
-      cont.innerHTML = '';
-
-      if (compDevices.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">ამ კომპანიას ჯერ არ აქვს დამატებული აპარატი.</p>`;
-        return;
-      }
-
-      compDevices.forEach((d, idx) => {
-        const div = document.createElement('div');
-        div.className = 'p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs items-center';
-        div.innerHTML = `
-          <input type="text" value="${d.deviceName}" placeholder="აპარატის სახელი / ნომერი" class="col-span-1 p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-medium" id="cfg_name_${d.id}">
-          <input type="text" value="${d.debit}" placeholder="დებეტი (მაგ. 1110)" class="p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="cfg_deb_${d.id}">
-          <input type="text" value="${d.credit}" placeholder="კრედიტი (მაგ. 1410\\001)" class="p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="cfg_crd_${d.id}">
-          <button onclick="removeDeviceRow(${d.id})" class="text-rose-400 hover:text-rose-300 font-bold text-center"><i class="fa-solid fa-trash"></i> წაშლა</button>
-        `;
-        cont.appendChild(div);
-      });
-    }
-
-    function addNewDeviceRow() {
-      const activeComp = getActiveCompany();
-      appData.devices.push({
-        id: Date.now(),
-        companyId: activeComp.id,
-        deviceName: `სალარო #${appData.devices.filter(d => d.companyId === activeComp.id).length + 1}`,
-        debit: '1110',
-        credit: '1410\\001'
-      });
-      renderDeviceConfigRows();
-    }
-
-    function removeDeviceRow(devId) {
-      appData.devices = appData.devices.filter(d => d.id !== devId);
-      renderDeviceConfigRows();
-    }
-
-    function saveDevicesConfig() {
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
-
-      compDevices.forEach(d => {
-        const n = document.getElementById(`cfg_name_${d.id}`);
-        const deb = document.getElementById(`cfg_deb_${d.id}`);
-        const crd = document.getElementById(`cfg_crd_${d.id}`);
-        if (n && deb && crd) {
-          d.deviceName = n.value.trim();
-          d.debit = deb.value.trim();
-          d.credit = crd.value.trim();
-        }
-      });
-
-      saveData();
-      initUI();
-      closeConfigModal();
     }
 
     // Z-ნომრების ამოკრება SuperFin-ის ჟურნალიდან
