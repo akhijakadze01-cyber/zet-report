@@ -612,7 +612,7 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "საბუღალტრო ოპერაციები");
 
-      XLSX.writeFile(wb, `SuperFin_Import_Z_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      XLSX.writeFile(wb, `SuperFin_Import_Z_${new Date().toISOString().slice(0, 10)}.xls`, { bookType: 'biff8' });
     }
 
     function copyTableToClipboard() {
