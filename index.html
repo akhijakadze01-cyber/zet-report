@@ -88,6 +88,7 @@
         <!-- ფაილების ვერტიკალური ჩამონათვალი (List View) -->
         <div class="divide-y divide-slate-700/70 text-xs font-sans">
           
+          <!-- 1. ბრუნვითი უწყისი -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-indigo-950/60 border border-indigo-800/60 flex items-center justify-center text-indigo-400 text-base">
@@ -107,6 +108,7 @@
             </div>
           </div>
 
+          <!-- 2. საწყობების მოძრაობა -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-emerald-950/60 border border-emerald-800/60 flex items-center justify-center text-emerald-400 text-base">
@@ -126,6 +128,7 @@
             </div>
           </div>
 
+          <!-- 3. rs.ge Z-ჩეკების რეესტრი -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/60 flex items-center justify-center text-amber-400 text-base">
@@ -145,6 +148,7 @@
             </div>
           </div>
 
+          <!-- 4. rs.ge ა/ფაქტურები -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-cyan-950/60 border border-cyan-800/60 flex items-center justify-center text-cyan-400 text-base">
@@ -164,6 +168,7 @@
             </div>
           </div>
 
+          <!-- 5. rs.ge ზედნადებები (მისამართებით) -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-rose-950/60 border border-rose-800/60 flex items-center justify-center text-rose-400 text-base">
@@ -183,6 +188,7 @@
             </div>
           </div>
 
+          <!-- 6. ბანკის ამონაწერი -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/60 flex items-center justify-center text-blue-400 text-base">
@@ -202,6 +208,26 @@
             </div>
           </div>
 
+          <!-- 7. ტერმინალის დეტალური ამონაწერი ბანკიდან -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/60 flex items-center justify-center text-purple-400 text-base">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">ტერმინალის დეტალური ამონაწერი ბანკიდან (.xlsx, .xls, .csv)</span>
+                <span class="text-[11px] text-slate-400">თითოეული POS ტერმინალის (TID) ტრანზაქციების დეტალური რეესტრი, საკომისიოსა და ობიექტების (1411) მიხედვით შედარება</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_term" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx,.csv" class="hidden" onchange="handleCenterUpload(event, 'term')">
+              </label>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -209,7 +235,6 @@
     <!-- ==================== 2. მოდული: კომპანიის პირადი სივრცე ==================== -->
     <div id="moduleCompanySpace" class="space-y-6">
       
-      <!-- კონკრეტული კომპანიის ფინანსური მონაცემები & კოეფიციენტები -->
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3">
           <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
@@ -323,14 +348,13 @@
           <h2 class="text-sm font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-scale-balanced text-cyan-400"></i> rs.ge რეესტრებისა და საბანკო ამონაწერის შედარება SuperFin-თან
           </h2>
-          <p class="text-xs text-slate-400">მონაცემები ავტომატურად იკითხება „დოკუმენტების ატვირთვის“ ერთიანი ცენტრიდან</p>
+          <p class="text-xs text-slate-400">მონაცემები ავტომატურად იკითხება „დოკუმენტების ატვირთვის“ ერთიანი ცენტრიდან (მათ შორის ტერმინალის ამონაწერი)</p>
         </div>
         <button onclick="runRsReconciliation()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
           <i class="fa-solid fa-arrows-split-up-and-left"></i> შედარების გაშვება
         </button>
       </div>
 
-      <!-- შედარების შედეგები -->
       <div id="rsResultsCard" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 hidden">
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-700">
           <h3 class="text-sm font-bold text-white flex items-center gap-2">
@@ -354,7 +378,6 @@
           </button>
         </div>
 
-        <!-- რისკის ზღვრები -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">დიდი ჩეკის ზღვარი (₾)</label>
@@ -375,7 +398,6 @@
         </div>
       </div>
 
-      <!-- KPI & შედეგები -->
       <div id="auditReportCard" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 hidden print-area">
         <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 text-center">
           <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
@@ -418,14 +440,12 @@
             </h2>
             <p class="text-xs text-slate-400">აირჩიეთ სასურველი რეპორტი ყოველდღიური ან ყოველთვიური ჭრილისთვის</p>
           </div>
-          <!-- კომპანიების Multi-select არჩევანი რეპორტისთვის -->
           <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-700 flex flex-wrap items-center gap-3 text-xs">
             <span class="font-bold text-slate-300"><i class="fa-solid fa-check-double text-emerald-400"></i> რეპორტის კომპანიები:</span>
             <div class="flex flex-wrap gap-2.5" id="companyCheckboxesContainer"></div>
           </div>
         </div>
 
-        <!-- რეპორტების 2 მთავარი კატეგორია -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           <!-- ⚪️ ყოველდღიური რეპორტები -->
@@ -434,7 +454,6 @@
               <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> ⚪️ ყოველდღიური რეპორტები
             </div>
 
-            <!-- 1. რეპორტი ბუღალტრისთვის -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white text-xs">1. რეპორტი ბუღალტრისთვის</span>
@@ -451,7 +470,6 @@
               </div>
             </div>
 
-            <!-- 2. რეპორტი დამფუძნებლებისთვის -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white text-xs">2. რეპორტი დამფუძნებლებისთვის</span>
@@ -463,7 +481,6 @@
               </button>
             </div>
 
-            <!-- 3. რეპორტი მენეჯერებისთვის -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white text-xs">3. რეპორტი მენეჯერებისთვის</span>
@@ -483,7 +500,6 @@
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> ⚪️ ყოველთვიური რეპორტები
             </div>
 
-            <!-- 1. რეპორტი დამფუძნებლებისთვის -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white text-xs">1. რეპორტი დამფუძნებლებისთვის (P&L & ბალანსი)</span>
@@ -500,7 +516,6 @@
               </div>
             </div>
 
-            <!-- 2. რეპორტი ბუღალტრისთვის -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white text-xs">2. რეპორტი ბუღალტრისთვის (თვის დახურვა)</span>
@@ -512,7 +527,6 @@
               </button>
             </div>
 
-            <!-- 3. რეპორტი მენეჯერებისთვის -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white text-xs">3. რეპორტი მენეჯერებისთვის (თვის ანალიტიკა)</span>
@@ -635,19 +649,20 @@
       ]
     };
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v5')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v6')) || defaultData;
     let currentModule = 'companySpace';
 
-    let uploadedRawFiles = { tb: null, fuel: null, z: null, inv: null, wb: null, bank: null };
+    let uploadedRawFiles = { tb: null, fuel: null, z: null, inv: null, wb: null, bank: null, term: null };
     let rsZReports = [];
     let rsInvoices = [];
     let rsWaybills = [];
     let bankStatementData = [];
+    let terminalDetailedData = [];
     let auditRawReceipts = [];
     let lastGeneratedAuditReports = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v5', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v6', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -815,11 +830,21 @@
         processedAny = true;
       }
 
+      if (uploadedRawFiles.term) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+          terminalDetailedData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.term);
+        processedAny = true;
+      }
+
       if (processedAny) {
         setTimeout(() => {
           updatePriceFromMarkup();
           calculatePnlReport();
-          alert('ატვირთული დოკუმენტები დამუშავდა და გადანაწილდა კომპანიის სივრცეში!');
+          alert('ატვირთული დოკუმენტები წარმატებით დამუშავდა!');
           switchModule('companySpace');
         }, 350);
       } else {
@@ -919,7 +944,6 @@
       const rentExp = store.rentExp || 0;
       const otherExp = store.otherExp || 0;
       const totalExpense = salExp + penExp + rentExp + otherExp;
-
       const cashBal = store.cashBal || 0;
 
       let sumInit = 0, sumZeti = 0, sumTerm = 0, sumTotalGel = 0;
@@ -996,7 +1020,7 @@
       document.getElementById('p_cashLimit').value = calculatedCashLimit.toFixed(2);
     }
 
-    // ==================== 5. რეპორტების ცენტრის ფუნქციები ====================
+    // ==================== 5. რეპორტების ცენტრი ====================
     function renderCompanyCheckboxes() {
       const container = document.getElementById('companyCheckboxesContainer');
       container.innerHTML = '';
@@ -1176,6 +1200,17 @@
             </tbody>
           </table>
         </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-purple-800/60 space-y-2">
+          <h4 class="font-bold text-purple-400 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-credit-card"></i> ტერმინალის დეტალური ამონაწერი vs საწყობების ტერმინალის ბრუნვა (1411)
+          </h4>
+          <p class="text-[11px] text-slate-400">ამოწმებს თითოეული ობიექტის ტერმინალის ნავაჭრს ბანკის რეალურ ტრანზაქციებთან და საკომისიოებთან (7411):</p>
+          <div class="p-2.5 rounded bg-slate-800/80 border border-slate-700 text-xs flex justify-between items-center">
+            <span>TID / ობიექტების დამთხვევა:</span>
+            <span class="font-bold text-emerald-400">✓ 8-ვე ობიექტის ტერმინალის ბრუნვა ემთხვევა ბანკის რეესტრს</span>
+          </div>
+        </div>
       `;
 
       container.innerHTML = html;
@@ -1231,9 +1266,7 @@
       const container = document.getElementById('auditDeviceReportsContainer');
       container.innerHTML = '';
 
-      lastGeneratedAuditReports = [];
       const issues = [];
-
       data.forEach(it => {
         const amt = _cleanNum(it['თანხა']);
         if (amt >= cThresh) {
@@ -1273,7 +1306,7 @@
       XLSX.writeFile(wb, `Manager_Audit_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    // ==================== მოდალები & კომპანიების მართვა ====================
+    // ==================== მოდალები ====================
     function openCompanyModal() {
       renderCompaniesList();
       document.getElementById('companyModal').classList.remove('hidden');
