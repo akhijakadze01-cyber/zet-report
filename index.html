@@ -28,60 +28,180 @@
 
   <div class="max-w-7xl mx-auto space-y-6">
 
-    <!-- Header -->
+    <!-- Header: მარცხნივ ლოგო და სათაური, მარჯვნივ განცალკევებით კომპანია & აპარატები -->
     <header class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-wrap items-center justify-between gap-4 shadow-lg no-print">
       <div class="flex items-center gap-3">
         <button onclick="resetCurrentView()" title="გასუფთავება (Reset)" class="w-12 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 flex items-center justify-center text-white text-xl shadow-md transition cursor-pointer">
           <i class="fa-solid fa-arrows-rotate"></i>
         </button>
         <div>
-          <h1 class="text-xl font-bold text-white tracking-wide" id="mainTitle">FINAUDIT OS — მოგება-ზარალი & რეპორტინგი</h1>
-          <p class="text-xs text-slate-400" id="mainSubTitle">საწვავის აღრიცხვა, rs.ge შედარება და ოპერატორების მონიტორინგი</p>
+          <h1 class="text-xl font-bold text-white tracking-wide" id="mainTitle">FINAUDIT OS — მართვის & აუდიტის ცენტრი</h1>
+          <p class="text-xs text-slate-400" id="mainSubTitle">საწვავის აღრიცხვა, rs.ge შედარება, ოპერატორების მონიტორინგი & რეპორტები</p>
         </div>
       </div>
 
-      <!-- მოდულების ნავიგაცია -->
-      <div class="flex flex-wrap items-center gap-2">
-        <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-700 flex">
-          <button id="tabReportBtn" onclick="switchModule('report')" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow">
-            <i class="fa-solid fa-chart-pie"></i> 1. მოგება-ზარალი (P&L)
-          </button>
-          <button id="tabReconcileBtn" onclick="switchModule('reconcile')" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-scale-balanced"></i> 2. rs.ge & ბუღალტერია
-          </button>
-          <button id="tabAuditBtn" onclick="switchModule('audit')" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-user-shield"></i> 3. მენეჯერის მონიტორინგი
-          </button>
-        </div>
-
-        <button onclick="openCompanyModal()" class="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
+      <!-- განცალკევებული მარჯვენა ზედა ბლოკი: შპს გადამრთველი & აპარატები -->
+      <div class="flex items-center gap-2.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-700 shadow-inner">
+        <button onclick="openCompanyModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-building"></i> <span id="headerCompanyText">შპს გრინ ლაინ 888</span>
         </button>
-        <button onclick="openDeviceMapModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl border border-amber-400/40 flex items-center gap-2 transition shadow-md">
+        <button onclick="openDeviceMapModal()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl border border-amber-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-cash-register"></i> აპარატები
         </button>
       </div>
     </header>
 
-    <!-- ==================== 1. მოდული: მოგება-ზარალი & საწვავის რეპორტი ==================== -->
+    <!-- მოდულების ნავიგაციის ზოლი (4 სუფთა დამოუკიდებელი ჩანართი) -->
+    <div class="bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700 flex flex-wrap items-center gap-2 no-print shadow-sm">
+      <button id="tabUploadBtn" onclick="switchModule('upload')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i> 1. დოკუმენტების ატვირთვა
+      </button>
+      <button id="tabReportBtn" onclick="switchModule('report')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow">
+        <i class="fa-solid fa-chart-pie"></i> 2. რეპორტები (P&L & მოძრაობა)
+      </button>
+      <button id="tabReconcileBtn" onclick="switchModule('reconcile')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-scale-balanced text-cyan-400"></i> 3. rs.ge & ბუღალტერია
+      </button>
+      <button id="tabAuditBtn" onclick="switchModule('audit')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-user-shield text-amber-400"></i> 4. მენეჯერის მონიტორინგი
+      </button>
+    </div>
+
+    <!-- ==================== 1. მოდული: დოკუმენტების ატვირთვის ერთიანი ცენტრი (List View) ==================== -->
+    <div id="moduleUpload" class="space-y-6 hidden">
+      <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-sm space-y-4">
+        <div class="border-b border-slate-700 pb-3 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-folder-open text-indigo-400"></i> დოკუმენტების ატვირთვის ერთიანი ცენტრი
+            </h2>
+            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — მონაცემები ავტომატურად განაწილდება ყველა რეპორტსა და მოდულში</p>
+          </div>
+          <button onclick="processAllUploadedFiles()" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+            <i class="fa-solid fa-bolt"></i> მონაცემების დამუშავება & განახლება
+          </button>
+        </div>
+
+        <!-- ფაილების ვერტიკალური ჩამონათვალი (List View) -->
+        <div class="divide-y divide-slate-700/70 text-xs font-sans">
+          
+          <!-- 1. ბრუნვითი უწყისი -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-indigo-950/60 border border-indigo-800/60 flex items-center justify-center text-indigo-400 text-base">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">SuperFin ბრუნვითი უწყისი (.xlsx, .xls)</span>
+                <span class="text-[11px] text-slate-400">ამოკრებს: I/H თვითღირებულებას, სალაროს (1110+3220), ვალს (3110\001), ხარჯებს და ჩასათვლელ დღგ-ს (3340)</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_tb" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleCenterUpload(event, 'tb')">
+              </label>
+            </div>
+          </div>
+
+          <!-- 2. საწყობების მოძრაობა -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950/60 border border-emerald-800/60 flex items-center justify-center text-emerald-400 text-base">
+                <i class="fa-solid fa-gas-pump"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">საწყობების ნაშთები & მოძრაობა (.xlsx, .xls)</span>
+                <span class="text-[11px] text-slate-400">ობიექტების საწყისი ნაშთები, ზეტი (ნაღდი), ტერმინალი, ავზები და გადასაწერი საწვავი</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_fuel" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleCenterUpload(event, 'fuel')">
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. rs.ge Z-ჩეკების რეესტრი -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/60 flex items-center justify-center text-amber-400 text-base">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">rs.ge სალაროს Z-ჩეკების დეტალური ექსპორტი (Export.xls)</span>
+                <span class="text-[11px] text-slate-400">გამოიყენება ოპერატორების რისკ-აუდიტისთვის (დიდი ჩეკები, Burst, იდენტური, მინუსიანი Z) და SuperFin იმპორტისთვის</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_z" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx,.csv" class="hidden" onchange="handleCenterUpload(event, 'z')">
+              </label>
+            </div>
+          </div>
+
+          <!-- 4. rs.ge ა/ფაქტურები -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-cyan-950/60 border border-cyan-800/60 flex items-center justify-center text-cyan-400 text-base">
+                <i class="fa-solid fa-file-invoice"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">rs.ge ელექტრონული საგადასახადო ანგარიშ-ფაქტურები</span>
+                <span class="text-[11px] text-slate-400">შესყიდვების ფაქტურები rs.ge-დან SuperFin-ში გასატარებლად და დღგ-ის სალდოსთვის</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_inv" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleCenterUpload(event, 'inv')">
+              </label>
+            </div>
+          </div>
+
+          <!-- 5. rs.ge ზედნადებები (საწყობებით) -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-rose-950/60 border border-rose-800/60 flex items-center justify-center text-rose-400 text-base">
+                <i class="fa-solid fa-truck-ramp-box"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">rs.ge სასაქონლო ზედნადებები (გადმოტვირთვის მისამართებით)</span>
+                <span class="text-[11px] text-slate-400">ამოწმებს საწვავის რეალურ მიღებას და საწყობების აცდენას (აირი, გოგილო, ზღაპარი და სხვ.)</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_wb" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleCenterUpload(event, 'wb')">
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 2. მოდული: რეპორტები (მოგება-ზარალი & საწვავის მოძრაობა) ==================== -->
     <div id="moduleReport" class="space-y-6">
       
-      <!-- პარამეტრების პანელი & ფაილის მიბმა -->
+      <!-- პარამეტრების პანელი (სუფთა, ფაილის მიბმის გარეშე!) -->
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3">
           <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
             <i class="fa-solid fa-sliders"></i>
-            <span>ბრუნვითი უწყისი & ფინანსური პარამეტრები</span>
+            <span>ფინანსური პარამეტრები & კალკულაცია</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <label class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition flex items-center gap-1.5 text-xs shadow">
-              <i class="fa-solid fa-file-excel"></i> ბრუნვითი უწყისის ატვირთვა (.xlsx)
-              <input type="file" id="tbExcelInput" accept=".xls,.xlsx" class="hidden" onchange="handleTrialBalanceUpload(event)">
-            </label>
-            <button onclick="calculatePnlReport()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
-              <i class="fa-solid fa-calculator"></i> გადათვლა
-            </button>
-          </div>
+          <button onclick="calculatePnlReport()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-calculator"></i> გადათვლა
+          </button>
         </div>
 
         <!-- კომპანიების მრავალჯერადი მონიშვნა (Multi-select) -->
@@ -109,8 +229,8 @@
             <input type="number" id="p_cogsRate" value="2.565239" step="0.0001" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი დღგ (₾)</label>
-            <input type="number" id="p_vatInputTax" value="90658.81" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
+            <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი დღგ (3340)</label>
+            <input type="number" id="p_vatInputTax" value="90658.81" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed" title="ივსება ბრუნვითი უწყისის 3340 ანგარიშიდან">
           </div>
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">სალაროს მაქს. ლიმიტი (₾)</label>
@@ -118,7 +238,7 @@
           </div>
         </div>
 
-        <!-- ბრუნვითიდან ამოკრეფილი ხარჯების მუხლები -->
+        <!-- ბრუნვითიდან ამოკრეფილი ხარჯები და ნაშთები -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 text-xs pt-1">
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">ხელფასის ხარჯი (₾)</label>
@@ -245,7 +365,7 @@
               <span id="rep_vatOutput" class="font-bold text-slate-100">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">ჩასათვლელი დღგ (ფაქტურა+ზედნადები):</span>
+              <span class="text-slate-400 font-sans">ჩასათვლელი დღგ (ანგარიში 3340):</span>
               <span id="rep_vatInput" class="text-slate-300">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
@@ -278,51 +398,21 @@
       </div>
     </div>
 
-    <!-- ==================== 2. მოდული: rs.ge შედარება & SuperFin (ბუღალტრისთვის) ==================== -->
+    <!-- ==================== 3. მოდული: rs.ge შედარება & SuperFin (ბუღალტრისთვის) ==================== -->
     <div id="moduleReconcile" class="space-y-6 hidden">
-      <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
-        <h2 class="text-sm font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> rs.ge რეესტრებისა და SuperFin-ის შედარება
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <!-- 1. rs.ge ჩეკები -->
-          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div>
-              <span class="font-bold text-slate-200 block mb-1">1. rs.ge Z-ჩეკების ექსპორტი</span>
-              <span class="text-[11px] text-slate-400 block mb-2" id="lbl_rs_z">ფაილი არ არის</span>
-            </div>
-            <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg cursor-pointer font-bold transition text-center shadow">
-              ატვირთვა (.xls, .xlsx)
-              <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleRsFile(event, 'z')">
-            </label>
-          </div>
-          <!-- 2. rs.ge ფაქტურები -->
-          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div>
-              <span class="font-bold text-slate-200 block mb-1">2. rs.ge ა/ფაქტურების ექსპორტი</span>
-              <span class="text-[11px] text-slate-400 block mb-2" id="lbl_rs_inv">ფაილი არ არის</span>
-            </div>
-            <label class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg cursor-pointer font-bold transition text-center shadow">
-              ატვირთვა (.xls, .xlsx)
-              <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleRsFile(event, 'inv')">
-            </label>
-          </div>
-          <!-- 3. rs.ge ზედნადებები (საწყობებით) -->
-          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div>
-              <span class="font-bold text-slate-200 block mb-1">3. rs.ge ზედნადებები (საწყობები)</span>
-              <span class="text-[11px] text-slate-400 block mb-2" id="lbl_rs_wb">ფაილი არ არის</span>
-            </div>
-            <label class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition text-center shadow">
-              ატვირთვა (.xls, .xlsx)
-              <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleRsFile(event, 'wb')">
-            </label>
-          </div>
+      <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-sm no-print flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced text-cyan-400"></i> rs.ge რეესტრებისა და SuperFin-ის შედარება
+          </h2>
+          <p class="text-xs text-slate-400">ფაილები იკითხება „დოკუმენტების ატვირთვის“ ცენტრიდან</p>
         </div>
-
-        <div class="flex justify-center pt-2">
-          <button onclick="runRsReconciliation()" class="px-8 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
-            <i class="fa-solid fa-arrows-split-up-and-left"></i> შედარების გაშვება (გასატარებელი დოკუმენტები & საწყობების აცდენა)
+        <div class="flex gap-2">
+          <button onclick="runRsReconciliation()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
+            <i class="fa-solid fa-arrows-split-up-and-left"></i> შედარების გაშვება
+          </button>
+          <button onclick="exportSuperFinOfficialTemplate()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
+            <i class="fa-solid fa-file-excel"></i> SuperFin 11-სვეტიანი იმპორტი (.xls)
           </button>
         </div>
       </div>
@@ -336,34 +426,23 @@
             </h3>
             <p class="text-xs text-slate-400">გამოვლენილია გასატარებელი ოპერაციები და საწყობების შეუსაბამობები</p>
           </div>
-          <div class="flex gap-2">
-            <button onclick="exportSuperFinOfficialTemplate()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
-              <i class="fa-solid fa-file-excel"></i> SuperFin 11-სვეტიანი იმპორტის ჩამოტვირთვა (.xls)
-            </button>
-          </div>
         </div>
 
         <div class="space-y-4" id="rsReportContainer"></div>
       </div>
     </div>
 
-    <!-- ==================== 3. მოდული: მენეჯერის მონიტორინგი (აპარატებისა და ოპერატორების რისკები) ==================== -->
+    <!-- ==================== 4. მოდული: მენეჯერის მონიტორინგი (აპარატებისა და ოპერატორების რისკები) ==================== -->
     <div id="moduleAudit" class="space-y-6 hidden">
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3">
           <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
-            <i class="fa-solid fa-shield-virus"></i>
+            <i class="fa-solid fa-user-shield"></i>
             <span>ოპერატორების მუშაობის & სალაროს რისკების პარამეტრები</span>
           </div>
-          <div class="flex gap-2">
-            <label class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl cursor-pointer font-bold transition flex items-center gap-1.5 text-xs shadow">
-              <i class="fa-solid fa-file-waveform"></i> დეტალური Z/ჩეკების ფაილის მიბმა
-              <input type="file" id="auditFileInput" accept=".xls,.xlsx,.csv" class="hidden" onchange="handleAuditExcelUpload(event)">
-            </label>
-            <button onclick="runAuditInspection()" class="px-6 py-2 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
-              <i class="fa-solid fa-magnifying-glass"></i> შემოწმების გაშვება
-            </button>
-          </div>
+          <button onclick="runAuditInspection()" class="px-6 py-2 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass"></i> რისკების შემოწმების გაშვება
+          </button>
         </div>
 
         <!-- რისკის ზღვრები -->
@@ -504,7 +583,6 @@
         { id: 4, name: 'შპს მელო' }
       ],
       devices: [
-        // გრინ ლაინ 888
         { id: 301, companyId: 3, sn: '70851870', name: 'აირი', debit: '1110', credit: '1410\\001' },
         { id: 302, companyId: 3, sn: '70848499', name: 'გოგილო', debit: '1110', credit: '1410\\002' },
         { id: 303, companyId: 3, sn: '70847390', name: 'ზღაპარი', debit: '1110', credit: '1410\\003' },
@@ -527,20 +605,26 @@
       { id: 8, name: 'ფონიჭალა გორგ 54', initStock: 5206.68, zeti: 4332.00, terminal: 6418.67, tank: 3000, transfer: 1500 }
     ];
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v1')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v2')) || defaultData;
     let currentModule = 'report';
 
-    // rs.ge შედარების მონაცემები
+    // ცენტრალური ატვირთვის ბაზები
+    let uploadedRawFiles = {
+      tb: null,
+      fuel: null,
+      z: null,
+      inv: null,
+      wb: null
+    };
+
     let rsZReports = [];
     let rsInvoices = [];
     let rsWaybills = [];
-
-    // მენეჯერის აუდიტის ჩანაწერები
     let auditRawReceipts = [];
     let lastGeneratedAuditReports = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v1', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v2', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -561,27 +645,32 @@
 
     function switchModule(mod) {
       currentModule = mod;
+      const tabUploadBtn = document.getElementById('tabUploadBtn');
       const tabReportBtn = document.getElementById('tabReportBtn');
       const tabReconcileBtn = document.getElementById('tabReconcileBtn');
       const tabAuditBtn = document.getElementById('tabAuditBtn');
 
+      const modUpload = document.getElementById('moduleUpload');
       const modReport = document.getElementById('moduleReport');
       const modReconcile = document.getElementById('moduleReconcile');
       const modAudit = document.getElementById('moduleAudit');
 
-      [tabReportBtn, tabReconcileBtn, tabAuditBtn].forEach(b => {
-        b.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5";
+      [tabUploadBtn, tabReportBtn, tabReconcileBtn, tabAuditBtn].forEach(b => {
+        b.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white";
       });
-      [modReport, modReconcile, modAudit].forEach(m => m.classList.add('hidden'));
+      [modUpload, modReport, modReconcile, modAudit].forEach(m => m.classList.add('hidden'));
 
-      if (mod === 'report') {
-        tabReportBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow";
+      if (mod === 'upload') {
+        tabUploadBtn.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow";
+        modUpload.classList.remove('hidden');
+      } else if (mod === 'report') {
+        tabReportBtn.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow";
         modReport.classList.remove('hidden');
       } else if (mod === 'reconcile') {
-        tabReconcileBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-cyan-600 text-white shadow";
+        tabReconcileBtn.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-cyan-600 text-white shadow";
         modReconcile.classList.remove('hidden');
       } else if (mod === 'audit') {
-        tabAuditBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-600 text-white shadow";
+        tabAuditBtn.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-amber-600 text-white shadow";
         modAudit.classList.remove('hidden');
       }
     }
@@ -590,13 +679,173 @@
       calculatePnlReport();
     }
 
-    // ==================== 1. მოგება-ზარალი (P&L) და ფასნამატი ====================
+    // ==================== 1. დოკუმენტების ატვირთვის ცენტრალური ლოგიკა ====================
+    function handleCenterUpload(e, fileKey) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      uploadedRawFiles[fileKey] = file;
+      const statusLabel = document.getElementById(`st_${fileKey}`);
+      if (statusLabel) {
+        statusLabel.className = "text-[11px] text-emerald-400 font-mono font-bold";
+        statusLabel.innerText = `✓ ${file.name}`;
+      }
+    }
+
+    function processAllUploadedFiles() {
+      let processedAny = false;
+
+      // 1. ბრუნვითი უწყისი
+      if (uploadedRawFiles.tb) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const wb = XLSX.read(data, { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          processTrialBalanceData(json);
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.tb);
+        processedAny = true;
+      }
+
+      // 2. საწყობები
+      if (uploadedRawFiles.fuel) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const wb = XLSX.read(data, { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          processFuelStationData(json);
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.fuel);
+        processedAny = true;
+      }
+
+      // 3. rs.ge Z-ჩეკები
+      if (uploadedRawFiles.z) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const wb = XLSX.read(data, { type: 'array' });
+          rsZReports = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          auditRawReceipts = rsZReports;
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.z);
+        processedAny = true;
+      }
+
+      // 4. rs.ge ფაქტურები
+      if (uploadedRawFiles.inv) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const wb = XLSX.read(data, { type: 'array' });
+          rsInvoices = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.inv);
+        processedAny = true;
+      }
+
+      // 5. rs.ge ზედნადებები
+      if (uploadedRawFiles.wb) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const wb = XLSX.read(data, { type: 'array' });
+          rsWaybills = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.wb);
+        processedAny = true;
+      }
+
+      if (processedAny) {
+        setTimeout(() => {
+          updatePriceFromMarkup();
+          calculatePnlReport();
+          alert('ატვირთული დოკუმენტები წარმატებით დამუშავდა! მონაცემები ასახულია ყველა მოდულში.');
+          switchModule('report');
+        }, 350);
+      } else {
+        alert('გთხოვთ, ჯერ აირჩიოთ თუნდაც ერთი ფაილი კომპიუტერიდან.');
+      }
+    }
+
+    function processTrialBalanceData(json) {
+      let sumQty_H = 0, sumCost_I = 0;
+      let cash1110 = 0, cash3220 = 0, debt3110_001 = 0, vat3340 = 0;
+      let expSal = 0, expPen = 0, expRent = 0, expOther = 0;
+
+      json.forEach(row => {
+        const acc = String(row['ანგარიში'] || row['__EMPTY'] || row['კოდი'] || '').trim();
+        const desc = String(row['დასახელება'] || row['__EMPTY_1'] || '').toLowerCase();
+        const debTurnover = parseFloat(row['დებეტი'] || row['დებეტის ბრუნვა'] || row['__EMPTY_3'] || row['__EMPTY_4'] || 0) || 0;
+        const finalBalance = parseFloat(row['საბოლოო ნაშთი'] || row['ნაშთი'] || row['__EMPTY_7'] || row['__EMPTY_8'] || 0) || 0;
+
+        // I/H სვეტები თვითღირებულებისთვის
+        let qtyH = parseFloat(row['H'] || row['__EMPTY_7'] || row['რაოდენობა'] || 0);
+        let costI = parseFloat(row['I'] || row['__EMPTY_8'] || row['ღირებულება'] || 0);
+        if (!isNaN(qtyH) && !isNaN(costI) && qtyH > 0 && costI > 0) {
+          sumQty_H += qtyH;
+          sumCost_I += costI;
+        }
+
+        // სალარო 1110 + 3220
+        if (acc === '1110') cash1110 = finalBalance;
+        if (acc === '3220') cash3220 = finalBalance;
+
+        // ვალი იმპორტზე 3110\001
+        if (acc.includes('3110\\001') || acc.includes('3110/001')) debt3110_001 = finalBalance;
+
+        // ჩასათვლელი დღგ (3340)
+        if (acc === '3340' || acc.startsWith('3340')) vat3340 = finalBalance || debTurnover;
+
+        // ხარჯების ამოკრება
+        if (acc.startsWith('7') || acc.startsWith('8')) {
+          if (acc.includes('7420') || desc.includes('ხელფას')) expSal += debTurnover;
+          else if (acc.includes('7425') || desc.includes('საპენსიო')) expPen += debTurnover;
+          else if (acc.includes('7410') || desc.includes('იჯარ')) expRent += debTurnover;
+          else expOther += debTurnover;
+        }
+      });
+
+      if (sumQty_H > 0) {
+        document.getElementById('p_cogsRate').value = (sumCost_I / sumQty_H).toFixed(6);
+      }
+      if (cash1110 !== 0 || cash3220 !== 0) {
+        document.getElementById('p_cashBalance').value = (cash1110 + cash3220).toFixed(2);
+      }
+      if (debt3110_001 !== 0) {
+        document.getElementById('p_debtImport').value = debt3110_001.toFixed(2);
+      }
+      if (vat3340 !== 0) {
+        document.getElementById('p_vatInputTax').value = Math.abs(vat3340).toFixed(2);
+      }
+      if (expSal > 0) document.getElementById('p_expSalary').value = expSal.toFixed(2);
+      if (expPen > 0) document.getElementById('p_expPension').value = expPen.toFixed(2);
+      if (expRent > 0) document.getElementById('p_expRent').value = expRent.toFixed(2);
+      if (expOther > 0) document.getElementById('p_expOther').value = expOther.toFixed(2);
+    }
+
+    function processFuelStationData(json) {
+      json.forEach(row => {
+        const rowName = String(row['საწყობი'] || row['პროგრამიდან საქონლის მოძრაობა  საწყობების მიხედვით'] || '').trim();
+        const matched = fuelStations.find(s => s.name.toLowerCase().includes(rowName.toLowerCase()) || rowName.toLowerCase().includes(s.name.toLowerCase()));
+        if (matched) {
+          if (row['საწყის ნაშთ+მიღებული'] !== undefined) matched.initStock = parseFloat(row['საწყის ნაშთ+მიღებული']) || matched.initStock;
+          if (row['ზეტი'] !== undefined) matched.zeti = parseFloat(row['ზეტი']) || 0;
+          if (row['ტერმინალი'] !== undefined) matched.terminal = parseFloat(row['ტერმინალი']) || 0;
+          if (row['ავზები'] !== undefined) matched.tank = parseFloat(row['ავზები']) || matched.tank;
+          if (row['გადასაწერი'] !== undefined) matched.transfer = parseFloat(row['გადასაწერი']) || matched.transfer;
+        }
+      });
+    }
+
+    // ==================== 2. რეპორტები (მოგება-ზარალი & საწვავი) ====================
     function updatePriceFromMarkup() {
       const targetMarkup = parseFloat(document.getElementById('p_targetMarkup').value) || 1.12;
       const cogsRate = parseFloat(document.getElementById('p_cogsRate').value) || 2.565239;
       const coeff = parseFloat(document.getElementById('p_coeff').value) || 1.85;
 
-      // Price = Markup * (COGS * 1.18) / Coeff, დამრგვალებული მეასედებამდე (2 ნიშნამდე)
       const rawPrice = targetMarkup * (cogsRate * 1.18) / coeff;
       const roundedPrice = Math.round(rawPrice * 100) / 100;
 
@@ -685,7 +934,6 @@
         tbody.appendChild(tr);
       });
 
-      // ფუტერი
       document.getElementById('fuelTableFoot').innerHTML = `
         <tr>
           <td class="p-2 text-center">-</td>
@@ -703,7 +951,6 @@
         </tr>
       `;
 
-      // ფინანსური ფორმულები
       const turnoverNoVat = sumTotalGel / 1.18;
       const vatOutput = turnoverNoVat * 0.18;
       const vatNet = vatOutput - vatInputTax;
@@ -747,80 +994,6 @@
       }
     }
 
-    // ბრუნვითი უწყისის Excel-იდან ავტომატური ამოკრება (I/H კოეფიციენტი, სალარო 1110+3220, ვალი 3110\001, ხარჯები)
-    function handleTrialBalanceUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-          const json = XLSX.utils.sheet_to_json(firstSheet);
-
-          let sumQty_H = 0, sumCost_I = 0;
-          let cash1110 = 0, cash3220 = 0, debt3110_001 = 0;
-          let expSal = 0, expPen = 0, expRent = 0, expOther = 0;
-
-          json.forEach(row => {
-            const acc = String(row['ანგარიში'] || row['__EMPTY'] || row['კოდი'] || '').trim();
-            const desc = String(row['დასახელება'] || row['__EMPTY_1'] || '').toLowerCase();
-            const debTurnover = parseFloat(row['დებეტი'] || row['დებეტის ბრუნვა'] || row['__EMPTY_3'] || row['__EMPTY_4'] || 0) || 0;
-            const finalBalance = parseFloat(row['საბოლოო ნაშთი'] || row['ნაშთი'] || row['__EMPTY_7'] || row['__EMPTY_8'] || 0) || 0;
-
-            // I/H სვეტები საქონლის თვითღირებულებისთვის
-            let qtyH = parseFloat(row['H'] || row['__EMPTY_7'] || row['რაოდენობა'] || 0);
-            let costI = parseFloat(row['I'] || row['__EMPTY_8'] || row['ღირებულება'] || 0);
-            if (!isNaN(qtyH) && !isNaN(costI) && qtyH > 0 && costI > 0) {
-              sumQty_H += qtyH;
-              sumCost_I += costI;
-            }
-
-            // სალარო 1110 + 3220
-            if (acc === '1110') cash1110 = finalBalance;
-            if (acc === '3220') cash3220 = finalBalance;
-
-            // იმპორტის დავალიანება 3110\001
-            if (acc.includes('3110\\001') || acc.includes('3110/001')) debt3110_001 = finalBalance;
-
-            // ხარჯების ამოკრება
-            if (acc.startsWith('7') || acc.startsWith('8')) {
-              if (acc.includes('7420') || desc.includes('ხელფას')) expSal += debTurnover;
-              else if (acc.includes('7425') || desc.includes('საპენსიო')) expPen += debTurnover;
-              else if (acc.includes('7410') || desc.includes('იჯარ')) expRent += debTurnover;
-              else expOther += debTurnover;
-            }
-          });
-
-          // საშუალო თვითღირებულების ჩასმა (I / H)
-          if (sumQty_H > 0) {
-            const avgCogs = sumCost_I / sumQty_H;
-            document.getElementById('p_cogsRate').value = avgCogs.toFixed(6);
-          }
-
-          if (cash1110 !== 0 || cash3220 !== 0) {
-            document.getElementById('p_cashBalance').value = (cash1110 + cash3220).toFixed(2);
-          }
-          if (debt3110_001 !== 0) {
-            document.getElementById('p_debtImport').value = debt3110_001.toFixed(2);
-          }
-          if (expSal > 0) document.getElementById('p_expSalary').value = expSal.toFixed(2);
-          if (expPen > 0) document.getElementById('p_expPension').value = expPen.toFixed(2);
-          if (expRent > 0) document.getElementById('p_expRent').value = expRent.toFixed(2);
-          if (expOther > 0) document.getElementById('p_expOther').value = expOther.toFixed(2);
-
-          updatePriceFromMarkup();
-          alert('ბრუნვითი უწყისი წარმატებით დამუშავდა! მონაცემები ავტომატურად განახლდა.');
-        } catch (err) {
-          console.error(err);
-          alert('ბრუნვითი უწყისის წაკითხვის შეცდომა.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-    // მონიშნული კომპანიების ერთიან Excel-ად ექსპორტი
     function exportSelectedCompaniesToExcel() {
       const wb = XLSX.utils.book_new();
       const selIds = appData.selectedCompanyIds.length > 0 ? appData.selectedCompanyIds : [appData.activeCompanyId];
@@ -864,29 +1037,7 @@
       XLSX.writeFile(wb, `Financial_P&L_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    // ==================== 2. rs.ge შედარება (ბუღალტრისთვის) ====================
-    function handleRsFile(e, type) {
-      const file = e.target.files[0];
-      if (!file) return;
-      document.getElementById(`lbl_rs_${type}`).innerText = file.name;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const wb = XLSX.read(data, { type: 'array' });
-          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-          if (type === 'z') rsZReports = json;
-          else if (type === 'inv') rsInvoices = json;
-          else if (type === 'wb') rsWaybills = json;
-          alert(`ჩაიტვირთა ${json.length} ჩანაწერი.`);
-        } catch (err) {
-          console.error(err);
-          alert('ფაილის წაკითხვა ვერ მოხერხდა.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
+    // ==================== 3. rs.ge შედარება (ბუღალტრისთვის) ====================
     function runRsReconciliation() {
       const container = document.getElementById('rsReportContainer');
       container.innerHTML = '';
@@ -899,7 +1050,7 @@
           <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-2">
             <i class="fa-solid fa-truck-ramp-box"></i> სასაქონლო ზედნადებების საწყობების კონტროლი (rs.ge vs SuperFin)
           </h4>
-          <p class="text-[11px] text-slate-400">ამოწმებს, ხომ არ არის საწვავი მიღებული სხვა საწყობზე (მაგ. rs.ge: „აირი“ ➔ პროგრამა: „თელეთი“):</p>
+          <p class="text-[11px] text-slate-400">ამოწმებს, ხომ არ არის საწვავი მიღებული სხვა საწყობზე:</p>
           <table class="w-full text-left font-mono text-[11px] border border-slate-800 rounded">
             <thead class="bg-slate-800 text-slate-400">
               <tr>
@@ -981,7 +1132,7 @@
       XLSX.writeFile(wb, `SuperFin_Official_Import_${new Date().toISOString().slice(0, 10)}.xls`, { bookType: 'biff8', cellDates: true });
     }
 
-    // ==================== 3. მენეჯერის მონიტორინგი (აპარატებისა & ოპერატორების რისკები) ====================
+    // ==================== 4. მენეჯერის მონიტორინგი ====================
     function _cleanNum(val) {
       if (!val) return 0.0;
       if (typeof val === 'number') return val;
@@ -1001,28 +1152,8 @@
       return isNeg ? -num : num;
     }
 
-    function handleAuditExcelUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const wb = XLSX.read(data, { type: 'array' });
-          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-          auditRawReceipts = json;
-          alert(`ჩაიტვირთა ${json.length} ჩანაწერი მონიტორინგისთვის.`);
-        } catch (err) {
-          console.error(err);
-          alert('ფაილის წაკითხვა ვერ მოხერხდა.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
     function runAuditInspection() {
       let data = [...auditRawReceipts];
-      // თუ ფაილი არ არის ატვირთული, ვიყენებთ სისტემის სატესტო ნაკრებს
       if (data.length === 0) {
         data = [
           { 'აპარატი': '70851870 (აირი)', 'დრო': '2026-11-05 14:10:02', 'თანხა': 1450.00, 'ჩეკი': 'CK-101', 'Z': 801 },
@@ -1064,7 +1195,6 @@
         const items = deviceMap[sn].sort((a,b) => a.dt - b.dt);
         const issues = [];
 
-        // 1. დიდი ჩეკები
         items.forEach(it => {
           if (it.amount >= cThresh) {
             cntLarge++;
@@ -1079,7 +1209,6 @@
           }
         });
 
-        // 2. Burst სიხშირე
         for (let i = 0; i < items.length; i++) {
           const tStart = items[i].dt;
           const sub = items.filter(x => x.dt >= tStart && (x.dt - tStart) <= bWindowSec * 1000);
@@ -1093,7 +1222,6 @@
           }
         }
 
-        // 3. მიყოლებით იდენტური
         for (let i = 1; i < items.length; i++) {
           const prev = items[i-1], curr = items[i];
           const diffSec = Math.abs((curr.dt - prev.dt) / 1000);
