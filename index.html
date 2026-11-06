@@ -254,7 +254,7 @@
           </div>
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">სალაროს მაქს. ლიმიტი (₾)</label>
-            <input type="number" id="p_cashLimit" value="70309.16" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-amber-300">
+            <input type="number" id="p_cashLimit" value="70309.16" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-amber-300 cursor-not-allowed" title="გამოითვლება rs.ge მეთოდური მითითებით: 10% შემოსავალი + 10% ხარჯი">
           </div>
         </div>
 
@@ -410,7 +410,7 @@
             </div>
             <div class="flex justify-between py-1.5 pt-2 border-t border-slate-700 bg-slate-800/60 px-2 rounded" id="rep_cashStatusBox">
               <span class="font-sans font-bold text-slate-300">სალაროს ლიმიტის სტატუსი:</span>
-              <span id="rep_cashStatus" class="font-bold text-emerald-400">ნორმაშია</span>
+              <span id="rep_cashStatus" class="font-bold text-emerald-400">გონივრული ნაშთის ფარგლებშია</span>
             </div>
           </div>
 
@@ -625,7 +625,7 @@
       { id: 8, name: 'ფონიჭალა გორგ 54', initStock: 5206.68, zeti: 4332.00, terminal: 6418.67, tank: 3000, transfer: 1500 }
     ];
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v3')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v4')) || defaultData;
     let currentModule = 'report';
 
     // ცენტრალური ატვირთვის ბაზები
@@ -646,7 +646,7 @@
     let lastGeneratedAuditReports = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v3', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v4', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -924,7 +924,6 @@
 
       const vatInputTax = parseFloat(document.getElementById('p_vatInputTax').value) || 0;
       const cashBal = parseFloat(document.getElementById('p_cashBalance').value) || 0;
-      const cashLimit = parseFloat(document.getElementById('p_cashLimit').value) || 0;
       const debtImport = parseFloat(document.getElementById('p_debtImport').value) || 0;
 
       let sumInit = 0, sumZeti = 0, sumTerm = 0, sumTotalGel = 0;
@@ -995,6 +994,22 @@
       const fuelRemGel = sumRemKg * 1.81 * 1.85;
       const fuelTransGel = sumTrans * 3.07;
 
+      // ==========================================
+      // სალაროს გონივრული ლიმიტის გამოთვლა (rs.ge მეთოდიკა)
+      // ==========================================
+      const totalIncome = sumTotalGel; // თვის შემოსავალი
+      let calculatedCashLimit = 0;
+
+      if (totalIncome > 0 && totalExpense > 0) {
+        calculatedCashLimit = (totalIncome * 0.10) + (totalExpense * 0.10);
+      } else if (totalIncome > 0) {
+        calculatedCashLimit = totalIncome * 0.10;
+      } else if (totalExpense > 0) {
+        calculatedCashLimit = Math.min(totalExpense * 0.10, cashBal);
+      }
+
+      document.getElementById('p_cashLimit').value = calculatedCashLimit.toFixed(2);
+
       document.getElementById('rep_turnover').innerText = `${turnoverNoVat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_cogs').innerText = `${cogs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_markup').innerText = markup.toFixed(4);
@@ -1014,16 +1029,18 @@
       document.getElementById('rep_debtImport').innerText = `${debtImport.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_cashBalance').innerText = `${cashBal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
 
-      const cashDiff = cashBal - cashLimit;
+      // გონივრული vs არაგონივრული ნაშთის შემოწმება
+      const unReasonableAmount = cashBal - calculatedCashLimit;
       const cashStatus = document.getElementById('rep_cashStatus');
       const cashBox = document.getElementById('rep_cashStatusBox');
-      if (cashDiff > 0) {
+
+      if (unReasonableAmount > 0) {
         cashStatus.className = "font-bold text-rose-400";
-        cashStatus.innerText = `გადაჭარბებულია +${cashDiff.toFixed(2)} ₾-ით!`;
-        cashBox.className = "flex justify-between py-1.5 pt-2 border-t border-rose-800 bg-rose-950/30 px-2 rounded";
+        cashStatus.innerText = `არაგონივრული ნაშთი: +${unReasonableAmount.toFixed(2)} ₾ (დირექტორის სესხის რისკი!)`;
+        cashBox.className = "flex justify-between py-1.5 pt-2 border-t border-rose-800 bg-rose-950/40 px-2 rounded";
       } else {
         cashStatus.className = "font-bold text-emerald-400";
-        cashStatus.innerText = "ლიმიტის ფარგლებშია";
+        cashStatus.innerText = "გონივრული ნაშთის ფარგლებშია (ნორმა)";
         cashBox.className = "flex justify-between py-1.5 pt-2 border-t border-slate-700 bg-slate-800/60 px-2 rounded";
       }
     }
@@ -1062,6 +1079,7 @@
         rows.push(["სხვა ხარჯები", document.getElementById('rep_otherExp').innerText]);
         rows.push(["საოპერაციო მოგება", document.getElementById('rep_profit').innerText]);
         rows.push(["სალაროს ნაშთი (1110+3220)", document.getElementById('rep_cashBalance').innerText]);
+        rows.push(["სალაროს გონივრული მაქს. ლიმიტი (10%+10%)", document.getElementById('p_cashLimit').value + " ₾"]);
         rows.push(["დავალიანება იმპორტზე (3110\\001)", document.getElementById('rep_debtImport').innerText]);
 
         const ws = XLSX.utils.aoa_to_sheet(rows);
