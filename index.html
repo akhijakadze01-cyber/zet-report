@@ -29,7 +29,7 @@
 
   <div class="max-w-7xl mx-auto space-y-6">
 
-    <!-- Header -->
+    <!-- Header: ლოგო & სათაური, მარჯვნივ განცალკევებით კომპანიის გადამრთველი & Settings -->
     <header class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-wrap items-center justify-between gap-4 shadow-lg no-print">
       <div class="flex items-center gap-3">
         <button onclick="resetCurrentView()" title="გასუფთავება (Reset)" class="w-12 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 flex items-center justify-center text-white text-xl shadow-md transition cursor-pointer">
@@ -87,6 +87,7 @@
         </div>
 
         <div class="divide-y divide-slate-700/70 text-xs font-sans">
+          
           <!-- 1. ბრუნვითი უწყისი -->
           <div class="py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -238,6 +239,7 @@
               </label>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -683,10 +685,10 @@
       ]
     };
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v9')) || defaultData;
+    // ვერსია v10 უზრუნველყოფს ძველი სატესტო ქეშის სრულ განულებას
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v10')) || defaultData;
     let currentModule = 'companySpace';
 
-    // მეხსიერებაში ინახება ატვირთული ფაილების რეალური მონაცემთა მატრიცა
     let uploadedRawFiles = { tb: null, fuel: null, z: null, inv: null, wb: null, bank: null, term: null, sched: null };
     let cachedTrialBalanceMatrix = null;
     let rsZReports = [];
@@ -697,7 +699,7 @@
     let auditRawReceipts = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v9', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v10', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -863,8 +865,8 @@
         const reader = new FileReader();
         reader.onload = function(evt) {
           const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
-          // წავიკითხოთ მატრიცად (header: 1), რათა SuperFin-ის ყველა სვეტი ზუსტად ამოვიღოთ ინდექსით
-          const matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1 });
           cachedTrialBalanceMatrix = matrix;
           processTrialBalanceMatrix(matrix);
         };
@@ -876,7 +878,8 @@
         const reader = new FileReader();
         reader.onload = function(evt) {
           const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
-          processFuelStationData(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          processFuelStationData(XLSX.utils.sheet_to_json(sheet, { header: 1 }));
         };
         reader.readAsArrayBuffer(uploadedRawFiles.fuel);
         processedAny = true;
@@ -946,32 +949,21 @@
     }
 
     // ==========================================
-    // ბრუნვითი უწყისის ზუსტი და უშეცდომო პარსინგი SuperFin-იდან
+    // ბრუნვითი უწყისის ზუსტი ამოკითხვა SuperFin-იდან
     // ==========================================
     function processTrialBalanceMatrix(matrix) {
       if (!matrix || matrix.length < 6) return;
 
       const store = getActiveCompanyStore();
       const mappings = store.accountMappings || defaultAccountMappings;
+      const extracted = { salExp: 0, penExp: 0, rentExp: 0, otherExp: 0, cashBal: 0, debtImport: 0, vatInput: 0 };
 
-      const extractedSums = { salExp: 0, penExp: 0, rentExp: 0, otherExp: 0, cashBal: 0, debtImport: 0, vatInput: 0 };
-
-      // SuperFin-ში მონაცემთა სტრიქონები იწყება მე-6 ინდექსიდან (row 7)
       for (let i = 0; i < matrix.length; i++) {
         const row = matrix[i];
         if (!row || row.length === 0) continue;
 
         const acc = String(row[0] !== undefined && row[0] !== null ? row[0] : '').trim();
-        // თუ სტრიქონი არ იწყება ციფრით (ანგარიშის კოდით), გამოვტოვოთ სათაურები
-        if (!acc || !/^\d/.test(acc)) continue;
-
-        // SuperFin სვეტები:
-        // row[0]: ანგარიშის ნომერი (მაგ. 1110, 7410, 3110\001)
-        // row[1]: დასახელება
-        // row[2]: საწყისი ნაშთი რაოდენობა | row[3]: საწყისი ნაშთი თანხა
-        // row[4]: დებეტური ბრუნვა რაოდენობა | row[5]: დებეტური ბრუნვა თანხა
-        // row[6]: კრედიტული ბრუნვა რაოდენობა | row[7]: კრედიტული ბრუნვა თანხა
-        // row[8]: ბოლო ნაშთი რაოდენობა | row[9]: ბოლო ნაშთი თანხა
+        if (!acc || !/^\d/.test(acc)) continue; // მხოლოდ ანგარიშის ნომრები
 
         const initBal = parseFloat(row[3]) || 0;
         const debTurnover = parseFloat(row[5]) || 0;
@@ -980,12 +972,9 @@
 
         mappings.forEach(m => {
           const targetAccounts = m.accounts.split(',').map(a => a.trim().toLowerCase()).filter(a => a);
+          const cleanAcc = acc.toLowerCase();
           
-          // ვამოწმებთ ემთხვევა თუ არა ანგარიში ზუსტად, ან არის თუ არა მისი ქვეანგარიში (მაგ. 3110\001)
-          const isMatch = targetAccounts.some(tgt => {
-            const cleanAcc = acc.toLowerCase();
-            return cleanAcc === tgt || cleanAcc.startsWith(tgt + '\\') || cleanAcc.startsWith(tgt + '/');
-          });
+          const isMatch = targetAccounts.some(tgt => cleanAcc === tgt || cleanAcc.startsWith(tgt + '\\') || cleanAcc.startsWith(tgt + '/'));
 
           if (isMatch) {
             let val = 0;
@@ -994,35 +983,46 @@
             else if (m.sourceType === 'initBalance') val = initBal;
             else if (m.sourceType === 'finalBalance') val = finalBal;
 
-            extractedSums[m.key] += val;
+            extracted[m.key] += val;
           }
         });
       }
 
-      // მიღებული რეალური ციფრების მინიჭება
-      store.cashBal = extractedSums.cashBal;
-      store.debtImport = extractedSums.debtImport;
-      store.vatInput = Math.abs(extractedSums.vatInput);
-      store.salExp = extractedSums.salExp;
-      store.penExp = extractedSums.penExp;
-      store.rentExp = extractedSums.rentExp;
-      store.otherExp = extractedSums.otherExp;
+      // მიღებული რეალური მნიშვნელობების ჩაწერა
+      store.salExp = extracted.salExp;
+      store.penExp = extracted.penExp;
+      store.rentExp = extracted.rentExp;
+      store.otherExp = extracted.otherExp;
+      store.cashBal = extracted.cashBal;
+      store.debtImport = extracted.debtImport;
+      store.vatInput = Math.abs(extracted.vatInput);
 
       saveData();
       initUI();
     }
 
-    function processFuelStationData(json) {
+    function processFuelStationData(rows) {
       const store = getActiveCompanyStore();
-      json.forEach(row => {
-        const rowName = String(row['საწყობი'] || row['პროგრამიდან საქონლის მოძრაობა  საწყობების მიხედვით'] || '').trim();
-        const matched = store.stations.find(s => s.name.toLowerCase().includes(rowName.toLowerCase()) || rowName.toLowerCase().includes(s.name.toLowerCase()));
+      if (!Array.isArray(rows)) return;
+
+      rows.forEach(r => {
+        const vals = Array.isArray(r) ? r : Object.values(r);
+        const rowName = String(vals[0] || '').trim().toLowerCase();
+        if (!rowName) return;
+
+        const matched = store.stations.find(s => {
+          const sName = s.name.toLowerCase();
+          return sName.includes(rowName) || rowName.includes(sName);
+        });
+
         if (matched) {
-          if (row['საწყის ნაშთ+მიღებული'] !== undefined) matched.initStock = parseFloat(row['საწყის ნაშთ+მიღებული']) || matched.initStock;
-          if (row['ზეტი'] !== undefined) matched.zeti = parseFloat(row['ზეტი']) || 0;
-          if (row['ტერმინალი'] !== undefined) matched.terminal = parseFloat(row['ტერმინალი']) || 0;
-          if (row['ავზები'] !== undefined) matched.tank = parseFloat(row['ავზები']) || matched.tank;
-          if (row['გადასაწერი'] !== undefined) matched.transfer = parseFloat(row['გადასაწერი']) || matched.transfer;
+          // vals[1]: საწყისი ნაშთი რაოდენობა | vals[2]: საწყისი თანხა
+          // vals[3]: შემოსავალი რაოდენობა | vals[4]: შემოსავალი თანხა
+          // vals[5]: გასავალი რაოდენობა | vals[6]: გასავალი თანხა
+          // vals[7]: ბოლო ნაშთი რაოდენობა | vals[8]: ბოლო ნაშთი თანხა
+          const initQty = parseFloat(vals[1]) || 0;
+          const incQty = parseFloat(vals[3]) || 0;
+          if (initQty + incQty > 0) matched.initStock = initQty + incQty;
         }
       });
       saveData();
@@ -1341,7 +1341,9 @@
       if (s.includes(',') && s.includes('.')) {
         if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
         else s = s.replace(/,/g, '');
-      } else if (s.includes(',')) s = s.replace(',', '.');
+      } else if (s.includes(',')) {
+        s = s.replace(',', '.');
+      }
       const num = parseFloat(s) || 0.0;
       return isNeg ? -num : num;
     }
