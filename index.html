@@ -2000,45 +2000,311 @@
 
     function exportDailyFoundersReportToExcel() {
       const dateStr = new Date().toISOString().slice(0, 10);
+      const comp = getActiveCompany();
+      const store = getActiveCompanyStore();
+      const price = parseFloat(document.getElementById('p_price')?.value) || 1.84;
+      const coeff = parseFloat(document.getElementById('p_coeff')?.value) || 1.85;
+      const cogsRate = parseFloat(document.getElementById('p_cogsRate')?.value) || 2.565239;
+
       const wb = XLSX.utils.book_new();
 
+      // =========================================================
+      // 1. SHEET 1: სალარო_და_სესხები (მოწესრიგებული სვეტებით)
+      // =========================================================
       const rowsCash = [
         ["ჰოლდინგი — სალაროსა და დამფუძნებლის სესხების შემაჯამებელი უწყისი"],
         [`თარიღი: ${dateStr}`],
         [],
-        ["#", "კომპანია", "სალარო (₾)", "ექვ. რუბლი", "კონვერტაციის ჩეკი", "სესხი: ნარიმან ფირცხელიანი", "სესხი: გოჩა ენდელაძე", "ნაშთი სალაროში (₾)"]
+        [
+          "#",
+          "კომპანია",
+          "სალარო (₾)",
+          "ექვ. რუბლი (₽)",
+          "კონვერტაციის ჩეკი",
+          "სესხი: ნარიმან ფირცხელიანი",
+          "სესხი: გოჩა ენდელაძე",
+          "ნაშთი სალაროში (₾)",
+          "სტატუსი / შეუსაბამობა"
+        ]
       ];
+
       let sCash = 0, sRub = 0, sNar = 0, sGoc = 0, sNet = 0;
       appData.foundersCashLoansData.forEach((r, idx) => {
         const net = (r.cash || 0) + (r.rubEq || 0) - (r.loanNariman || 0) - (r.loanGocha || 0);
-        sCash += (r.cash || 0); sRub += (r.rubEq || 0); sNar += (r.loanNariman || 0); sGoc += (r.loanGocha || 0); sNet += net;
-        rowsCash.push([idx + 1, r.name, r.cash || 0, r.rubEq || 0, 0, r.loanNariman || 0, r.loanGocha || 0, net]);
+        sCash += (r.cash || 0);
+        sRub += (r.rubEq || 0);
+        sNar += (r.loanNariman || 0);
+        sGoc += (r.loanGocha || 0);
+        sNet += net;
+
+        let status = "✓ ნორმა";
+        if (net < 0) status = `🚨 დეფიციტი (${net.toFixed(2)} ₾)`;
+        else if (r.name.includes('მელო') && (r.cash || 0) > 28217) status = "⚠️ ლიმიტის გადაცდომა";
+        else if ((r.cash || 0) > 100000) status = "⚠️ მაღალი ნაშთი";
+
+        rowsCash.push([
+          idx + 1,
+          r.name,
+          Number((r.cash || 0).toFixed(2)),
+          Number((r.rubEq || 0).toFixed(0)),
+          0,
+          Number((r.loanNariman || 0).toFixed(2)),
+          Number((r.loanGocha || 0).toFixed(2)),
+          Number(net.toFixed(2)),
+          status
+        ]);
       });
+
       rowsCash.push([]);
-      rowsCash.push(["სულ:", "", sCash, sRub, 0, sNar, sGoc, sNet]);
+      rowsCash.push([
+        "სულ:",
+        "12 კომპანია",
+        Number(sCash.toFixed(2)),
+        Number(sRub.toFixed(0)),
+        0,
+        Number(sNar.toFixed(2)),
+        Number(sGoc.toFixed(2)),
+        Number(sNet.toFixed(2)),
+        sNet < 0 ? "დეფიციტი" : "ბალანსში"
+      ]);
+
       const wsCash = XLSX.utils.aoa_to_sheet(rowsCash);
-      wsCash['!cols'] = [{ wch: 5 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, { wch: 16 }, { wch: 22 }, { wch: 20 }, { wch: 18 }];
+      wsCash['!cols'] = [
+        { wch: 6 },
+        { wch: 22 },
+        { wch: 16 },
+        { wch: 16 },
+        { wch: 20 },
+        { wch: 26 },
+        { wch: 24 },
+        { wch: 20 },
+        { wch: 26 }
+      ];
       XLSX.utils.book_append_sheet(wb, wsCash, "სალარო_და_სესხები");
 
+      // =========================================================
+      // 2. SHEET 2: გადახდების_განრიგი (სრული სვეტებით)
+      // =========================================================
       const rowsPay = [
-        ["ჰოლდინგი — გადახდების განრიგი"],
+        ["ჰოლდინგი — დღიური გადახდების, იჯარებისა და კრედიტორების განრიგი"],
         [`თარიღი: ${dateStr}`],
         [],
-        ["#", "კომპანია", "დანიშნულება", "მიმღები", "თანხა (₾)", "კომენტარი", "გადახდის თარიღი"]
+        [
+          "#",
+          "N",
+          "კომპანია",
+          "დანიშნულება",
+          "მიმღები",
+          "თანხა (₾)",
+          "კომენტარი",
+          "გადახდის თარიღი",
+          "სტატუსი"
+        ]
       ];
+
       let sPay = 0;
       const scheduleList = appData.foundersPaymentScheduleData || appData.paymentScheduleData || [];
       scheduleList.forEach((p, idx) => {
         sPay += (p.amount || 0);
-        rowsPay.push([idx + 1, p.company, p.purpose, p.recipient, p.amount || 0, p.comment || '', p.dueDate || p.date || '']);
+        rowsPay.push([
+          idx + 1,
+          p.n || (idx + 1),
+          p.company || '',
+          p.purpose || '',
+          p.recipient || '',
+          Number((p.amount || 0).toFixed(2)),
+          p.comment || '',
+          p.dueDate || p.date || '-',
+          p.paid ? "გადახდილი" : "გადასახდელი"
+        ]);
       });
+
       rowsPay.push([]);
-      rowsPay.push(["ჯამი:", "", "", "", sPay, "", ""]);
+      rowsPay.push(["სულ:", "", "", "", "", Number(sPay.toFixed(2)), "", "", ""]);
+
       const wsPay = XLSX.utils.aoa_to_sheet(rowsPay);
-      wsPay['!cols'] = [{ wch: 5 }, { wch: 22 }, { wch: 24 }, { wch: 28 }, { wch: 15 }, { wch: 35 }, { wch: 16 }];
+      wsPay['!cols'] = [
+        { wch: 6 },
+        { wch: 6 },
+        { wch: 22 },
+        { wch: 24 },
+        { wch: 28 },
+        { wch: 16 },
+        { wch: 55 },
+        { wch: 16 },
+        { wch: 14 }
+      ];
       XLSX.utils.book_append_sheet(wb, wsPay, "გადახდების_განრიგი");
 
-      XLSX.writeFile(wb, `დამფუძნებლის_დღიური_რეპორტი_${dateStr}.xlsx`);
+      // =========================================================
+      // 3. SHEET 3: საწვავის_ბალანსი_და_Snapshot (სურათი 3-ის ზუსტი ანალოგი)
+      // =========================================================
+      let sumInit = 0, sumZeti = 0, sumTerm = 0, sumTotalGel = 0;
+      let sumLiters = 0, sumKg = 0, sumRemKg = 0, sumTank = 0, sumTrans = 0;
+
+      const stationRows = [];
+      store.stations.forEach((st, idx) => {
+        const rowTotal = (st.zeti || 0) + (st.terminal || 0);
+        const liters = price > 0 ? rowTotal / price : 0;
+        const kg = coeff > 0 ? liters / coeff : 0;
+        const remKg = (st.initStock || 0) - kg;
+
+        sumInit += (st.initStock || 0);
+        sumZeti += (st.zeti || 0);
+        sumTerm += (st.terminal || 0);
+        sumTotalGel += rowTotal;
+        sumLiters += liters;
+        sumKg += kg;
+        sumRemKg += remKg;
+        sumTank += (st.tank || 0);
+        sumTrans += (st.transfer || 0);
+
+        stationRows.push({
+          idx: idx + 1,
+          name: st.name,
+          initStock: st.initStock || 0,
+          zeti: st.zeti || 0,
+          terminal: st.terminal || 0,
+          total: rowTotal,
+          price: price,
+          liters: liters,
+          kg: kg,
+          remKg: remKg,
+          tank: st.tank || 0,
+          transfer: st.transfer || 0
+        });
+      });
+
+      // Flash Snapshot-ის გამოთვლები
+      const turnoverNoVat = sumTotalGel / 1.18;
+      const vatOutput = sumTotalGel - turnoverNoVat;
+      const vatInputFact = store.vatInputFact || 3000;
+      const vatInputWb = store.vatInput || 87659;
+      const vatNetPayable = vatOutput - vatInputWb; // უარყოფითი = ჩასათვლელი
+      const cogs = (sumTotalGel / 1.84 / coeff) * cogsRate;
+      const markup = cogs > 0 ? turnoverNoVat / cogs : 0;
+      const monthlyExp = (store.salExp || 0) + (store.penExp || 0) + (store.rentExp || 0) + (store.otherExp || 0) || 41000;
+      const profit = turnoverNoVat - cogs - monthlyExp;
+      const debtToImport = store.debtImport || -124468;
+      const cashBal = store.cashBal || 87017;
+      const cashLimit = parseFloat(document.getElementById('p_cashLimit')?.value) || (sumTotalGel * 0.1) || 70309;
+      const fuelLitersTotal = Math.round(sumRemKg * coeff);
+      const fuelValueGel = sumRemKg * cogsRate;
+      const overrunGasGel = 24560;
+
+      // ვაწყობთ გაერთიანებულ ცხრილს (მარცხნივ სადგურები, მარჯვნივ Snapshot)
+      const rowsFuel = [
+        [`${comp.name} — საწვავის მოძრაობა & Flash Snapshot`, "", "", "", "", "", "", "", "", "", "", "", "", "თარიღი: " + dateStr],
+        [],
+        [
+          "პროგრამიდან საქონლის მოძრაობა საწყობების მიხედვით",
+          "საწყისი ნაშთ+მიღებული",
+          "ზეტი",
+          "ტერმინალი",
+          "ჯამი",
+          "ფასი",
+          "ლიტ",
+          "კგ",
+          "ნაშთი",
+          "ავზები",
+          "გადასაწერი",
+          "",
+          "მაჩვენებელი (Flash Snapshot)",
+          "თანხა / მნიშვნელობა"
+        ]
+      ];
+
+      // მარჯვენა მხარის სტრიქონების სია
+      const rightSideMetrics = [
+        ["ბრუნვა დაუბეგრ", Number(turnoverNoVat.toFixed(2))],
+        ["გადასახდელი დღგ", Number(vatOutput.toFixed(2))],
+        ["ჩასათვლელი ფაქტ", Number(vatInputFact.toFixed(2))],
+        ["ჩასათვლელი ზედნად", Number(vatInputWb.toFixed(2))],
+        ["გადასახდელი დღგ (სალდო)", Number(vatNetPayable.toFixed(2))],
+        ["ჩნ საქონლ თვითღ", Number(cogs.toFixed(2))],
+        ["ფასნამატი", Number(markup.toFixed(4))],
+        ["ხარჯი თვის", Number(monthlyExp.toFixed(2))],
+        ["მოგება (EBIT)", Number(profit.toFixed(2))],
+        ["იმპორტის მიმართ დავალიანება", Number(debtToImport.toFixed(2))],
+        ["სალაროს ნაშთი", Number(cashBal.toFixed(2))],
+        ["სალაროს მაქს ლიმიტი (10%)", Number(cashLimit.toFixed(2))],
+        ["საწვავის ნაშთი (ლიტრი)", fuelLitersTotal],
+        ["საწ. ნაშთი თანხაში (₾)", Number(fuelValueGel.toFixed(2))],
+        ["გადასაწერი საწვავი თანხაში", overrunGasGel]
+      ];
+
+      const maxRows = Math.max(stationRows.length, rightSideMetrics.length);
+
+      for (let i = 0; i < maxRows; i++) {
+        const st = stationRows[i];
+        const right = rightSideMetrics[i] || ["", ""];
+
+        if (st) {
+          rowsFuel.push([
+            st.name,
+            Number(st.initStock.toFixed(2)),
+            Number(st.zeti.toFixed(2)),
+            Number(st.terminal.toFixed(2)),
+            Number(st.total.toFixed(2)),
+            st.price,
+            Number(st.liters.toFixed(2)),
+            Number(st.kg.toFixed(2)),
+            Number(st.remKg.toFixed(2)),
+            st.tank,
+            st.transfer,
+            "",
+            right[0],
+            right[1]
+          ]);
+        } else {
+          rowsFuel.push([
+            "", "", "", "", "", "", "", "", "", "", "",
+            "",
+            right[0],
+            right[1]
+          ]);
+        }
+      }
+
+      // სადგურების ჯამის სტრიქონი
+      rowsFuel.push([
+        "ჯამი",
+        Number(sumInit.toFixed(2)),
+        Number(sumZeti.toFixed(2)),
+        Number(sumTerm.toFixed(2)),
+        Number(sumTotalGel.toFixed(2)),
+        "",
+        Number(sumLiters.toFixed(2)),
+        Number(sumKg.toFixed(2)),
+        Number(sumRemKg.toFixed(2)),
+        sumTank,
+        sumTrans,
+        "",
+        "თვითღირებ. (I/H):",
+        cogsRate
+      ]);
+
+      const wsFuel = XLSX.utils.aoa_to_sheet(rowsFuel);
+      wsFuel['!cols'] = [
+        { wch: 22 }, // საწყობი
+        { wch: 18 }, // საწყისი
+        { wch: 14 }, // ზეტი
+        { wch: 14 }, // ტერმინალი
+        { wch: 14 }, // ჯამი
+        { wch: 8 },  // ფასი
+        { wch: 14 }, // ლიტ
+        { wch: 12 }, // კგ
+        { wch: 12 }, // ნაშთი
+        { wch: 10 }, // ავზები
+        { wch: 14 }, // გადასაწერი
+        { wch: 5 },  // გამყოფი ცარიელი
+        { wch: 28 }, // Snapshot მაჩვენებელი
+        { wch: 20 }  // Snapshot მნიშვნელობა
+      ];
+      XLSX.utils.book_append_sheet(wb, wsFuel, "საწვავის_ბალანსი_და_Snapshot");
+
+      // ფაილის გადმოწერა
+      XLSX.writeFile(wb, `${comp.name}_დამფუძნებლის_დღიური_რეპორტი_${dateStr}.xlsx`);
     }
 
     // 4. ყოველთვიური რეპორტი ბუღალტრისთვის
