@@ -1952,11 +1952,24 @@
           </tr>
         `;
       });
-
-      // 3. მონაცემები გადახდების განრიგი (სესხები & იჯარები & კრედიტორული ვალები)
-      let payRowsHtml = '';
-      let sumPay = 0;
-      appData.paymentScheduleData.forEach((p, idx) => {
+// 3. მონაცემები გადახდების განრიგი (სესხები & იჯარები & კრედიტორული ვალები)
+let payRowsHtml = '';
+let sumPay = 0;
+const scheduleList = appData.foundersPaymentScheduleData || appData.paymentScheduleData || [];
+scheduleList.forEach((p, idx) => {
+  sumPay += (p.amount || 0);
+  payRowsHtml += `
+    <tr class="hover:bg-slate-800/50 transition border-b border-slate-800/80 text-xs">
+      <td class="p-2 text-center text-slate-500 font-mono">${idx + 1}</td>
+      <td class="p-2 font-bold text-slate-200">${p.company}</td>
+      <td class="p-2 text-slate-300">${p.purpose}</td>
+      <td class="p-2 text-slate-100">${p.recipient}</td>
+      <td class="p-2 text-right font-mono font-bold text-emerald-400">${(p.amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+      <td class="p-2 text-slate-400 text-[11px]">${p.comment || '-'}</td>
+      <td class="p-2 text-slate-300 font-mono text-center">${p.dueDate || p.date || '-'}</td>
+    </tr>
+  `;
+});
         sumPay += p.amount;
         payRowsHtml += `
           <tr class="hover:bg-slate-800/50 transition border-b border-slate-800/80 text-xs">
