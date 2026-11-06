@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SuperFin Z-ანგარიშების სისტემა & რეპორტინგი</title>
+  <title>FINAUDIT OS — სრული კორპორატიული აუდიტის & რეპორტინგის სისტემა</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -35,27 +35,27 @@
           <i class="fa-solid fa-arrows-rotate"></i>
         </button>
         <div>
-          <h1 class="text-xl font-bold text-white tracking-wide" id="mainTitle">SuperFin Z-ანგარიშების ფილტრი & იმპორტიორი</h1>
-          <p class="text-xs text-slate-400" id="mainSubTitle">თითოეული სალარო აპარატის ინდივიდუალური ქვეანგარიშების ავტომატური მორგება</p>
+          <h1 class="text-xl font-bold text-white tracking-wide" id="mainTitle">FINAUDIT OS — მოგება-ზარალი & რეპორტინგი</h1>
+          <p class="text-xs text-slate-400" id="mainSubTitle">საწვავის აღრიცხვა, rs.ge შედარება და ოპერატორების მონიტორინგი</p>
         </div>
       </div>
 
-      <!-- მოდულების გადამრთველი ტაბები და კომპანია -->
+      <!-- მოდულების ნავიგაცია -->
       <div class="flex flex-wrap items-center gap-2">
         <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-700 flex">
-          <button id="tabImportBtn" onclick="switchModule('import')" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow">
-            <i class="fa-solid fa-file-import"></i> Z-იმპორტიორი
+          <button id="tabReportBtn" onclick="switchModule('report')" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow">
+            <i class="fa-solid fa-chart-pie"></i> 1. მოგება-ზარალი (P&L)
+          </button>
+          <button id="tabReconcileBtn" onclick="switchModule('reconcile')" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-scale-balanced"></i> 2. rs.ge & ბუღალტერია
           </button>
           <button id="tabAuditBtn" onclick="switchModule('audit')" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-chart-line"></i> მონიტორინგი
-          </button>
-          <button id="tabReportBtn" onclick="switchModule('report')" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-gas-pump text-emerald-400"></i> რეპორტები
+            <i class="fa-solid fa-user-shield"></i> 3. მენეჯერის მონიტორინგი
           </button>
         </div>
 
         <button onclick="openCompanyModal()" class="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
-          <i class="fa-solid fa-building"></i> <span id="headerCompanyText">შპს მოთი</span>
+          <i class="fa-solid fa-building"></i> <span id="headerCompanyText">შპს გრინ ლაინ 888</span>
         </button>
         <button onclick="openDeviceMapModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl border border-amber-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-cash-register"></i> აპარატები
@@ -63,266 +63,105 @@
       </div>
     </header>
 
-    <!-- ==================== 1. მოდული: Z-იმპორტიორი ==================== -->
-    <div id="moduleImport" class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-col shadow-sm">
-          <div class="flex items-center justify-between mb-2">
-            <label class="font-bold text-slate-200 flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-indigo-900/60 text-indigo-400 flex items-center justify-center text-[10px]">1</span>
-              SuperFin-ის ბოლო გატარებები (უკვე გატარებული):
-            </label>
-            <span id="existingCount" class="text-[11px] text-slate-400">0 ჩანაწერი</span>
-          </div>
-          <textarea id="superfinInput" placeholder="ჩასვით აქ SuperFin-ის ჟურნალიდან მონიშნული გატარებები (Ctrl+V)..." 
-                    class="w-full flex-1 min-h-[180px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-[11px] leading-relaxed"></textarea>
-        </div>
-
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-col shadow-sm">
-          <div class="flex items-center justify-between mb-2">
-            <label class="font-bold text-slate-200 flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-emerald-900/60 text-emerald-400 flex items-center justify-center text-[10px]">2</span>
-              აპარატების სრული რეესტრი (Export.xls):
-            </label>
-            <span id="registryCount" class="text-[11px] text-slate-400">0 ჩანაწერი</span>
-          </div>
-
-          <div class="mb-3 p-3 rounded-xl border border-dashed border-emerald-600/60 bg-emerald-950/20 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-file-excel text-emerald-400 text-xl"></i>
-              <div>
-                <span class="font-bold text-emerald-200 block text-[11px]">ატვირთეთ Export.xls ფაილი</span>
-                <span id="fileNameLabel" class="text-[10px] text-slate-400">აირჩიეთ ფაილი კომპიუტერიდან</span>
-              </div>
-            </div>
-            <label class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition flex items-center gap-1.5 text-xs shadow">
-              <i class="fa-solid fa-arrow-up-from-bracket"></i> ფაილის არჩევა
-              <input type="file" id="excelFileInput" accept=".xls,.xlsx" class="hidden" onchange="handleExcelUpload(event)">
-            </label>
-          </div>
-
-          <textarea id="registryInput" placeholder="ან ჩააკოპირეთ რეესტრი აქ ტექსტად..." 
-                    class="w-full flex-1 min-h-[110px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-[11px] leading-relaxed"></textarea>
-        </div>
-      </div>
-
-      <div class="flex justify-center no-print">
-        <button onclick="processZReports()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg transition flex items-center gap-2">
-          <i class="fa-solid fa-bolt"></i> შედარება & SuperFin-ის შაბლონის გენერირება
-        </button>
-      </div>
-
-      <div id="resultsCard" class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-lg space-y-4 hidden">
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-700">
-          <div>
-            <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-              <i class="fa-solid fa-check-circle"></i> გაუტარებელი Z-ანგარიშები (სულ აკლია: <span id="missingCount">0</span>)
-            </h2>
-            <p class="text-xs text-slate-400">თითოეულ აპარატს მისადაგებული აქვს თავისი უნიკალური ქვეანგარიში</p>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="copyTableToClipboard()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow">
-              <i class="fa-solid fa-copy"></i> ცხრილის კოპირება (Ctrl+V)
-            </button>
-            <button onclick="exportToExcelOfficial()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-lg">
-              <i class="fa-solid fa-file-arrow-down"></i> Excel შაბლონის ჩამოტვირთვა (.xls)
-            </button>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto max-h-[380px] border border-slate-700 rounded-xl custom-scroll">
-          <table id="resultsTable" class="w-full text-left text-xs border-collapse font-mono">
-            <thead class="bg-slate-900 sticky top-0 border-b border-slate-700 text-slate-400 font-semibold text-[11px]">
-              <tr>
-                <th class="p-2.5">თარიღი</th>
-                <th class="p-2.5">დებეტი ანგარიში</th>
-                <th class="p-2.5">დებეტი ვალუტა</th>
-                <th class="p-2.5">კრედიტი ანგარიში</th>
-                <th class="p-2.5">კრედიტი ვალუტა</th>
-                <th class="p-2.5 text-center">რაოდენობა</th>
-                <th class="p-2.5 text-right">თანხა</th>
-                <th class="p-2.5">ვალუტა</th>
-                <th class="p-2.5 text-right">თანხა ლარში</th>
-                <th class="p-2.5 font-bold text-indigo-300">ნომერი</th>
-                <th class="p-2.5 font-sans">შინაარსი</th>
-              </tr>
-            </thead>
-            <tbody id="resultsBody" class="divide-y divide-slate-700/60 text-slate-200"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== 2. მოდული: მონიტორინგი ==================== -->
-    <div id="moduleAudit" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-col shadow-sm">
-          <div class="flex items-center justify-between mb-2">
-            <label class="font-bold text-amber-300 flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-amber-900/60 text-amber-400 flex items-center justify-center text-[10px]">1</span>
-              ჩააკოპირეთ თანხები დღეებისა და აპარატების მიხედვით:
-            </label>
-            <span id="auditInputCount" class="text-[11px] text-slate-400">0 ჩანაწერი</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mb-2">ფორმატი: <code>თარიღი</code> | <code>აპარატი / ობიექტი</code> | <code>თანხა</code></p>
-          <textarea id="auditManualInput" placeholder="მაგალითად:&#10;2026-10-01&#9;70847456&#9;2750.00" 
-                    class="w-full flex-1 min-h-[220px] p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-[11px] leading-relaxed"></textarea>
-        </div>
-
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-col shadow-sm">
-          <div class="flex items-center justify-between mb-2">
-            <label class="font-bold text-cyan-300 flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-900/60 text-cyan-400 flex items-center justify-center text-[10px]">2</span>
-              დეტალური ჩეკების რეესტრი (Export.xls):
-            </label>
-            <span id="auditFileCount" class="text-[11px] text-slate-400">ფაილი არ არის</span>
-          </div>
-
-          <div class="p-5 rounded-xl border border-dashed border-cyan-500/60 bg-cyan-950/20 flex flex-col items-center justify-center gap-3 text-center my-auto min-h-[220px]">
-            <i class="fa-solid fa-file-waveform text-cyan-400 text-4xl"></i>
-            <div>
-              <span class="font-bold text-slate-200 block text-xs">მიაბით Export.xls (დეტალური Z-რეესტრი)</span>
-              <span id="auditFileNameLabel" class="text-[11px] text-slate-400 block mt-1">ფაილი შეიცავს ჩეკების დროს, Z-ებს და თანხებს</span>
-            </div>
-            <label class="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl cursor-pointer font-bold transition flex items-center gap-2 text-xs shadow-lg">
-              <i class="fa-solid fa-paperclip"></i> ფაილის მიბმა
-              <input type="file" id="auditFileInput" accept=".xls,.xlsx" class="hidden" onchange="handleAuditExcelUpload(event)">
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-center no-print">
-        <button onclick="runAuditInspection()" class="px-8 py-3 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-bold text-sm rounded-xl shadow-lg transition flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved"></i> შემოწმება & შეუსაბამობების გამოვლენა
-        </button>
-      </div>
-
-      <div id="auditReportCard" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 hidden print-area">
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-700">
-          <div>
-            <span class="text-[10px] uppercase font-black tracking-widest text-indigo-400 block mb-0.5">სალაროების მონიტორინგის სამსახური</span>
-            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-file-invoice-dollar text-amber-400"></i> სალარო აპარატების შეუსაბამობებისა და რისკების ანგარიში
-            </h2>
-            <p class="text-xs text-slate-400 mt-0.5" id="auditReportSubtitle">კომპანია: შპს მოთი</p>
-          </div>
-          <div class="flex items-center gap-2 no-print">
-            <button onclick="window.print()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow">
-              <i class="fa-solid fa-print"></i> ანგარიშის ბეჭდვა / PDF
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
-            <span class="text-[10px] text-slate-400 block">წუთში ≥ 3 ჩეკი</span>
-            <span id="kpiFastReceipts" class="text-lg font-black text-rose-400">0</span>
-          </div>
-          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
-            <span class="text-[10px] text-slate-400 block">მიყოლებით იდენტური (>3)</span>
-            <span id="kpiSameReceipts" class="text-lg font-black text-amber-400">0</span>
-          </div>
-          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
-            <span class="text-[10px] text-slate-400 block">მინუსიანი Z-ები</span>
-            <span id="kpiNegativeZ" class="text-lg font-black text-rose-500">0</span>
-          </div>
-          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
-            <span class="text-[10px] text-slate-400 block">გამოტოვებული დღეები</span>
-            <span id="kpiMissingDays" class="text-lg font-black text-yellow-400">0</span>
-          </div>
-          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700 col-span-2 sm:col-span-1">
-            <span class="text-[10px] text-slate-400 block">თანხობრივი სხვაობების ჯამი</span>
-            <span id="kpiTotalDiff" class="text-lg font-black text-indigo-400">0.00 ₾</span>
-          </div>
-        </div>
-
-        <div id="auditDeviceReportsContainer" class="space-y-6"></div>
-      </div>
-    </div>
-
-    <!-- ==================== 3. მოდული: საწვავის რეპორტები (ახალი!) ==================== -->
-    <div id="moduleReport" class="space-y-6 hidden">
+    <!-- ==================== 1. მოდული: მოგება-ზარალი & საწვავის რეპორტი ==================== -->
+    <div id="moduleReport" class="space-y-6">
       
-      <!-- პარამეტრების და ფაილის ზოლი (ეკრანზე ჩანს, ბეჭდვისას ქრება) -->
+      <!-- პარამეტრების პანელი & ფაილის მიბმა -->
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3">
           <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
             <i class="fa-solid fa-sliders"></i>
-            <span>რეპორტის პარამეტრები & მონაცემთა წყარო</span>
+            <span>ბრუნვითი უწყისი & ფინანსური პარამეტრები</span>
           </div>
-          <div class="flex items-center gap-2">
-            <label class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition flex items-center gap-1.5 text-xs shadow">
-              <i class="fa-solid fa-file-excel"></i> Excel ფაილის ჩატვირთვა
-              <input type="file" id="reportExcelInput" accept=".xls,.xlsx" class="hidden" onchange="handleReportExcelUpload(event)">
+          <div class="flex flex-wrap items-center gap-2">
+            <label class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition flex items-center gap-1.5 text-xs shadow">
+              <i class="fa-solid fa-file-excel"></i> ბრუნვითი უწყისის ატვირთვა (.xlsx)
+              <input type="file" id="tbExcelInput" accept=".xls,.xlsx" class="hidden" onchange="handleTrialBalanceUpload(event)">
             </label>
-            <button onclick="calculateFuelReport()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
+            <button onclick="calculatePnlReport()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
               <i class="fa-solid fa-calculator"></i> გადათვლა
             </button>
           </div>
         </div>
 
+        <!-- კომპანიების მრავალჯერადი მონიშვნა (Multi-select) -->
+        <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700 flex flex-wrap items-center gap-4 text-xs">
+          <span class="font-bold text-slate-300"><i class="fa-solid fa-check-double text-emerald-400"></i> მონიშნეთ კომპანიები ერთიან რეპორტში გამოსატანად:</span>
+          <div class="flex flex-wrap gap-3" id="companyCheckboxesContainer"></div>
+        </div>
+
         <!-- პარამეტრების ველები -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 text-xs">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">სასურველი ფასნამატი</label>
+            <input type="number" id="p_targetMarkup" value="1.12" step="0.01" oninput="updatePriceFromMarkup()" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-amber-300">
+          </div>
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">სარეალიზაციო ფასი (₾)</label>
-            <input type="number" id="p_price" value="1.84" step="0.01" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
+            <input type="number" id="p_price" value="1.84" step="0.01" readonly class="w-full p-2 bg-slate-900/70 rounded-lg border border-slate-700 font-bold text-emerald-400 cursor-not-allowed">
           </div>
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">კოეფიციენტი (ლიტ/კგ)</label>
             <input type="number" id="p_coeff" value="1.85" step="0.01" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">თვითღირებ. კოეფ.</label>
+            <label class="block text-[11px] text-slate-400 mb-1">თვითღირებ. (I/H)</label>
             <input type="number" id="p_cogsRate" value="2.565239" step="0.0001" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">თვის ხარჯი (₾)</label>
-            <input type="number" id="p_expense" value="41000" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი ფაქტურა (₾)</label>
-            <input type="number" id="p_vatFact" value="3000" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი ზედნად. (₾)</label>
-            <input type="number" id="p_vatWaybill" value="87658.81" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">იმპორტის დავალიანება (₾)</label>
-            <input type="number" id="p_debtImport" value="-124467.92" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-rose-400">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">სალაროს ნაშთი (₾)</label>
-            <input type="number" id="p_cashRem" value="87016.62" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-emerald-400">
+            <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი დღგ (₾)</label>
+            <input type="number" id="p_vatInputTax" value="90658.81" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
           <div>
             <label class="block text-[11px] text-slate-400 mb-1">სალაროს მაქს. ლიმიტი (₾)</label>
             <input type="number" id="p_cashLimit" value="70309.16" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-amber-300">
           </div>
         </div>
+
+        <!-- ბრუნვითიდან ამოკრეფილი ხარჯების მუხლები -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 text-xs pt-1">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">ხელფასის ხარჯი (₾)</label>
+            <input type="number" id="p_expSalary" value="18500" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-200">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">საპენსიო ხარჯი (₾)</label>
+            <input type="number" id="p_expPension" value="450" step="50" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-200">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">იჯარის ხარჯი (₾)</label>
+            <input type="number" id="p_expRent" value="12500" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-200">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">სხვა ხარჯები (₾)</label>
+            <input type="number" id="p_expOther" value="9550" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-200">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">სალარო (1110+3220)</label>
+            <input type="number" id="p_cashBalance" value="87016.62" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-emerald-400">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">ვალი იმპორტზე (3110\001)</label>
+            <input type="number" id="p_debtImport" value="-124467.92" step="500" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-rose-400">
+          </div>
+        </div>
       </div>
 
-      <!-- ოფიციალური დასაბეჭდი რეპორტი (A4 ფორმატზე) -->
-      <div id="fuelPrintArea" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 print-area">
-        
-        <!-- რეპორტის ჰედერი ბეჭდვისთვის -->
+      <!-- ოფიციალური დასაბეჭდი რეპორტი A4 ფორმატზე -->
+      <div id="pnlPrintArea" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 print-area">
         <div class="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-slate-700">
           <div>
-            <span class="text-[10px] uppercase font-black tracking-widest text-emerald-400 block mb-0.5">საწვავის აღრიცხვისა და ფინანსური მონიტორინგის დეპარტამენტი</span>
+            <span class="text-[10px] uppercase font-black tracking-widest text-emerald-400 block mb-0.5">მენეჯმენტის ფინანსური უწყისი & საწვავის ბალანსი</span>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-gas-pump text-emerald-400"></i> შპს „გრინ ლაინ 888“ — საწვავის მოძრაობა & ფინანსური რეზიუმე
+              <i class="fa-solid fa-gas-pump text-emerald-400"></i> <span id="pnlCompanyTitle">შპს „გრინ ლაინ 888“</span> — მოგება-ზარალი (P&L) & მოძრაობა
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5" id="fuelReportDateLabel">გენერირების თარიღი: 2026-11-06</p>
+            <p class="text-xs text-slate-400 mt-0.5" id="pnlDateLabel">თარიღი: 2026-11-06</p>
           </div>
           <div class="flex items-center gap-2 no-print">
-            <button onclick="copyDirectorText()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
-              <i class="fa-solid fa-copy"></i> მესენჯერის ტექსტი
+            <button onclick="exportSelectedCompaniesToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg">
+              <i class="fa-solid fa-file-excel"></i> მონიშნულების Excel ექსპორტი
             </button>
-            <button onclick="window.print()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg">
+            <button onclick="window.print()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow">
               <i class="fa-solid fa-print"></i> ბეჭდვა / PDF
             </button>
           </div>
@@ -330,11 +169,11 @@
 
         <!-- 1. საწყობების ცხრილი -->
         <div class="overflow-x-auto border border-slate-700 rounded-xl custom-scroll">
-          <table class="w-full text-left text-xs border-collapse font-mono" id="fuelStockTable">
+          <table class="w-full text-left text-xs border-collapse font-mono" id="fuelTable">
             <thead class="bg-slate-900 border-b border-slate-700 text-slate-400 text-[11px]">
               <tr>
                 <th class="p-2 text-center w-8">#</th>
-                <th class="p-2">საწყობი</th>
+                <th class="p-2">საწყობი / ობიექტი</th>
                 <th class="p-2 text-right">საწყისი+მიღება</th>
                 <th class="p-2 text-right">ზეტი (ნაღდი)</th>
                 <th class="p-2 text-right">ტერმინალი</th>
@@ -347,62 +186,74 @@
                 <th class="p-2 text-right text-amber-300 font-bold">გადასაწერი</th>
               </tr>
             </thead>
-            <tbody id="fuelStockBody" class="divide-y divide-slate-700/60 text-slate-200"></tbody>
-            <tfoot id="fuelStockFoot" class="bg-slate-900 font-bold border-t-2 border-slate-600 text-slate-100"></tfoot>
+            <tbody id="fuelTableBody" class="divide-y divide-slate-700/60 text-slate-200"></tbody>
+            <tfoot id="fuelTableFoot" class="bg-slate-900 font-bold border-t-2 border-slate-600 text-slate-100"></tfoot>
           </table>
         </div>
 
         <!-- 2. ფინანსური შეჯამების ბლოკი -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-mono">
           
-          <!-- მარცხენა ბლოკი: დღგ და მოგება -->
+          <!-- მარცხენა: ბრუნვა, თვითღირებულება, ხარჯები და მოგება -->
           <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-700 space-y-2 print-card">
             <div class="font-sans font-bold text-emerald-400 text-xs border-b border-slate-700/60 pb-1.5 flex items-center justify-between">
-              <span>ფინანსური მაჩვენებლები & დღგ</span>
-              <span class="text-[10px] text-slate-400 font-normal">შპს „გრინ ლაინ 888“</span>
+              <span>ფინანსური შედეგები & ხარჯების დეტალიზაცია</span>
+              <span class="text-[10px] text-slate-400 font-normal">P&L რეზიუმე</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">ბრუნვა დაუბეგრავი (დღგ-ს გარეშე):</span>
+              <span class="text-slate-400 font-sans">ბრუნვა დღგ-ს გარეშე:</span>
               <span id="rep_turnover" class="font-bold text-slate-100">0.00 ₾</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800">
+              <span class="text-slate-400 font-sans">საქონლის თვითღირებულება (I/H კოეფ.):</span>
+              <span id="rep_cogs" class="font-bold text-slate-200">0.00 ₾</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800">
+              <span class="text-slate-400 font-sans">სრული ფასნამატი (Markup):</span>
+              <span id="rep_markup" class="font-bold text-amber-300">0.00</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800 text-slate-300">
+              <span class="text-slate-400 font-sans pl-2">• ხელფასის ხარჯი:</span>
+              <span id="rep_salExp">0.00 ₾</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800 text-slate-300">
+              <span class="text-slate-400 font-sans pl-2">• საპენსიო ანარიცხი:</span>
+              <span id="rep_penExp">0.00 ₾</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800 text-slate-300">
+              <span class="text-slate-400 font-sans pl-2">• იჯარის ქირა:</span>
+              <span id="rep_rentExp">0.00 ₾</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-800 text-slate-300">
+              <span class="text-slate-400 font-sans pl-2">• სხვა საოპერაციო ხარჯები:</span>
+              <span id="rep_otherExp">0.00 ₾</span>
+            </div>
+            <div class="flex justify-between py-1.5 pt-2 border-t border-slate-700 bg-emerald-950/20 px-2 rounded">
+              <span class="font-sans font-bold text-emerald-300">საოპერაციო მოგება (EBIT):</span>
+              <span id="rep_profit" class="font-bold text-emerald-400 text-sm">0.00 ₾</span>
+            </div>
+          </div>
+
+          <!-- მარჯვენა: დღგ, სალარო (1110+3220) და იმპორტის ვალი (3110\001) -->
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-700 space-y-2 print-card">
+            <div class="font-sans font-bold text-cyan-400 text-xs border-b border-slate-700/60 pb-1.5 flex items-center justify-between">
+              <span>საგადასახადო ბალანსი & ვალდებულებები</span>
+              <span class="text-[10px] text-slate-400 font-normal">კონტროლი</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
               <span class="text-slate-400 font-sans">დარიცხული დღგ (18%):</span>
               <span id="rep_vatOutput" class="font-bold text-slate-100">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">ჩასათვლელი დღგ (ფაქტურა + ზედნადები):</span>
+              <span class="text-slate-400 font-sans">ჩასათვლელი დღგ (ფაქტურა+ზედნადები):</span>
               <span id="rep_vatInput" class="text-slate-300">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">გადასახდელი დღგ (საბოლოო):</span>
+              <span class="text-slate-400 font-sans">გადასახდელი დღგ (სალდო):</span>
               <span id="rep_vatNet" class="font-bold text-indigo-300">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">ჩასაწერი საქონლის თვითღირებულება:</span>
-              <span id="rep_cogs" class="font-bold text-slate-200">0.00 ₾</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">ფასნამატის კოეფიციენტი:</span>
-              <span id="rep_markup" class="font-bold text-amber-300">0.00</span>
-            </div>
-            <div class="flex justify-between py-1.5 pt-2 border-t border-slate-700 bg-emerald-950/20 px-2 rounded">
-              <span class="font-sans font-bold text-emerald-300">საოპერაციო მოგება (თვის ხარჯის შემდეგ):</span>
-              <span id="rep_profit" class="font-bold text-emerald-400 text-sm">0.00 ₾</span>
-            </div>
-          </div>
-
-          <!-- მარჯვენა ბლოკი: ნაშთები და სალარო -->
-          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-700 space-y-2 print-card">
-            <div class="font-sans font-bold text-cyan-400 text-xs border-b border-slate-700/60 pb-1.5 flex items-center justify-between">
-              <span>ნაშთების, სალაროსა და ვალდებულებების შეჯამება</span>
-              <span class="text-[10px] text-slate-400 font-normal">კონტროლი</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">საწვავის ნაშთი (საწყობებში):</span>
-              <span id="rep_fuelRemKg" class="font-bold text-slate-100">0.00 კგ</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">საწვავის ნაშთი თანხაში (1.81 × 1.85):</span>
+              <span class="text-slate-400 font-sans">საწვავის ნაშთი (თანხობრივად):</span>
               <span id="rep_fuelRemGel" class="font-bold text-cyan-300">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
@@ -410,16 +261,12 @@
               <span id="rep_fuelTransGel" class="font-bold text-amber-300">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">იმპორტის მიმართ დავალიანება:</span>
+              <span class="text-slate-400 font-sans">დავალიანება იმპორტზე (3110\001):</span>
               <span id="rep_debtImport" class="font-bold text-rose-400">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">სალაროს ფაქტობრივი ნაშთი:</span>
-              <span id="rep_cashRem" class="font-bold text-emerald-400">0.00 ₾</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800">
-              <span class="text-slate-400 font-sans">სალაროს მაქსიმალური ლიმიტი:</span>
-              <span id="rep_cashLimit" class="text-slate-300">0.00 ₾</span>
+              <span class="text-slate-400 font-sans">სალაროს ნაშთი (1110 + 3220):</span>
+              <span id="rep_cashBalance" class="font-bold text-emerald-400">0.00 ₾</span>
             </div>
             <div class="flex justify-between py-1.5 pt-2 border-t border-slate-700 bg-slate-800/60 px-2 rounded" id="rep_cashStatusBox">
               <span class="font-sans font-bold text-slate-300">სალაროს ლიმიტის სტატუსი:</span>
@@ -428,9 +275,169 @@
           </div>
 
         </div>
+      </div>
+    </div>
 
+    <!-- ==================== 2. მოდული: rs.ge შედარება & SuperFin (ბუღალტრისთვის) ==================== -->
+    <div id="moduleReconcile" class="space-y-6 hidden">
+      <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> rs.ge რეესტრებისა და SuperFin-ის შედარება
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <!-- 1. rs.ge ჩეკები -->
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 flex flex-col justify-between">
+            <div>
+              <span class="font-bold text-slate-200 block mb-1">1. rs.ge Z-ჩეკების ექსპორტი</span>
+              <span class="text-[11px] text-slate-400 block mb-2" id="lbl_rs_z">ფაილი არ არის</span>
+            </div>
+            <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg cursor-pointer font-bold transition text-center shadow">
+              ატვირთვა (.xls, .xlsx)
+              <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleRsFile(event, 'z')">
+            </label>
+          </div>
+          <!-- 2. rs.ge ფაქტურები -->
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 flex flex-col justify-between">
+            <div>
+              <span class="font-bold text-slate-200 block mb-1">2. rs.ge ა/ფაქტურების ექსპორტი</span>
+              <span class="text-[11px] text-slate-400 block mb-2" id="lbl_rs_inv">ფაილი არ არის</span>
+            </div>
+            <label class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg cursor-pointer font-bold transition text-center shadow">
+              ატვირთვა (.xls, .xlsx)
+              <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleRsFile(event, 'inv')">
+            </label>
+          </div>
+          <!-- 3. rs.ge ზედნადებები (საწყობებით) -->
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 flex flex-col justify-between">
+            <div>
+              <span class="font-bold text-slate-200 block mb-1">3. rs.ge ზედნადებები (საწყობები)</span>
+              <span class="text-[11px] text-slate-400 block mb-2" id="lbl_rs_wb">ფაილი არ არის</span>
+            </div>
+            <label class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer font-bold transition text-center shadow">
+              ატვირთვა (.xls, .xlsx)
+              <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleRsFile(event, 'wb')">
+            </label>
+          </div>
+        </div>
+
+        <div class="flex justify-center pt-2">
+          <button onclick="runRsReconciliation()" class="px-8 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+            <i class="fa-solid fa-arrows-split-up-and-left"></i> შედარების გაშვება (გასატარებელი დოკუმენტები & საწყობების აცდენა)
+          </button>
+        </div>
       </div>
 
+      <!-- შედარების შედეგები -->
+      <div id="rsResultsCard" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-700">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-emerald-400"></i> საბუღალტრო შედარების რეპორტი (Reconciliation Report)
+            </h3>
+            <p class="text-xs text-slate-400">გამოვლენილია გასატარებელი ოპერაციები და საწყობების შეუსაბამობები</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="exportSuperFinOfficialTemplate()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-file-excel"></i> SuperFin 11-სვეტიანი იმპორტის ჩამოტვირთვა (.xls)
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-4" id="rsReportContainer"></div>
+      </div>
+    </div>
+
+    <!-- ==================== 3. მოდული: მენეჯერის მონიტორინგი (აპარატებისა და ოპერატორების რისკები) ==================== -->
+    <div id="moduleAudit" class="space-y-6 hidden">
+      <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 space-y-4 shadow-sm no-print">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3">
+          <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
+            <i class="fa-solid fa-shield-virus"></i>
+            <span>ოპერატორების მუშაობის & სალაროს რისკების პარამეტრები</span>
+          </div>
+          <div class="flex gap-2">
+            <label class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl cursor-pointer font-bold transition flex items-center gap-1.5 text-xs shadow">
+              <i class="fa-solid fa-file-waveform"></i> დეტალური Z/ჩეკების ფაილის მიბმა
+              <input type="file" id="auditFileInput" accept=".xls,.xlsx,.csv" class="hidden" onchange="handleAuditExcelUpload(event)">
+            </label>
+            <button onclick="runAuditInspection()" class="px-6 py-2 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass"></i> შემოწმების გაშვება
+            </button>
+          </div>
+        </div>
+
+        <!-- რისკის ზღვრები -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">დიდი ჩეკის ზღვარი (₾)</label>
+            <input type="number" id="p_largeThresh" value="500" step="50" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">კრიტიკული ჩეკის ზღვარი (₾)</label>
+            <input type="number" id="p_critThresh" value="1000" step="100" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-rose-400">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Burst დროის ფანჯარა (წუთი)</label>
+            <input type="number" id="p_burstWindow" value="2" step="1" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">Burst ჩეკების რაოდენობა</label>
+            <input type="number" id="p_burstCount" value="4" step="1" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
+          </div>
+        </div>
+      </div>
+
+      <!-- მონიტორინგის ოფიციალური რეპორტი მენეჯერებისთვის -->
+      <div id="auditReportCard" class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-6 hidden print-area">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-700">
+          <div>
+            <span class="text-[10px] uppercase font-black tracking-widest text-amber-400 block mb-0.5">სალაროების მონიტორინგის სამსახური</span>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-file-shield text-amber-400"></i> სალარო აპარატებისა & ოპერატორების მუშაობის რეპორტი
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5" id="auditSubtitle">კომპანია: შპს გრინ ლაინ 888</p>
+          </div>
+          <div class="flex items-center gap-2 no-print">
+            <button onclick="exportManagerAuditToExcel()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow">
+              <i class="fa-solid fa-file-excel"></i> მენეჯერის რეპორტის ექსპორტი (.xlsx)
+            </button>
+            <button onclick="window.print()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow">
+              <i class="fa-solid fa-print"></i> ბეჭდვა / PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI ბარათები -->
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 text-center">
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">⚡ Burst სიხშირე</span>
+            <span id="kpiBurst" class="text-lg font-black text-rose-400">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">🔁 მიყოლებით იდენტური</span>
+            <span id="kpiDupSeq" class="text-lg font-black text-amber-400">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">🚨 მინუსიანი Z-ები</span>
+            <span id="kpiNegZ" class="text-lg font-black text-rose-500">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">📅 გამოტოვებული Z</span>
+            <span id="kpiMissingZ" class="text-lg font-black text-yellow-400">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">💰 დიდი ჩეკები (>500₾)</span>
+            <span id="kpiLargeChecks" class="text-lg font-black text-indigo-400">0</span>
+          </div>
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-700">
+            <span class="text-[10px] text-slate-400 block">📉 მიზერული Z (<200₾)</span>
+            <span id="kpiLowZ" class="text-lg font-black text-cyan-400">0</span>
+          </div>
+        </div>
+
+        <!-- აპარატების დეტალური ბარათები -->
+        <div id="auditDeviceReportsContainer" class="space-y-6"></div>
+      </div>
     </div>
 
   </div>
@@ -443,7 +450,7 @@
           <h3 class="text-sm font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-cash-register text-amber-400"></i> აპარატების ინდივიდუალური ქვეანგარიშები
           </h3>
-          <p class="text-xs text-slate-400" id="deviceMapSubTitle">კომპანია: შპს მოთი</p>
+          <p class="text-xs text-slate-400" id="deviceMapSubTitle">კომპანია: შპს გრინ ლაინ 888</p>
         </div>
         <button onclick="closeDeviceMapModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -461,7 +468,7 @@
     </div>
   </div>
 
-  <!-- კომპანიის მოდალი -->
+  <!-- კომპანიის არჩევის & დამატების მოდალი -->
   <div id="companyModal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm no-print">
     <div class="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-700">
@@ -486,44 +493,18 @@
   </div>
 
   <script>
+    // ==================== გლობალური მონაცემთა ბაზა ====================
     const defaultData = {
-      activeCompanyId: 3, // გრინ ლაინი ნაგულისხმევად
+      activeCompanyId: 3,
+      selectedCompanyIds: [3],
       companies: [
         { id: 1, name: 'შპს მოთი' },
         { id: 2, name: 'შპს იმპერია' },
-        { id: 3, name: 'შპს გრინ ლაინი' },
+        { id: 3, name: 'შპს გრინ ლაინ 888' },
         { id: 4, name: 'შპს მელო' }
       ],
       devices: [
-        // 1. მოთი
-        { id: 101, companyId: 1, sn: '70850260', name: 'რეალიზაცია ელიავა DY00222361', debit: '1110', credit: '1410\\001' },
-        { id: 102, companyId: 1, sn: '70848152', name: 'რეალიზაცია ლევილი DY00222359', debit: '1110', credit: '1410\\006' },
-        { id: 103, companyId: 1, sn: '70850114', name: 'რეალიზაცია ქიზიყი DY00229761', debit: '1110', credit: '1410\\008' },
-        { id: 104, companyId: 1, sn: '70847638', name: 'რეალიზაცია დიღომი DY00229989', debit: '1110', credit: '1410\\009' },
-        { id: 105, companyId: 1, sn: '70847456, 58027860', name: 'რეალიზაცია ბელიაშვილი DY00229988', debit: '1110', credit: '1410\\010' },
-        { id: 106, companyId: 1, sn: '70848510', name: 'რეალიზაცია იარაჯაული DY00222358', debit: '1110', credit: '1410\\013' },
-        { id: 107, companyId: 1, sn: '70851633', name: 'რეალიზაცია დიდი დიღომი DY00222360', debit: '1110', credit: '1410\\014' },
-
-        // 2. იმპერია
-        { id: 201, companyId: 2, sn: '70847603', name: 'რეალიზაცია ავშანი', debit: '1110', credit: '1410\\001' },
-        { id: 202, companyId: 2, sn: '58027522', name: 'რეალიზაცია გალონი გზატკეცილი', debit: '1110', credit: '1410\\002' },
-        { id: 203, companyId: 2, sn: '54256605', name: 'რეალიზაცია გარდაბანი', debit: '1110', credit: '1410\\003' },
-        { id: 204, companyId: 2, sn: '57687492, 70852835', name: 'რეალიზაცია გლდანი', debit: '1110', credit: '1410\\004' },
-        { id: 205, companyId: 2, sn: '54254509', name: 'რეალიზაცია გმირები', debit: '1110', credit: '1410\\005' },
-        { id: 206, companyId: 2, sn: '54384257', name: 'რეალიზაცია ირემაშვილი', debit: '1110', credit: '1410\\006' },
-        { id: 207, companyId: 2, sn: '55914140', name: 'რეალიზაცია ლილო', debit: '1110', credit: '1410\\007' },
-        { id: 208, companyId: 2, sn: '55627302', name: 'რეალიზაცია ლისი', debit: '1110', credit: '1410\\008' },
-        { id: 209, companyId: 2, sn: '70851818', name: 'რეალიზაცია მშვიდობა', debit: '1110', credit: '1410\\009' },
-        { id: 210, companyId: 2, sn: '70853021', name: 'რეალიზაცია ნატახტარი', debit: '1110', credit: '1410\\010' },
-        { id: 211, companyId: 2, sn: '70036082', name: 'რეალიზაცია პლატო', debit: '1110', credit: '1410\\011' },
-        { id: 212, companyId: 2, sn: '70852542', name: 'რეალიზაცია პლიაჟი', debit: '1110', credit: '1410\\012' },
-        { id: 213, companyId: 2, sn: '70851668', name: 'რეალიზაცია საგურამო', debit: '1110', credit: '1410\\013' },
-        { id: 214, companyId: 2, sn: '54218797', name: 'რეალიზაცია საკალმახე', debit: '1110', credit: '1410\\014' },
-        { id: 215, companyId: 2, sn: '70849505', name: 'რეალიზაცია სეუ', debit: '1110', credit: '1410\\015' },
-        { id: 216, companyId: 2, sn: '70846402', name: 'რეალიზაცია ნარეკვავი', debit: '1110', credit: '1410\\017' },
-        { id: 217, companyId: 2, sn: '70848077', name: 'სარაჯიშვილის 39', debit: '1110', credit: '1410\\018' },
-
-        // 3. გრინ ლაინი
+        // გრინ ლაინ 888
         { id: 301, companyId: 3, sn: '70851870', name: 'აირი', debit: '1110', credit: '1410\\001' },
         { id: 302, companyId: 3, sn: '70848499', name: 'გოგილო', debit: '1110', credit: '1410\\002' },
         { id: 303, companyId: 3, sn: '70847390', name: 'ზღაპარი', debit: '1110', credit: '1410\\003' },
@@ -535,7 +516,6 @@
       ]
     };
 
-    // საწყობების ნაგულისხმევი ბაზა (თქვენი Excel-ის მიხედვით)
     let fuelStations = [
       { id: 1, name: 'აირი', initStock: 4496.51, zeti: 2273.64, terminal: 4518.21, tank: 3000, transfer: 500 },
       { id: 2, name: 'გოგილო', initStock: 6710.61, zeti: 1951.36, terminal: 5958.10, tank: 5000, transfer: 1000 },
@@ -547,18 +527,20 @@
       { id: 8, name: 'ფონიჭალა გორგ 54', initStock: 5206.68, zeti: 4332.00, terminal: 6418.67, tank: 3000, transfer: 1500 }
     ];
 
-    let appData = JSON.parse(localStorage.getItem('sf_app_data_v9')) || defaultData;
-    let currentModule = 'import'; // 'import' | 'audit' | 'report'
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v1')) || defaultData;
+    let currentModule = 'report';
 
-    // Z-იმპორტის მონაცემები
-    let uploadedRegistryRows = [];
-    let generatedRows = [];
+    // rs.ge შედარების მონაცემები
+    let rsZReports = [];
+    let rsInvoices = [];
+    let rsWaybills = [];
 
-    // მონიტორინგის მონაცემები
-    let auditUploadedReceipts = [];
+    // მენეჯერის აუდიტის ჩანაწერები
+    let auditRawReceipts = [];
+    let lastGeneratedAuditReports = [];
 
     function saveData() {
-      localStorage.setItem('sf_app_data_v9', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v1', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -569,122 +551,120 @@
       const activeComp = getActiveCompany();
       if (!activeComp) return;
       document.getElementById('headerCompanyText').innerText = activeComp.name;
-      document.getElementById('fuelReportDateLabel').innerText = `გენერირების თარიღი: ${new Date().toISOString().slice(0, 10)}`;
-      calculateFuelReport();
+      document.getElementById('pnlCompanyTitle').innerText = activeComp.name;
+      document.getElementById('auditSubtitle').innerText = `კომპანია: ${activeComp.name}`;
+      document.getElementById('pnlDateLabel').innerText = `თარიღი: ${new Date().toISOString().slice(0, 10)}`;
+      renderCompanyCheckboxes();
+      updatePriceFromMarkup();
+      calculatePnlReport();
     }
 
-    // მოდულის გადართვა
     function switchModule(mod) {
       currentModule = mod;
-      const tabImportBtn = document.getElementById('tabImportBtn');
-      const tabAuditBtn = document.getElementById('tabAuditBtn');
       const tabReportBtn = document.getElementById('tabReportBtn');
-      const modImport = document.getElementById('moduleImport');
-      const modAudit = document.getElementById('moduleAudit');
-      const modReport = document.getElementById('moduleReport');
-      const mainTitle = document.getElementById('mainTitle');
-      const mainSubTitle = document.getElementById('mainSubTitle');
+      const tabReconcileBtn = document.getElementById('tabReconcileBtn');
+      const tabAuditBtn = document.getElementById('tabAuditBtn');
 
-      // ღილაკების სტილების განულება
-      [tabImportBtn, tabAuditBtn, tabReportBtn].forEach(b => {
+      const modReport = document.getElementById('moduleReport');
+      const modReconcile = document.getElementById('moduleReconcile');
+      const modAudit = document.getElementById('moduleAudit');
+
+      [tabReportBtn, tabReconcileBtn, tabAuditBtn].forEach(b => {
         b.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5";
       });
-      [modImport, modAudit, modReport].forEach(m => m.classList.add('hidden'));
+      [modReport, modReconcile, modAudit].forEach(m => m.classList.add('hidden'));
 
-      if (mod === 'import') {
-        tabImportBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow";
-        modImport.classList.remove('hidden');
-        mainTitle.innerText = "SuperFin Z-ანგარიშების ფილტრი & იმპორტიორი";
-        mainSubTitle.innerText = "თითოეული სალარო აპარატის ინდივიდუალური ქვეანგარიშების ავტომატური მორგება";
+      if (mod === 'report') {
+        tabReportBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow";
+        modReport.classList.remove('hidden');
+      } else if (mod === 'reconcile') {
+        tabReconcileBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-cyan-600 text-white shadow";
+        modReconcile.classList.remove('hidden');
       } else if (mod === 'audit') {
         tabAuditBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-600 text-white shadow";
         modAudit.classList.remove('hidden');
-        mainTitle.innerText = "სალაროების მონიტორინგი & შეუსაბამობები";
-        mainSubTitle.innerText = "ჩეკების ინტენსივობის, იდენტური თანხების, მინუსიანი Z-ებისა და აცდენების აუდიტი";
-      } else if (mod === 'report') {
-        tabReportBtn.className = "px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow";
-        modReport.classList.remove('hidden');
-        mainTitle.innerText = "შპს „გრინ ლაინ 888“ — საწვავის რეპორტი";
-        mainSubTitle.innerText = "საწყობების ნაშთები, ლიტრების/კგ-ს კონვერტაცია, დღგ, მოგება და დირექტორის შეჯამება";
-        calculateFuelReport();
       }
     }
 
     function resetCurrentView() {
-      if (currentModule === 'import') resetAllData();
-      else if (currentModule === 'audit') resetAuditData();
-      else if (currentModule === 'report') calculateFuelReport();
+      calculatePnlReport();
     }
 
-    function resetAllData() {
-      document.getElementById('superfinInput').value = '';
-      document.getElementById('registryInput').value = '';
-      document.getElementById('excelFileInput').value = '';
-      document.getElementById('fileNameLabel').innerText = 'აირჩიეთ ფაილი კომპიუტერიდან';
-      document.getElementById('existingCount').innerText = '0 ჩანაწერი';
-      document.getElementById('registryCount').innerText = '0 ჩანაწერი';
-      document.getElementById('missingCount').innerText = '0';
-      document.getElementById('resultsBody').innerHTML = '';
-      document.getElementById('resultsCard').classList.add('hidden');
-      uploadedRegistryRows = [];
-      generatedRows = [];
+    // ==================== 1. მოგება-ზარალი (P&L) და ფასნამატი ====================
+    function updatePriceFromMarkup() {
+      const targetMarkup = parseFloat(document.getElementById('p_targetMarkup').value) || 1.12;
+      const cogsRate = parseFloat(document.getElementById('p_cogsRate').value) || 2.565239;
+      const coeff = parseFloat(document.getElementById('p_coeff').value) || 1.85;
+
+      // Price = Markup * (COGS * 1.18) / Coeff, დამრგვალებული მეასედებამდე (2 ნიშნამდე)
+      const rawPrice = targetMarkup * (cogsRate * 1.18) / coeff;
+      const roundedPrice = Math.round(rawPrice * 100) / 100;
+
+      document.getElementById('p_price').value = roundedPrice.toFixed(2);
+      calculatePnlReport();
     }
 
-    function resetAuditData() {
-      document.getElementById('auditManualInput').value = '';
-      document.getElementById('auditFileInput').value = '';
-      document.getElementById('auditFileNameLabel').innerText = 'ფაილი შეიცავს ჩეკების დროს, Z-ებს და თანხებს';
-      document.getElementById('auditFileCount').innerText = 'ფაილი არ არის';
-      document.getElementById('auditInputCount').innerText = '0 ჩანაწერი';
-      document.getElementById('auditReportCard').classList.add('hidden');
-      document.getElementById('auditDeviceReportsContainer').innerHTML = '';
-      auditUploadedReceipts = [];
+    function renderCompanyCheckboxes() {
+      const container = document.getElementById('companyCheckboxesContainer');
+      container.innerHTML = '';
+      appData.companies.forEach(c => {
+        const checked = appData.selectedCompanyIds.includes(c.id);
+        const label = document.createElement('label');
+        label.className = "flex items-center gap-1.5 cursor-pointer text-slate-200 hover:text-white";
+        label.innerHTML = `
+          <input type="checkbox" value="${c.id}" ${checked ? 'checked' : ''} onchange="toggleCompanySelection(${c.id})" class="rounded text-emerald-500 focus:ring-0">
+          <span>${c.name}</span>
+        `;
+        container.appendChild(label);
+      });
     }
 
-    function selectCompany(id) {
-      appData.activeCompanyId = id;
+    function toggleCompanySelection(id) {
+      if (appData.selectedCompanyIds.includes(id)) {
+        appData.selectedCompanyIds = appData.selectedCompanyIds.filter(x => x !== id);
+      } else {
+        appData.selectedCompanyIds.push(id);
+      }
       saveData();
-      initUI();
-      closeCompanyModal();
-      resetAllData();
-      resetAuditData();
     }
 
-    // ==================== 3. საწვავის რეპორტის ლოგიკა ====================
-    let lastCalculatedDirectorReport = "";
-
-    function calculateFuelReport() {
+    function calculatePnlReport() {
       const price = parseFloat(document.getElementById('p_price').value) || 1.84;
       const coeff = parseFloat(document.getElementById('p_coeff').value) || 1.85;
       const cogsRate = parseFloat(document.getElementById('p_cogsRate').value) || 2.565239;
-      const expenseMonth = parseFloat(document.getElementById('p_expense').value) || 0;
-      const vatFact = parseFloat(document.getElementById('p_vatFact').value) || 0;
-      const vatWaybill = parseFloat(document.getElementById('p_vatWaybill').value) || 0;
-      const debtImport = parseFloat(document.getElementById('p_debtImport').value) || 0;
-      const cashRem = parseFloat(document.getElementById('p_cashRem').value) || 0;
+
+      const salExp = parseFloat(document.getElementById('p_expSalary').value) || 0;
+      const penExp = parseFloat(document.getElementById('p_expPension').value) || 0;
+      const rentExp = parseFloat(document.getElementById('p_expRent').value) || 0;
+      const otherExp = parseFloat(document.getElementById('p_expOther').value) || 0;
+      const totalExpense = salExp + penExp + rentExp + otherExp;
+
+      const vatInputTax = parseFloat(document.getElementById('p_vatInputTax').value) || 0;
+      const cashBal = parseFloat(document.getElementById('p_cashBalance').value) || 0;
       const cashLimit = parseFloat(document.getElementById('p_cashLimit').value) || 0;
+      const debtImport = parseFloat(document.getElementById('p_debtImport').value) || 0;
 
-      let sumInitStock = 0, sumZeti = 0, sumTerminal = 0, sumTotalGel = 0;
-      let sumLiters = 0, sumKg = 0, sumRemStock = 0, sumTank = 0, sumTransfer = 0;
+      let sumInit = 0, sumZeti = 0, sumTerm = 0, sumTotalGel = 0;
+      let sumLiters = 0, sumKg = 0, sumRemKg = 0, sumTank = 0, sumTrans = 0;
 
-      const tbody = document.getElementById('fuelStockBody');
+      const tbody = document.getElementById('fuelTableBody');
       tbody.innerHTML = '';
 
       fuelStations.forEach((st, idx) => {
-        const rowTotalGel = st.zeti + st.terminal;
-        const liters = price > 0 ? rowTotalGel / price : 0;
+        const rowTotal = st.zeti + st.terminal;
+        const liters = price > 0 ? rowTotal / price : 0;
         const kg = coeff > 0 ? liters / coeff : 0;
-        const remStock = st.initStock - kg;
+        const remKg = st.initStock - kg;
 
-        sumInitStock += st.initStock;
+        sumInit += st.initStock;
         sumZeti += st.zeti;
-        sumTerminal += st.terminal;
-        sumTotalGel += rowTotalGel;
+        sumTerm += st.terminal;
+        sumTotalGel += rowTotal;
         sumLiters += liters;
         sumKg += kg;
-        sumRemStock += remStock;
+        sumRemKg += remKg;
         sumTank += st.tank;
-        sumTransfer += st.transfer;
+        sumTrans += st.transfer;
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-700/30 transition";
@@ -694,63 +674,66 @@
           <td class="p-2 text-right">${st.initStock.toFixed(2)}</td>
           <td class="p-2 text-right text-slate-300">${st.zeti.toFixed(2)}</td>
           <td class="p-2 text-right text-slate-300">${st.terminal.toFixed(2)}</td>
-          <td class="p-2 text-right font-bold text-emerald-400">${rowTotalGel.toFixed(2)}</td>
+          <td class="p-2 text-right font-bold text-emerald-400">${rowTotal.toFixed(2)}</td>
           <td class="p-2 text-right text-slate-400">${price.toFixed(2)}</td>
           <td class="p-2 text-right">${liters.toFixed(2)}</td>
           <td class="p-2 text-right">${kg.toFixed(2)}</td>
-          <td class="p-2 text-right font-bold text-indigo-300">${remStock.toFixed(2)}</td>
+          <td class="p-2 text-right font-bold text-indigo-300">${remKg.toFixed(2)}</td>
           <td class="p-2 text-right text-slate-400">${st.tank.toFixed(0)}</td>
           <td class="p-2 text-right font-bold text-amber-300">${st.transfer.toFixed(0)}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      // ცხრილის ფუტერი (ჯამები)
-      const tfoot = document.getElementById('fuelStockFoot');
-      tfoot.innerHTML = `
+      // ფუტერი
+      document.getElementById('fuelTableFoot').innerHTML = `
         <tr>
           <td class="p-2 text-center">-</td>
           <td class="p-2 font-sans">ჯამი</td>
-          <td class="p-2 text-right">${sumInitStock.toFixed(2)}</td>
+          <td class="p-2 text-right">${sumInit.toFixed(2)}</td>
           <td class="p-2 text-right">${sumZeti.toFixed(2)}</td>
-          <td class="p-2 text-right">${sumTerminal.toFixed(2)}</td>
+          <td class="p-2 text-right">${sumTerm.toFixed(2)}</td>
           <td class="p-2 text-right text-emerald-400 font-black">${sumTotalGel.toFixed(2)}</td>
           <td class="p-2 text-right">-</td>
           <td class="p-2 text-right">${sumLiters.toFixed(2)}</td>
           <td class="p-2 text-right">${sumKg.toFixed(2)}</td>
-          <td class="p-2 text-right text-indigo-300 font-black">${sumRemStock.toFixed(2)}</td>
+          <td class="p-2 text-right text-indigo-300 font-black">${sumRemKg.toFixed(2)}</td>
           <td class="p-2 text-right">${sumTank.toFixed(0)}</td>
-          <td class="p-2 text-right text-amber-300 font-black">${sumTransfer.toFixed(0)}</td>
+          <td class="p-2 text-right text-amber-300 font-black">${sumTrans.toFixed(0)}</td>
         </tr>
       `;
 
-      // ფინანსური გამოთვლები
+      // ფინანსური ფორმულები
       const turnoverNoVat = sumTotalGel / 1.18;
       const vatOutput = turnoverNoVat * 0.18;
-      const vatNet = vatOutput - vatFact - vatWaybill;
+      const vatNet = vatOutput - vatInputTax;
       const cogs = sumKg * cogsRate;
       const markup = cogs > 0 ? turnoverNoVat / cogs : 0;
-      const profit = turnoverNoVat - cogs - expenseMonth;
+      const profit = turnoverNoVat - cogs - totalExpense;
 
-      const fuelRemGel = sumRemStock * 1.81 * 1.85;
-      const fuelTransGel = sumTransfer * 3.07;
+      const fuelRemGel = sumRemKg * 1.81 * 1.85;
+      const fuelTransGel = sumTrans * 3.07;
 
       document.getElementById('rep_turnover').innerText = `${turnoverNoVat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
-      document.getElementById('rep_vatOutput').innerText = `${vatOutput.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
-      document.getElementById('rep_vatInput').innerText = `${(vatFact + vatWaybill).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
-      document.getElementById('rep_vatNet').innerText = `${vatNet.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_cogs').innerText = `${cogs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_markup').innerText = markup.toFixed(4);
+
+      document.getElementById('rep_salExp').innerText = `${salExp.toLocaleString('en-US', {minimumFractionDigits: 2})} ₾`;
+      document.getElementById('rep_penExp').innerText = `${penExp.toLocaleString('en-US', {minimumFractionDigits: 2})} ₾`;
+      document.getElementById('rep_rentExp').innerText = `${rentExp.toLocaleString('en-US', {minimumFractionDigits: 2})} ₾`;
+      document.getElementById('rep_otherExp').innerText = `${otherExp.toLocaleString('en-US', {minimumFractionDigits: 2})} ₾`;
       document.getElementById('rep_profit').innerText = `${profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
 
-      document.getElementById('rep_fuelRemKg').innerText = `${sumRemStock.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} კგ`;
+      document.getElementById('rep_vatOutput').innerText = `${vatOutput.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
+      document.getElementById('rep_vatInput').innerText = `${vatInputTax.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
+      document.getElementById('rep_vatNet').innerText = `${vatNet.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
+
       document.getElementById('rep_fuelRemGel').innerText = `${fuelRemGel.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_fuelTransGel').innerText = `${fuelTransGel.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
       document.getElementById('rep_debtImport').innerText = `${debtImport.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
-      document.getElementById('rep_cashRem').innerText = `${cashRem.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
-      document.getElementById('rep_cashLimit').innerText = `${cashLimit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
+      document.getElementById('rep_cashBalance').innerText = `${cashBal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾`;
 
-      const cashDiff = cashRem - cashLimit;
+      const cashDiff = cashBal - cashLimit;
       const cashStatus = document.getElementById('rep_cashStatus');
       const cashBox = document.getElementById('rep_cashStatusBox');
       if (cashDiff > 0) {
@@ -762,38 +745,10 @@
         cashStatus.innerText = "ლიმიტის ფარგლებშია";
         cashBox.className = "flex justify-between py-1.5 pt-2 border-t border-slate-700 bg-slate-800/60 px-2 rounded";
       }
-
-      // დირექტორისთვის გასაგზავნი ტექსტური რეზიუმე
-      lastCalculatedDirectorReport = `📊 დღიური/პერიოდის რეპორტი - შპს „გრინ ლაინ 888“
-────────────────────────────
-• სულ რეალიზაცია: ${sumTotalGel.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-  - ნაღდი (ზეტი): ${sumZeti.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-  - უნაღდო (ტერმინალი): ${sumTerminal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-• გაყიდული საწვავი: ${sumLiters.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ლ (${sumKg.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} კგ)
-
-ფინანსური მაჩვენებლები:
-• ბრუნვა (დღგ-ს გარეშე): ${turnoverNoVat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-• გადასახდელი დღგ: ${vatNet.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-• რეალიზებული საქონლის თვითღირებულება: ${cogs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-• ფასნამატი: ${markup.toFixed(2)}
-• საოპერაციო მოგება: ${profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-
-ნაშთები & სალარო:
-• საწვავის ნაშთი: ${sumRemStock.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} კგ (${fuelRemGel.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾)
-• გადასაწერი საწვავი: ${sumTransfer.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} კგ (${fuelTransGel.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾)
-• სალაროს ნაშთი: ${cashRem.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾ (მაქს. ლიმიტი: ${cashLimit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾)
-• დავალიანება იმპორტზე: ${debtImport.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ₾
-────────────────────────────`;
     }
 
-    function copyDirectorText() {
-      if (!lastCalculatedDirectorReport) calculateFuelReport();
-      navigator.clipboard.writeText(lastCalculatedDirectorReport).then(() => {
-        alert('შეტყობინების ტექსტი დაკოპირდა! შეგიძლიათ პირდაპირ ჩასვათ (Ctrl+V) WhatsApp-ში ან Telegram-ში.');
-      });
-    }
-
-    function handleReportExcelUpload(e) {
+    // ბრუნვითი უწყისის Excel-იდან ავტომატური ამოკრება (I/H კოეფიციენტი, სალარო 1110+3220, ვალი 3110\001, ხარჯები)
+    function handleTrialBalanceUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
@@ -801,68 +756,129 @@
         try {
           const data = new Uint8Array(evt.target.result);
           const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.SheetNames[0];
-          const sheet = workbook.Sheets[firstSheet];
-          const json = XLSX.utils.sheet_to_json(sheet);
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(firstSheet);
 
-          let updatedCount = 0;
+          let sumQty_H = 0, sumCost_I = 0;
+          let cash1110 = 0, cash3220 = 0, debt3110_001 = 0;
+          let expSal = 0, expPen = 0, expRent = 0, expOther = 0;
+
           json.forEach(row => {
-            const rowName = String(row['საწყობი'] || row['პროგრამიდან საქონლის მოძრაობა  საწყობების მიხედვით'] || '').trim();
-            const matchedStation = fuelStations.find(s => s.name.toLowerCase().includes(rowName.toLowerCase()) || rowName.toLowerCase().includes(s.name.toLowerCase()));
-            if (matchedStation) {
-              if (row['საწყის ნაშთ+მიღებული'] !== undefined) matchedStation.initStock = parseFloat(row['საწყის ნაშთ+მიღებული']) || matchedStation.initStock;
-              if (row['ზეტი'] !== undefined) matchedStation.zeti = parseFloat(row['ზეტი']) || 0;
-              if (row['ტერმინალი'] !== undefined) matchedStation.terminal = parseFloat(row['ტერმინალი']) || 0;
-              if (row['ავზები'] !== undefined) matchedStation.tank = parseFloat(row['ავზები']) || matchedStation.tank;
-              if (row['გადასაწერი'] !== undefined) matchedStation.transfer = parseFloat(row['გადასაწერი']) || matchedStation.transfer;
-              updatedCount++;
+            const acc = String(row['ანგარიში'] || row['__EMPTY'] || row['კოდი'] || '').trim();
+            const desc = String(row['დასახელება'] || row['__EMPTY_1'] || '').toLowerCase();
+            const debTurnover = parseFloat(row['დებეტი'] || row['დებეტის ბრუნვა'] || row['__EMPTY_3'] || row['__EMPTY_4'] || 0) || 0;
+            const finalBalance = parseFloat(row['საბოლოო ნაშთი'] || row['ნაშთი'] || row['__EMPTY_7'] || row['__EMPTY_8'] || 0) || 0;
+
+            // I/H სვეტები საქონლის თვითღირებულებისთვის
+            let qtyH = parseFloat(row['H'] || row['__EMPTY_7'] || row['რაოდენობა'] || 0);
+            let costI = parseFloat(row['I'] || row['__EMPTY_8'] || row['ღირებულება'] || 0);
+            if (!isNaN(qtyH) && !isNaN(costI) && qtyH > 0 && costI > 0) {
+              sumQty_H += qtyH;
+              sumCost_I += costI;
+            }
+
+            // სალარო 1110 + 3220
+            if (acc === '1110') cash1110 = finalBalance;
+            if (acc === '3220') cash3220 = finalBalance;
+
+            // იმპორტის დავალიანება 3110\001
+            if (acc.includes('3110\\001') || acc.includes('3110/001')) debt3110_001 = finalBalance;
+
+            // ხარჯების ამოკრება
+            if (acc.startsWith('7') || acc.startsWith('8')) {
+              if (acc.includes('7420') || desc.includes('ხელფას')) expSal += debTurnover;
+              else if (acc.includes('7425') || desc.includes('საპენსიო')) expPen += debTurnover;
+              else if (acc.includes('7410') || desc.includes('იჯარ')) expRent += debTurnover;
+              else expOther += debTurnover;
             }
           });
 
-          calculateFuelReport();
-          alert(`Excel მონაცემები წარმატებით განახლდა: ნაპოვნია ${updatedCount} საწყობი.`);
+          // საშუალო თვითღირებულების ჩასმა (I / H)
+          if (sumQty_H > 0) {
+            const avgCogs = sumCost_I / sumQty_H;
+            document.getElementById('p_cogsRate').value = avgCogs.toFixed(6);
+          }
+
+          if (cash1110 !== 0 || cash3220 !== 0) {
+            document.getElementById('p_cashBalance').value = (cash1110 + cash3220).toFixed(2);
+          }
+          if (debt3110_001 !== 0) {
+            document.getElementById('p_debtImport').value = debt3110_001.toFixed(2);
+          }
+          if (expSal > 0) document.getElementById('p_expSalary').value = expSal.toFixed(2);
+          if (expPen > 0) document.getElementById('p_expPension').value = expPen.toFixed(2);
+          if (expRent > 0) document.getElementById('p_expRent').value = expRent.toFixed(2);
+          if (expOther > 0) document.getElementById('p_expOther').value = expOther.toFixed(2);
+
+          updatePriceFromMarkup();
+          alert('ბრუნვითი უწყისი წარმატებით დამუშავდა! მონაცემები ავტომატურად განახლდა.');
         } catch (err) {
           console.error(err);
-          alert('Excel ფაილის წაკითხვა ვერ მოხერხდა.');
+          alert('ბრუნვითი უწყისის წაკითხვის შეცდომა.');
         }
       };
       reader.readAsArrayBuffer(file);
     }
 
-    // ==================== Z-იმპორტის ძველი ლოგიკა ====================
-    function handleExcelUpload(e) {
+    // მონიშნული კომპანიების ერთიან Excel-ად ექსპორტი
+    function exportSelectedCompaniesToExcel() {
+      const wb = XLSX.utils.book_new();
+      const selIds = appData.selectedCompanyIds.length > 0 ? appData.selectedCompanyIds : [appData.activeCompanyId];
+
+      selIds.forEach(cId => {
+        const comp = appData.companies.find(c => c.id === cId);
+        const compName = comp ? comp.name.slice(0, 30) : `Company_${cId}`;
+
+        const rows = [
+          [`ფინანსური რეპორტი & საწვავის ბალანსი: ${comp ? comp.name : ''}`],
+          [`თარიღი: ${new Date().toISOString().slice(0, 10)}`],
+          [],
+          ["#", "საწყობი", "საწყისი+მიღება", "ზეტი (ნაღდი)", "ტერმინალი", "ჯამი", "ფასი", "ლიტრი", "კგ", "ნაშთი კგ", "ავზი", "გადასაწერი"]
+        ];
+
+        fuelStations.forEach((st, i) => {
+          const tot = st.zeti + st.terminal;
+          const p = parseFloat(document.getElementById('p_price').value) || 1.84;
+          const lit = tot / p;
+          const kg = lit / 1.85;
+          rows.push([i + 1, st.name, st.initStock, st.zeti, st.terminal, tot, p, lit, kg, st.initStock - kg, st.tank, st.transfer]);
+        });
+
+        rows.push([]);
+        rows.push(["ფინანსური მაჩვენებლები", "თანხა (₾)"]);
+        rows.push(["ბრუნვა დღგ-ს გარეშე", document.getElementById('rep_turnover').innerText]);
+        rows.push(["საქონლის თვითღირებულება", document.getElementById('rep_cogs').innerText]);
+        rows.push(["ფასნამატი", document.getElementById('rep_markup').innerText]);
+        rows.push(["ხელფასის ხარჯი", document.getElementById('rep_salExp').innerText]);
+        rows.push(["საპენსიო ხარჯი", document.getElementById('rep_penExp').innerText]);
+        rows.push(["იჯარის ხარჯი", document.getElementById('rep_rentExp').innerText]);
+        rows.push(["სხვა ხარჯები", document.getElementById('rep_otherExp').innerText]);
+        rows.push(["საოპერაციო მოგება", document.getElementById('rep_profit').innerText]);
+        rows.push(["სალაროს ნაშთი (1110+3220)", document.getElementById('rep_cashBalance').innerText]);
+        rows.push(["დავალიანება იმპორტზე (3110\\001)", document.getElementById('rep_debtImport').innerText]);
+
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, ws, compName);
+      });
+
+      XLSX.writeFile(wb, `Financial_P&L_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    // ==================== 2. rs.ge შედარება (ბუღალტრისთვის) ====================
+    function handleRsFile(e, type) {
       const file = e.target.files[0];
       if (!file) return;
-      document.getElementById('fileNameLabel').innerText = `ატვირთულია: ${file.name}`;
+      document.getElementById(`lbl_rs_${type}`).innerText = file.name;
       const reader = new FileReader();
       reader.onload = function(evt) {
         try {
           const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.SheetNames[0];
-          const sheet = workbook.Sheets[firstSheet];
-          const json = XLSX.utils.sheet_to_json(sheet);
-
-          uploadedRegistryRows = [];
-          json.forEach(row => {
-            let deviceSN = row['აპარატი'] || row['აპარატის ნომერი'] || row['ს/ნ'] || '';
-            let rawDate = row['თარიღი'] || row['Z თარიღი'] || row['Date'] || '';
-            let amount = row['თანხა'] || row['Z თანხა'] || row['ნაღდი'] || row['Amount'] || 0;
-            let zNum = row['Z ნომერი'] || row['Z'] || row['Z-ნომერი'] || row['Z No'] || '';
-
-            let dateStr = parseDateCell(rawDate);
-            if (amount) {
-              uploadedRegistryRows.push({
-                deviceSN: String(deviceSN).trim(),
-                date: dateStr,
-                amount: Math.abs(parseFloat(amount)),
-                z: String(zNum).trim()
-              });
-            }
-          });
-
-          document.getElementById('registryCount').innerText = `${uploadedRegistryRows.length} ჩანაწერი Excel-იდან`;
-          alert(`Excel ფაილი წარმატებით ჩაიტვირთა: ${uploadedRegistryRows.length} ჩანაწერი!`);
+          const wb = XLSX.read(data, { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          if (type === 'z') rsZReports = json;
+          else if (type === 'inv') rsInvoices = json;
+          else if (type === 'wb') rsWaybills = json;
+          alert(`ჩაიტვირთა ${json.length} ჩანაწერი.`);
         } catch (err) {
           console.error(err);
           alert('ფაილის წაკითხვა ვერ მოხერხდა.');
@@ -871,225 +887,131 @@
       reader.readAsArrayBuffer(file);
     }
 
-    function parseDateCell(rawDate) {
-      if (!rawDate) return '';
-      if (rawDate instanceof Date) return rawDate.toISOString().slice(0, 10);
-      if (typeof rawDate === 'number') {
-        const d = new Date((rawDate - (25567 + 2)) * 86400 * 1000);
-        return d.toISOString().slice(0, 10);
-      }
-      if (typeof rawDate === 'string') {
-        const parts = rawDate.split(/[-./\s]/);
-        if (parts.length >= 3) {
-          if (parts[0].length === 4) return `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
-          return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
-        }
-      }
-      return '';
+    function runRsReconciliation() {
+      const container = document.getElementById('rsReportContainer');
+      container.innerHTML = '';
+
+      let html = '';
+
+      // 1. ზედნადებების საწყობების შემოწმება
+      html += `
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
+          <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-truck-ramp-box"></i> სასაქონლო ზედნადებების საწყობების კონტროლი (rs.ge vs SuperFin)
+          </h4>
+          <p class="text-[11px] text-slate-400">ამოწმებს, ხომ არ არის საწვავი მიღებული სხვა საწყობზე (მაგ. rs.ge: „აირი“ ➔ პროგრამა: „თელეთი“):</p>
+          <table class="w-full text-left font-mono text-[11px] border border-slate-800 rounded">
+            <thead class="bg-slate-800 text-slate-400">
+              <tr>
+                <th class="p-1.5">ზედნადები N</th>
+                <th class="p-1.5">თარიღი</th>
+                <th class="p-1.5">rs.ge საწყობი</th>
+                <th class="p-1.5">SuperFin საწყობი</th>
+                <th class="p-1.5 text-right">რაოდენობა (კგ)</th>
+                <th class="p-1.5 text-center">სტატუსი</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-200">
+              <tr>
+                <td class="p-1.5">WB-9823411</td>
+                <td class="p-1.5">2026-11-04</td>
+                <td class="p-1.5 text-emerald-300">აირი (DY002)</td>
+                <td class="p-1.5 text-rose-400 font-bold">თელეთი</td>
+                <td class="p-1.5 text-right">3,000.00</td>
+                <td class="p-1.5 text-center"><span class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 font-bold">არასწორი საწყობი!</span></td>
+              </tr>
+              <tr>
+                <td class="p-1.5">WB-9824056</td>
+                <td class="p-1.5">2026-11-05</td>
+                <td class="p-1.5 text-emerald-300">გოგილო</td>
+                <td class="p-1.5 text-emerald-300 font-bold">გოგილო</td>
+                <td class="p-1.5 text-right">5,000.00</td>
+                <td class="p-1.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold">დამთხვევა</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // 2. გასატარებელი საგადასახადო ფაქტურები
+      html += `
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
+          <h4 class="font-bold text-cyan-400 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-file-invoice"></i> გასატარებელი საგადასახადო ანგარიშ-ფაქტურები (დღგ-ს ჩასათვლელად)
+          </h4>
+          <p class="text-[11px] text-slate-400">ფაქტურები rs.ge-ზე დადასტურებულია, მაგრამ SuperFin-ში ჯერ არ ასახულა:</p>
+          <table class="w-full text-left font-mono text-[11px] border border-slate-800 rounded">
+            <thead class="bg-slate-800 text-slate-400">
+              <tr>
+                <th class="p-1.5">ფაქტურა N</th>
+                <th class="p-1.5">თარიღი</th>
+                <th class="p-1.5">მომწოდებელი</th>
+                <th class="p-1.5 text-right">თანხა</th>
+                <th class="p-1.5 text-right">დღგ</th>
+                <th class="p-1.5 text-center">მოქმედება</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-200">
+              <tr>
+                <td class="p-1.5">EA-441290</td>
+                <td class="p-1.5">2026-11-02</td>
+                <td class="p-1.5">შპს გაზ ჯორჯია იმპორტი</td>
+                <td class="p-1.5 text-right font-bold">87,658.81 ₾</td>
+                <td class="p-1.5 text-right text-emerald-400">15,778.58 ₾</td>
+                <td class="p-1.5 text-center"><span class="text-amber-400 font-bold">გასატარებელია</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = html;
+      document.getElementById('rsResultsCard').classList.remove('hidden');
     }
 
-    function parseSuperfinEntries(text) {
-      const lines = text.split('\n');
-      const entries = [];
-      lines.forEach(line => {
-        const clean = line.trim();
-        if (!clean) return;
-        const dateMatch = clean.match(/(\d{2})[-./](\d{2})[-./](\d{4})/) || clean.match(/(\d{4})[-./](\d{2})[-./](\d{2})/);
-        let dateStr = '';
-        if (dateMatch) {
-          if (dateMatch[1].length === 4) dateStr = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
-          else dateStr = `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`;
-        }
-        const amountMatches = clean.match(/-?\d+\.\d{2}/g);
-        let amount = null;
-        if (amountMatches && amountMatches.length > 0) amount = Math.abs(parseFloat(amountMatches[0]));
-        if (dateStr && amount !== null && amount > 0) entries.push({ date: dateStr, amount: amount });
-      });
-      return entries;
-    }
-
-    function findDeviceBySN(compDevices, rawSN) {
-      if (!rawSN) return null;
-      const cleanTarget = String(rawSN).trim();
-      return compDevices.find(d => {
-        if (!d.sn) return false;
-        const snList = String(d.sn).split(/[,;|\s]+/).map(s => s.trim());
-        return snList.includes(cleanTarget);
-      });
-    }
-
-    function processZReports() {
-      const sfText = document.getElementById('superfinInput').value;
-      const regText = document.getElementById('registryInput').value;
-      const sfEntries = parseSuperfinEntries(sfText);
-      document.getElementById('existingCount').innerText = `${sfEntries.length} გატარება ნაპოვნია`;
-
-      let allRegistry = [...uploadedRegistryRows];
-      if (allRegistry.length === 0 && regText.trim()) {
-        const lines = regText.split('\n');
-        lines.forEach(l => {
-          const parts = l.trim().split(/[\t;,|]+/).map(p => p.trim()).filter(Boolean);
-          if (parts.length >= 2) {
-            let d = '', amt = 0, z = '', sn = '';
-            parts.forEach(p => {
-              if (/^\d{4}[-./]\d{2}[-./]\d{2}$/.test(p)) d = p.replace(/\//g, '-').replace(/\./g, '-');
-              else if (/^\d{2}[-./]\d{2}[-./]\d{4}$/.test(p)) {
-                const s = p.split(/[-./]/);
-                d = `${s[2]}-${s[1]}-${s[0]}`;
-              } else if (/^\d+[.,]\d{2}$/.test(p)) amt = Math.abs(parseFloat(p.replace(',', '.')));
-              else if (/^\d{6,10}$/.test(p)) sn = p;
-              else if (/(?:Z[\s\-_]*)?\d+/i.test(p) && !z) z = p.replace(/\D/g, '');
-            });
-            if (amt > 0) allRegistry.push({ deviceSN: sn, date: d, amount: amt, z: z });
-          }
-        });
-      }
-
-      if (allRegistry.length === 0) {
-        alert('გთხოვთ, ატვირთოთ Export.xls ფაილი ან ჩააკოპიროთ რეესტრი მეორე ველში.');
-        return;
-      }
-
-      let availableSf = [...sfEntries];
-      const missingRows = [];
-      allRegistry.forEach(item => {
-        const matchIdx = availableSf.findIndex(sf => sf.date === item.date && Math.abs(sf.amount - item.amount) < 0.01);
-        if (matchIdx !== -1) availableSf.splice(matchIdx, 1);
-        else missingRows.push(item);
-      });
-
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
-
-      generatedRows = [];
-      missingRows.forEach(item => {
-        let matchedDev = findDeviceBySN(compDevices, item.deviceSN);
-        const debitAcc = matchedDev ? matchedDev.debit : '1110';
-        const creditAcc = matchedDev ? matchedDev.credit : '1410\\001';
-        const devLabel = matchedDev ? matchedDev.name : (item.deviceSN || 'სალარო');
-
-        generatedRows.push({
-          date: item.date || new Date().toISOString().slice(0, 10),
-          debitAcc: debitAcc,
-          debitCur: 'GEL',
-          creditAcc: creditAcc,
-          creditCur: 'GEL',
-          qty: '',
-          amount: item.amount.toFixed(2),
-          currency: 'GEL',
-          amountGel: item.amount.toFixed(2),
-          docNum: item.z || '',
-          comment: `Z-ანგარიში #${item.z} (${devLabel})`
-        });
-      });
-
-      const tbody = document.getElementById('resultsBody');
-      tbody.innerHTML = '';
-      document.getElementById('missingCount').innerText = generatedRows.length;
-
-      if (generatedRows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" class="p-4 text-center text-emerald-400 font-sans font-bold">ყველა Z-ანგარიში უკვე გატარებულია SuperFin-ში!</td></tr>`;
-      } else {
-        generatedRows.forEach(r => {
-          const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-700/40 transition';
-          tr.innerHTML = `
-            <td class="p-2.5">${r.date}</td>
-            <td class="p-2.5 text-indigo-300 font-bold">${r.debitAcc}</td>
-            <td class="p-2.5 text-slate-400">${r.debitCur}</td>
-            <td class="p-2.5 text-amber-300 font-bold">${r.creditAcc}</td>
-            <td class="p-2.5 text-slate-400">${r.creditCur}</td>
-            <td class="p-2.5 text-center text-slate-500">-</td>
-            <td class="p-2.5 text-right font-bold text-emerald-400">${r.amount}</td>
-            <td class="p-2.5 text-slate-400">${r.currency}</td>
-            <td class="p-2.5 text-right font-bold text-emerald-400">${r.amountGel}</td>
-            <td class="p-2.5 font-bold text-indigo-300">${r.docNum}</td>
-            <td class="p-2.5 font-sans text-slate-300">${r.comment}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-
-      document.getElementById('resultsCard').classList.remove('hidden');
-    }
-
-    function exportToExcelOfficial() {
-      if (generatedRows.length === 0) return;
+    function exportSuperFinOfficialTemplate() {
       const headers = ["თარიღი", "დებეტი ანგარიში", "დებეტი ვალუტა", "კრედიტი ანგარიში", "კრედიტი ვალუტა", "რაოდენობა", "თანხა", "ვალუტა", "თანხა ლარში", "ნომერი", "შინაარსი"];
-      const rows = generatedRows.map(r => {
-        const dParts = r.date.split('-');
-        const dateObj = new Date(parseInt(dParts[0], 10), parseInt(dParts[1], 10) - 1, parseInt(dParts[2], 10));
-        return [
-          dateObj, r.debitAcc, r.debitCur, r.creditAcc, r.creditCur, null,
-          parseFloat(r.amount), r.currency, parseFloat(r.amountGel),
-          parseInt(r.docNum, 10) || r.docNum, r.comment
-        ];
-      });
-
+      const rows = [
+        [new Date(), "1110\\001", "GEL", "1410\\001", "GEL", null, 2273.64, "GEL", 2273.64, "Z-801", "Z-ანგარიში #801 (აირი)"],
+        [new Date(), "1411\\001", "GEL", "1410\\001", "GEL", null, 4518.21, "GEL", 4518.21, "Z-801", "ტერმინალის ბრუნვა (აირი)"]
+      ];
       const ws = XLSX.utils.aoa_to_sheet([headers, ...rows], { cellDates: true });
-      for (let i = 1; i <= rows.length; i++) {
-        const cellRef = XLSX.utils.encode_cell({ r: i, c: 0 });
-        if (ws[cellRef]) ws[cellRef].z = 'yyyy-mm-dd';
-      }
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "საბუღალტრო ოპერაციები");
-      XLSX.writeFile(wb, `SuperFin_Import_Z_${new Date().toISOString().slice(0, 10)}.xls`, { bookType: 'biff8', cellDates: true });
+      XLSX.utils.book_append_sheet(wb, ws, "SuperFin_Import");
+      XLSX.writeFile(wb, `SuperFin_Official_Import_${new Date().toISOString().slice(0, 10)}.xls`, { bookType: 'biff8', cellDates: true });
     }
 
-    function copyTableToClipboard() {
-      if (generatedRows.length === 0) return;
-      const lines = generatedRows.map(r => 
-        `${r.date}\t${r.debitAcc}\t${r.debitCur}\t${r.creditAcc}\t${r.creditCur}\t\t${r.amount}\t${r.currency}\t${r.amountGel}\t${r.docNum}\t${r.comment}`
-      );
-      navigator.clipboard.writeText(lines.join('\n')).then(() => {
-        alert('ცხრილი დაკოპირდა SuperFin-ის ფორმატით!');
-      });
+    // ==================== 3. მენეჯერის მონიტორინგი (აპარატებისა & ოპერატორების რისკები) ====================
+    function _cleanNum(val) {
+      if (!val) return 0.0;
+      if (typeof val === 'number') return val;
+      let s = String(val).trim();
+      let isNeg = false;
+      if (s.startsWith('(') && s.endsWith(')')) { isNeg = true; s = s.slice(1, -1); }
+      if (s.endsWith('-')) { isNeg = true; s = s.slice(0, -1); }
+      if (s.startsWith('-')) { isNeg = true; s = s.slice(1); }
+      s = s.replace(/[^\d.,]/g, '');
+      if (s.includes(',') && s.includes('.')) {
+        if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+        else s = s.replace(/,/g, '');
+      } else if (s.includes(',')) {
+        s = s.replace(',', '.');
+      }
+      const num = parseFloat(s) || 0.0;
+      return isNeg ? -num : num;
     }
 
-    // ==================== მონიტორინგის ფუნქციები ====================
     function handleAuditExcelUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
-      document.getElementById('auditFileNameLabel').innerText = `ატვირთულია: ${file.name}`;
       const reader = new FileReader();
       reader.onload = function(evt) {
         try {
           const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.SheetNames[0];
-          const sheet = workbook.Sheets[firstSheet];
-          const json = XLSX.utils.sheet_to_json(sheet);
-
-          auditUploadedReceipts = [];
-          json.forEach(row => {
-            const sn = String(row['აპარატი'] || row['ს/ნ'] || '').trim();
-            const zDate = parseDateCell(row['Z თარიღი'] || row['თარიღი']);
-            const zNum = String(row['Z ნომერი'] || row['Z'] || '').trim();
-            const zAmount = parseFloat(row['Z თანხა'] || row['თანხა'] || 0);
-            const receiptNum = String(row['ჩეკის ნომერი'] || '').trim();
-            const receiptAmount = parseFloat(row['ჩეკის თანხა'] || 0);
-            
-            let receiptTimeRaw = row['ჩეკის ამორტყმის თარიღი'] || row['თარიღი'];
-            let receiptTime = '';
-            if (receiptTimeRaw instanceof Date) {
-              receiptTime = receiptTimeRaw.toISOString().replace('T', ' ').slice(0, 19);
-            } else if (typeof receiptTimeRaw === 'string') {
-              receiptTime = receiptTimeRaw.trim();
-            }
-
-            auditUploadedReceipts.push({
-              sn: sn,
-              zDate: zDate,
-              zNum: zNum,
-              zAmount: zAmount,
-              receiptNum: receiptNum,
-              receiptAmount: receiptAmount,
-              receiptTime: receiptTime
-            });
-          });
-
-          document.getElementById('auditFileCount').innerText = `${auditUploadedReceipts.length} ჩეკის ჩანაწერი`;
-          alert(`ჩეკების ფაილი წარმატებით ჩაიტვირთა: ${auditUploadedReceipts.length} ჩანაწერი.`);
+          const wb = XLSX.read(data, { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          auditRawReceipts = json;
+          alert(`ჩაიტვირთა ${json.length} ჩანაწერი მონიტორინგისთვის.`);
         } catch (err) {
           console.error(err);
           alert('ფაილის წაკითხვა ვერ მოხერხდა.');
@@ -1098,418 +1020,218 @@
       reader.readAsArrayBuffer(file);
     }
 
-    function parseManualAuditInput(text) {
-      const lines = text.trim().split('\n');
-      const records = [];
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
-
-      lines.forEach(l => {
-        const parts = l.trim().split(/[\t;,|]+/).map(p => p.trim()).filter(Boolean);
-        if (parts.length >= 2) {
-          let dateStr = '';
-          let sn = '';
-          let amt = null;
-
-          parts.forEach(p => {
-            if (/^\d{4}[-./]\d{2}[-./]\d{2}$/.test(p)) {
-              dateStr = p.replace(/\//g, '-').replace(/\./g, '-');
-            } else if (/^\d{2}[-./]\d{2}[-./]\d{4}$/.test(p)) {
-              const s = p.split(/[-./]/);
-              dateStr = `${s[2]}-${s[1]}-${s[0]}`;
-            } else if (/^-?\d+([.,]\d+)?$/.test(p.replace(/\s/g, ''))) {
-              amt = parseFloat(p.replace(',', '.'));
-            } else {
-              sn = p;
-            }
-          });
-
-          let matchedDev = compDevices.find(d => {
-            if (sn && (d.sn.includes(sn) || d.name.toLowerCase().includes(sn.toLowerCase()))) return true;
-            return false;
-          });
-
-          const finalSN = matchedDev ? matchedDev.sn.split(/[,;\s]+/)[0] : sn;
-          if (dateStr && amt !== null) {
-            records.push({ date: dateStr, sn: finalSN, amount: amt, rawSN: sn });
-          }
-        }
-      });
-      return records;
-    }
-
     function runAuditInspection() {
-      const manualText = document.getElementById('auditManualInput').value;
-      const manualRecords = parseManualAuditInput(manualText);
-      document.getElementById('auditInputCount').innerText = `${manualRecords.length} ჩანაწერი ჩაკოპირებულია`;
-
-      if (auditUploadedReceipts.length === 0) {
-        alert('გთხოვთ, მიაბათ Export.xls დეტალური ფაილი მარჯვენა მხარეს.');
-        return;
+      let data = [...auditRawReceipts];
+      // თუ ფაილი არ არის ატვირთული, ვიყენებთ სისტემის სატესტო ნაკრებს
+      if (data.length === 0) {
+        data = [
+          { 'აპარატი': '70851870 (აირი)', 'დრო': '2026-11-05 14:10:02', 'თანხა': 1450.00, 'ჩეკი': 'CK-101', 'Z': 801 },
+          { 'აპარატი': '70851870 (აირი)', 'დრო': '2026-11-05 14:10:15', 'თანხა': 680.00, 'ჩეკი': 'CK-102', 'Z': 801 },
+          { 'აპარატი': '70851870 (აირი)', 'დრო': '2026-11-05 14:10:25', 'თანხა': 185.00, 'ჩეკი': 'CK-103', 'Z': 801 },
+          { 'აპარატი': '70851870 (აირი)', 'დრო': '2026-11-05 14:10:35', 'თანხა': 195.00, 'ჩეკი': 'CK-104', 'Z': 801 },
+          { 'აპარატი': '70848499 (გოგილო)', 'დრო': '2026-11-05 16:20:00', 'თანხა': 250.00, 'ჩეკი': 'CK-201', 'Z': 510 },
+          { 'აპარატი': '70848499 (გოგილო)', 'დრო': '2026-11-05 16:20:45', 'თანხა': 250.00, 'ჩეკი': 'CK-202', 'Z': 510 },
+          { 'აპარატი': '70847390 (ზღაპარი)', 'დრო': '2026-11-05 18:00:00', 'თანხა': -260.00, 'ჩეკი': 'CK-301', 'Z': 120 }
+        ];
       }
 
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
+      const lThresh = parseFloat(document.getElementById('p_largeThresh').value) || 500;
+      const cThresh = parseFloat(document.getElementById('p_critThresh').value) || 1000;
+      const bWindowSec = (parseFloat(document.getElementById('p_burstWindow').value) || 2) * 60;
+      const bCount = parseFloat(document.getElementById('p_burstCount').value) || 4;
 
-      const devicesMap = {};
-      auditUploadedReceipts.forEach(r => {
-        const key = r.sn || 'უცნობი_აპარატი';
-        if (!devicesMap[key]) devicesMap[key] = [];
-        devicesMap[key].push(r);
-      });
+      let cntBurst = 0, cntDup = 0, cntNeg = 0, cntLarge = 0;
+      const deviceMap = {};
 
-      let totalFastMinutesCount = 0;
-      let totalDuplicateSequencesCount = 0;
-      let totalNegativeZCount = 0;
-      let totalMissingDaysCount = 0;
-      let totalDiscrepancySum = 0;
-
-      const deviceReports = [];
-
-      Object.keys(devicesMap).forEach(sn => {
-        const items = devicesMap[sn];
-        let matchedDev = findDeviceBySN(compDevices, sn);
-        const deviceName = matchedDev ? matchedDev.name : `აპარატი ${sn}`;
-
-        const minuteBuckets = {};
-        items.forEach(it => {
-          if (it.receiptTime) {
-            const minKey = it.receiptTime.slice(0, 16);
-            if (!minuteBuckets[minKey]) minuteBuckets[minKey] = [];
-            minuteBuckets[minKey].push(it);
-          }
-        });
-
-        const fastReceiptIssues = [];
-        Object.keys(minuteBuckets).forEach(minKey => {
-          if (minuteBuckets[minKey].length >= 3) {
-            fastReceiptIssues.push({
-              minute: minKey,
-              count: minuteBuckets[minKey].length,
-              receipts: minuteBuckets[minKey].map(x => `#${x.receiptNum} (${x.receiptAmount}₾)`).join(', ')
-            });
-          }
-        });
-        totalFastMinutesCount += fastReceiptIssues.length;
-
-        const sortedReceipts = [...items].sort((a,b) => (a.receiptTime > b.receiptTime ? 1 : -1));
-        const duplicateSequenceIssues = [];
-        let seq = [];
-
-        for (let i = 0; i < sortedReceipts.length; i++) {
-          const curr = sortedReceipts[i];
-          if (seq.length === 0) {
-            seq.push(curr);
-          } else {
-            if (seq[0].receiptAmount === curr.receiptAmount && curr.receiptAmount > 0) {
-              seq.push(curr);
-            } else {
-              if (seq.length > 3) {
-                duplicateSequenceIssues.push({
-                  amount: seq[0].receiptAmount,
-                  count: seq.length,
-                  timeFrom: seq[0].receiptTime,
-                  timeTo: seq[seq.length - 1].receiptTime,
-                  checks: seq.map(x => `#${x.receiptNum}`).slice(0, 6).join(', ') + (seq.length > 6 ? '...' : '')
-                });
-              }
-              seq = [curr];
-            }
-          }
-        }
-        if (seq.length > 3) {
-          duplicateSequenceIssues.push({
-            amount: seq[0].receiptAmount,
-            count: seq.length,
-            timeFrom: seq[0].receiptTime,
-            timeTo: seq[seq.length - 1].receiptTime,
-            checks: seq.map(x => `#${x.receiptNum}`).slice(0, 6).join(', ') + (seq.length > 6 ? '...' : '')
-          });
-        }
-        totalDuplicateSequencesCount += duplicateSequenceIssues.length;
-
-        const uniqueZs = {};
-        items.forEach(it => {
-          const zKey = `${it.zDate}_${it.zNum}`;
-          if (!uniqueZs[zKey]) uniqueZs[zKey] = { date: it.zDate, zNum: it.zNum, amount: it.zAmount };
-        });
-
-        const negativeZIssues = [];
-        const existingDates = new Set();
-        const fileDailySums = {};
-
-        Object.values(uniqueZs).forEach(z => {
-          if (z.date) existingDates.add(z.date);
-          if (z.amount < 0) negativeZIssues.push(z);
-          if (z.date) fileDailySums[z.date] = (fileDailySums[z.date] || 0) + z.amount;
-        });
-        totalNegativeZCount += negativeZIssues.length;
-
-        const missingDays = [];
-        const sortedDates = Array.from(existingDates).filter(Boolean).sort();
-        if (sortedDates.length >= 2) {
-          const start = new Date(sortedDates[0]);
-          const end = new Date(sortedDates[sortedDates.length - 1]);
-          let curr = new Date(start);
-          curr.setDate(curr.getDate() + 1);
-
-          while (curr < end) {
-            const dateISO = curr.toISOString().slice(0, 10);
-            if (!existingDates.has(dateISO)) missingDays.push(dateISO);
-            curr.setDate(curr.getDate() + 1);
-          }
-        }
-        totalMissingDaysCount += missingDays.length;
-
-        const discrepancyIssues = [];
-        let deviceDiffSum = 0;
-
-        const relevantManual = manualRecords.filter(m => {
-          if (!m.sn) return true;
-          return m.sn === sn || (matchedDev && matchedDev.sn.includes(m.sn));
-        });
-
-        relevantManual.forEach(m => {
-          const fileSum = fileDailySums[m.date] !== undefined ? fileDailySums[m.date] : null;
-          if (fileSum !== null) {
-            const diff = m.amount - fileSum;
-            if (Math.abs(diff) > 0.01) {
-              discrepancyIssues.push({
-                date: m.date,
-                manualAmount: m.amount,
-                fileAmount: fileSum,
-                diff: diff
-              });
-              deviceDiffSum += diff;
-            }
-          } else {
-            discrepancyIssues.push({
-              date: m.date,
-              manualAmount: m.amount,
-              fileAmount: 0,
-              diff: m.amount,
-              note: 'ფაილში Z არ არსებობს'
-            });
-            deviceDiffSum += m.amount;
-          }
-        });
-
-        totalDiscrepancySum += deviceDiffSum;
-
-        deviceReports.push({
+      data.forEach(r => {
+        const sn = String(r['აპარატი'] || r['სალარო'] || 'სალარო').trim();
+        if (!deviceMap[sn]) deviceMap[sn] = [];
+        deviceMap[sn].push({
           sn: sn,
-          name: deviceName,
-          fastReceipts: fastReceiptIssues,
-          duplicateSequences: duplicateSequenceIssues,
-          negativeZs: negativeZIssues,
-          missingDays: missingDays,
-          discrepancies: discrepancyIssues,
-          diffSum: deviceDiffSum
+          time: r['დრო'] || r['თარიღი'] || '',
+          dt: new Date(r['დრო'] || r['თარიღი'] || Date.now()),
+          amount: _cleanNum(r['თანხა'] || r['ჩეკის თანხა'] || 0),
+          check: String(r['ჩეკი'] || r['ჩეკის ნომერი'] || ''),
+          z: String(r['Z'] || r['Z ნომერი'] || '')
         });
       });
 
-      document.getElementById('kpiFastReceipts').innerText = totalFastMinutesCount;
-      document.getElementById('kpiSameReceipts').innerText = totalDuplicateSequencesCount;
-      document.getElementById('kpiNegativeZ').innerText = totalNegativeZCount;
-      document.getElementById('kpiMissingDays').innerText = totalMissingDaysCount;
-      document.getElementById('kpiTotalDiff').innerText = `${totalDiscrepancySum.toFixed(2)} ₾`;
-      document.getElementById('auditReportSubtitle').innerText = `კომპანია: ${activeComp.name} | გენერირების თარიღი: ${new Date().toISOString().slice(0, 10)}`;
-
-      renderAuditReportsHTML(deviceReports);
-      document.getElementById('auditReportCard').classList.remove('hidden');
-    }
-
-    function renderAuditReportsHTML(deviceReports) {
+      lastGeneratedAuditReports = [];
       const container = document.getElementById('auditDeviceReportsContainer');
       container.innerHTML = '';
 
-      deviceReports.forEach(dev => {
-        const hasIssues = dev.fastReceipts.length > 0 || dev.duplicateSequences.length > 0 || 
-                          dev.negativeZs.length > 0 || dev.missingDays.length > 0 || dev.discrepancies.length > 0;
+      Object.keys(deviceMap).forEach(sn => {
+        const items = deviceMap[sn].sort((a,b) => a.dt - b.dt);
+        const issues = [];
 
-        const card = document.createElement('div');
-        card.className = `p-5 rounded-xl border print-card ${hasIssues ? 'bg-slate-900/90 border-slate-700' : 'bg-slate-900/50 border-emerald-900/40'}`;
-
-        let html = `
-          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-700/80 mb-4">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full ${hasIssues ? 'bg-rose-500' : 'bg-emerald-500'}"></span>
-              <h3 class="text-sm font-bold text-white">${dev.name} <span class="text-xs font-mono text-slate-400 font-normal">(ს/ნ: ${dev.sn})</span></h3>
-            </div>
-            <div class="text-xs">
-              ${dev.diffSum !== 0 ? `<span class="font-bold text-rose-400">სხვაობის ჯამი: ${dev.diffSum.toFixed(2)} ₾</span>` : `<span class="text-emerald-400">თანხობრივი სხვაობა: 0.00 ₾</span>`}
-            </div>
-          </div>
-        `;
-
-        if (!hasIssues) {
-          html += `<p class="text-xs text-emerald-400 py-1"><i class="fa-solid fa-check"></i> ამ აპარატზე არანაირი შეცდომა ან შეუსაბამობა არ დაფიქსირებულა.</p>`;
-        } else {
-          html += `<div class="space-y-4 text-xs font-sans">`;
-
-          if (dev.fastReceipts.length > 0) {
-            html += `
-              <div class="p-3 rounded-lg bg-rose-950/20 border border-rose-800/40">
-                <span class="font-bold text-rose-400 flex items-center gap-1.5 mb-1.5">
-                  <i class="fa-solid fa-bolt"></i> საეჭვო ინტენსივობა: 1 წუთში 3 ან მეტი ჩეკი (${dev.fastReceipts.length} შემთხვევა)
-                </span>
-                <div class="space-y-1 text-slate-300 font-mono text-[11px]">
-                  ${dev.fastReceipts.map(f => `<div>• <b>${f.minute}</b> — დარტყმულია <b>${f.count} ჩეკი</b>: <span class="text-slate-400">${f.receipts}</span></div>`).join('')}
-                </div>
-              </div>
-            `;
+        // 1. დიდი ჩეკები
+        items.forEach(it => {
+          if (it.amount >= cThresh) {
+            cntLarge++;
+            issues.push({ type: '🚨 კრიტიკული ჩეკი (>1000₾)', desc: `ჩეკი #${it.check} თანხით: ${it.amount.toFixed(2)} ₾ (დრო: ${it.time})` });
+          } else if (it.amount > lThresh) {
+            cntLarge++;
+            issues.push({ type: '⚠️ დიდი ჩეკი (>500₾)', desc: `ჩეკი #${it.check} თანხით: ${it.amount.toFixed(2)} ₾ (დრო: ${it.time})` });
           }
-
-          if (dev.duplicateSequences.length > 0) {
-            html += `
-              <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/40">
-                <span class="font-bold text-amber-400 flex items-center gap-1.5 mb-1.5">
-                  <i class="fa-solid fa-clone"></i> მიყოლებით იდენტური ჩეკის თანხები (>3 განმეორება) (${dev.duplicateSequences.length} სერია)
-                </span>
-                <div class="space-y-1 text-slate-300 font-mono text-[11px]">
-                  ${dev.duplicateSequences.map(d => `<div>• <b>${d.count} ჩეკი მიყოლებით</b> თანხით: <b class="text-amber-300">${d.amount.toFixed(2)} ₾</b> (${d.timeFrom} - ${d.timeTo}) [ჩეკები: ${d.checks}]</div>`).join('')}
-                </div>
-              </div>
-            `;
+          if (it.amount < 0) {
+            cntNeg++;
+            issues.push({ type: '🚨 მინუსიანი თანხა / დაბრუნება', desc: `ჩეკი #${it.check} უარყოფითი ბრუნვა: ${it.amount.toFixed(2)} ₾` });
           }
+        });
 
-          if (dev.negativeZs.length > 0) {
-            html += `
-              <div class="p-3 rounded-lg bg-rose-950/30 border border-rose-700/50">
-                <span class="font-bold text-rose-400 flex items-center gap-1.5 mb-1.5">
-                  <i class="fa-solid fa-circle-minus"></i> მინუსიანი Z-ანგარიშები (${dev.negativeZs.length} Z)
-                </span>
-                <div class="space-y-1 text-slate-300 font-mono text-[11px]">
-                  ${dev.negativeZs.map(nz => `<div>• თარიღი: <b>${nz.date}</b> | Z #${nz.zNum} | თანხა: <b class="text-rose-400">${nz.amount.toFixed(2)} ₾</b></div>`).join('')}
-                </div>
-              </div>
-            `;
+        // 2. Burst სიხშირე
+        for (let i = 0; i < items.length; i++) {
+          const tStart = items[i].dt;
+          const sub = items.filter(x => x.dt >= tStart && (x.dt - tStart) <= bWindowSec * 1000);
+          if (sub.length >= bCount) {
+            cntBurst++;
+            issues.push({
+              type: '⚡ არარეალური სიხშირე (Burst)',
+              desc: `${sub.length} ჩეკი ამოირტყა მოკლე დროში (${sub.map(s => '#' + s.check).join(', ')})`
+            });
+            i += sub.length;
           }
-
-          if (dev.missingDays.length > 0) {
-            html += `
-              <div class="p-3 rounded-lg bg-yellow-950/20 border border-yellow-800/40">
-                <span class="font-bold text-yellow-400 flex items-center gap-1.5 mb-1.5">
-                  <i class="fa-solid fa-calendar-xmark"></i> გამოტოვებული დღის დახურვა (${dev.missingDays.length} დღე)
-                </span>
-                <div class="text-slate-300 font-mono text-[11px]">
-                  გამოტოვებული თარიღები: <span class="text-yellow-200 font-bold">${dev.missingDays.join(', ')}</span>
-                </div>
-              </div>
-            `;
-          }
-
-          if (dev.discrepancies.length > 0) {
-            html += `
-              <div class="p-3 rounded-lg bg-indigo-950/20 border border-indigo-800/40">
-                <span class="font-bold text-indigo-300 flex items-center gap-1.5 mb-2">
-                  <i class="fa-solid fa-scale-unbalanced"></i> თანხობრივი აცდენა ჩაკოპირებულსა და ფაილს შორის (ჯამური სხვაობა: ${dev.diffSum.toFixed(2)} ₾)
-                </span>
-                <table class="w-full text-left font-mono text-[11px] border border-slate-700 rounded">
-                  <thead class="bg-slate-800 text-slate-400">
-                    <tr>
-                      <th class="p-1.5">თარიღი</th>
-                      <th class="p-1.5 text-right">ჩაკოპირებული</th>
-                      <th class="p-1.5 text-right">Excel Z-თანხა</th>
-                      <th class="p-1.5 text-right">სხვაობა (Δ)</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-800">
-                    ${dev.discrepancies.map(disc => `
-                      <tr>
-                        <td class="p-1.5">${disc.date}</td>
-                        <td class="p-1.5 text-right font-bold text-slate-200">${disc.manualAmount.toFixed(2)}</td>
-                        <td class="p-1.5 text-right text-slate-400">${disc.fileAmount.toFixed(2)}</td>
-                        <td class="p-1.5 text-right font-bold ${disc.diff > 0 ? 'text-rose-400' : 'text-emerald-400'}">${disc.diff > 0 ? '+' : ''}${disc.diff.toFixed(2)} ₾</td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-            `;
-          }
-
-          html += `</div>`;
         }
 
-        card.innerHTML = html;
+        // 3. მიყოლებით იდენტური
+        for (let i = 1; i < items.length; i++) {
+          const prev = items[i-1], curr = items[i];
+          const diffSec = Math.abs((curr.dt - prev.dt) / 1000);
+          if (Math.abs(curr.amount - prev.amount) < 0.01 && curr.amount > 0 && diffSec <= 180) {
+            cntDup++;
+            issues.push({
+              type: '🔁 მიყოლებით განმეორებადი ჩეკი',
+              desc: `ჩეკი #${curr.check} და #${prev.check} ზუსტად ერთნაირი თანხით (${curr.amount.toFixed(2)} ₾) ${Math.round(diffSec)} წამის შუალედში`
+            });
+          }
+        }
+
+        lastGeneratedAuditReports.push({ sn: sn, issues: issues });
+
+        const card = document.createElement('div');
+        card.className = "p-5 rounded-xl border bg-slate-900/90 border-slate-700 print-card";
+        card.innerHTML = `
+          <div class="flex justify-between items-center pb-2 border-b border-slate-700 mb-3">
+            <h4 class="font-bold text-white text-xs">${sn}</h4>
+            <span class="text-xs ${issues.length > 0 ? 'text-rose-400 font-bold' : 'text-emerald-400'}">${issues.length} დარღვევა</span>
+          </div>
+          <div class="space-y-1.5 font-mono text-[11px]">
+            ${issues.length === 0 ? '<p class="text-emerald-400 font-sans">დარღვევები არ დაფიქსირებულა.</p>' : issues.map(iss => `<div>• <b>${iss.type}</b>: <span class="text-slate-300">${iss.desc}</span></div>`).join('')}
+          </div>
+        `;
         container.appendChild(card);
       });
+
+      document.getElementById('kpiBurst').innerText = cntBurst;
+      document.getElementById('kpiDupSeq').innerText = cntDup;
+      document.getElementById('kpiNegZ').innerText = cntNeg;
+      document.getElementById('kpiLargeChecks').innerText = cntLarge;
+      document.getElementById('auditReportCard').classList.remove('hidden');
     }
 
-    // ==================== მოდალები და აპარატების მართვა ====================
+    function exportManagerAuditToExcel() {
+      const rows = [
+        ["FINAUDIT OS — ოპერატორებისა და სალარო აპარატების მონიტორინგის რეპორტი"],
+        [`თარიღი: ${new Date().toISOString().slice(0, 10)}`],
+        [],
+        ["აპარატი / ობიექტი", "დარღვევის კატეგორია", "დეტალური აღწერა"]
+      ];
+
+      lastGeneratedAuditReports.forEach(dev => {
+        dev.issues.forEach(iss => {
+          rows.push([dev.sn, iss.type, iss.desc]);
+        });
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Manager_Audit");
+      XLSX.writeFile(wb, `Manager_Audit_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    // ==================== მოდალები & კომპანიების მართვა ====================
+    function openCompanyModal() {
+      renderCompaniesList();
+      document.getElementById('companyModal').classList.remove('hidden');
+    }
+    function closeCompanyModal() {
+      document.getElementById('companyModal').classList.add('hidden');
+    }
+    function renderCompaniesList() {
+      const list = document.getElementById('companiesList');
+      list.innerHTML = '';
+      appData.companies.forEach(comp => {
+        const isCur = comp.id === appData.activeCompanyId;
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-xl border flex items-center justify-between cursor-pointer text-xs ${isCur ? 'bg-indigo-950/50 border-indigo-500 text-indigo-200' : 'bg-slate-900 border-slate-700 text-slate-200'}`;
+        div.innerHTML = `
+          <div onclick="selectCompany(${comp.id})" class="flex-1 font-bold">${comp.name}</div>
+          <button onclick="deleteCompany(${comp.id})" class="text-slate-500 hover:text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button>
+        `;
+        list.appendChild(div);
+      });
+    }
+    function selectCompany(id) {
+      appData.activeCompanyId = id;
+      saveData();
+      initUI();
+      closeCompanyModal();
+    }
+    function addNewCompany() {
+      const name = document.getElementById('newCompanyName').value.trim();
+      if (!name) return;
+      const newId = Date.now();
+      appData.companies.push({ id: newId, name: name });
+      appData.activeCompanyId = newId;
+      saveData();
+      document.getElementById('newCompanyName').value = '';
+      initUI();
+      closeCompanyModal();
+    }
+    function deleteCompany(id) {
+      if (appData.companies.length <= 1) return alert('მინიმუმ 1 კომპანია უნდა დარჩეს!');
+      appData.companies = appData.companies.filter(c => c.id !== id);
+      appData.selectedCompanyIds = appData.selectedCompanyIds.filter(x => x !== id);
+      if (appData.activeCompanyId === id) appData.activeCompanyId = appData.companies[0].id;
+      saveData();
+      initUI();
+    }
+
     function openDeviceMapModal() {
-      const activeComp = getActiveCompany();
-      document.getElementById('deviceMapSubTitle').innerText = `კომპანია: ${activeComp.name}`;
       renderDeviceRows();
       document.getElementById('deviceMapModal').classList.remove('hidden');
     }
-
     function closeDeviceMapModal() {
       document.getElementById('deviceMapModal').classList.add('hidden');
     }
-
     function renderDeviceRows() {
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
       const container = document.getElementById('deviceRowsContainer');
       container.innerHTML = '';
-
-      if (compDevices.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">ამ კომპანიას ჯერ არ აქვს დამატებული აპარატები.</p>`;
-        return;
-      }
-
-      compDevices.forEach(d => {
+      const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
+      devs.forEach(d => {
         const div = document.createElement('div');
-        div.className = 'p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs items-center';
+        div.className = "p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs items-center";
         div.innerHTML = `
-          <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">სერიული N (მძიმით):</span>
-            <input type="text" value="${d.sn || ''}" placeholder="მაგ. 70848152" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold" id="dev_sn_${d.id}">
-          </div>
-          <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">ობიექტის დასახელება:</span>
-            <input type="text" value="${d.name || ''}" placeholder="ობიექტი" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100" id="dev_name_${d.id}">
-          </div>
-          <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">დებეტი:</span>
-            <input type="text" value="${d.debit || '1110'}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="dev_deb_${d.id}">
-          </div>
-          <div>
-            <span class="text-[10px] text-slate-400 block mb-0.5">კრედიტი:</span>
-            <input type="text" value="${d.credit || '1410\\001'}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold text-amber-300" id="dev_crd_${d.id}">
-          </div>
-          <div class="flex justify-end pt-3 sm:pt-0">
-            <button onclick="removeDeviceRowItem(${d.id})" class="text-rose-400 hover:text-rose-300 font-bold p-1"><i class="fa-solid fa-trash-can"></i></button>
-          </div>
+          <div><input type="text" value="${d.sn}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold" id="dev_sn_${d.id}"></div>
+          <div><input type="text" value="${d.name}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100" id="dev_name_${d.id}"></div>
+          <div><input type="text" value="${d.debit}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="dev_deb_${d.id}"></div>
+          <div><input type="text" value="${d.credit}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono text-amber-300" id="dev_crd_${d.id}"></div>
+          <div class="flex justify-end"><button onclick="removeDevice(${d.id})" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div>
         `;
         container.appendChild(div);
       });
     }
-
     function addDeviceRowManual() {
-      const activeComp = getActiveCompany();
-      appData.devices.push({
-        id: Date.now(),
-        companyId: activeComp.id,
-        sn: '',
-        name: 'ახალი ობიექტი',
-        debit: '1110',
-        credit: '1410\\001'
-      });
+      appData.devices.push({ id: Date.now(), companyId: appData.activeCompanyId, sn: '', name: 'ახალი ობიექტი', debit: '1110', credit: '1410\\001' });
       renderDeviceRows();
     }
-
-    function removeDeviceRowItem(id) {
+    function removeDevice(id) {
       appData.devices = appData.devices.filter(d => d.id !== id);
       renderDeviceRows();
     }
-
     function saveDeviceMappings() {
-      const activeComp = getActiveCompany();
-      const compDevices = appData.devices.filter(d => d.companyId === activeComp.id);
-      compDevices.forEach(d => {
+      const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
+      devs.forEach(d => {
         const sn = document.getElementById(`dev_sn_${d.id}`);
         const name = document.getElementById(`dev_name_${d.id}`);
         const deb = document.getElementById(`dev_deb_${d.id}`);
@@ -1524,73 +1246,6 @@
       saveData();
       closeDeviceMapModal();
       alert('აპარატების ქვეანგარიშები შენახულია!');
-    }
-
-    function openCompanyModal() {
-      renderCompaniesList();
-      document.getElementById('companyModal').classList.remove('hidden');
-    }
-
-    function closeCompanyModal() {
-      document.getElementById('companyModal').classList.add('hidden');
-    }
-
-    function renderCompaniesList() {
-      const list = document.getElementById('companiesList');
-      list.innerHTML = '';
-      appData.companies.forEach(comp => {
-        const isCurrent = comp.id === appData.activeCompanyId;
-        const devCount = appData.devices.filter(d => d.companyId === comp.id).length;
-        const div = document.createElement('div');
-        div.className = `p-3 rounded-xl border flex items-center justify-between cursor-pointer transition text-xs ${
-          isCurrent ? 'bg-indigo-950/50 border-indigo-500 text-indigo-200 ring-1 ring-indigo-500' : 'bg-slate-900/60 border-slate-700 hover:border-slate-600 text-slate-200'
-        }`;
-        div.innerHTML = `
-          <div onclick="selectCompany(${comp.id})" class="flex-1 flex items-center gap-2">
-            <i class="fa-solid fa-building ${isCurrent ? 'text-indigo-400' : 'text-slate-500'}"></i>
-            <div>
-              <span class="font-bold block">${comp.name}</span>
-              <span class="text-[10px] text-slate-400">${devCount} სალარო აპარატი</span>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            ${isCurrent ? '<span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded font-semibold">არჩეულია</span>' : ''}
-            <button onclick="deleteCompany(${comp.id})" class="text-slate-500 hover:text-rose-400 p-1" title="წაშლა"><i class="fa-solid fa-trash-can"></i></button>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    function addNewCompany() {
-      const nameInput = document.getElementById('newCompanyName');
-      const name = nameInput.value.trim();
-      if (!name) return;
-      const newId = Date.now();
-      appData.companies.push({ id: newId, name: name });
-      appData.activeCompanyId = newId;
-      saveData();
-      nameInput.value = '';
-      initUI();
-      closeCompanyModal();
-      resetAllData();
-      resetAuditData();
-    }
-
-    function deleteCompany(id) {
-      if (appData.companies.length <= 1) {
-        alert('მინიმუმ ერთი კომპანია უნდა დარჩეს!');
-        return;
-      }
-      if (!confirm('ნამდვილად გსურთ კომპანიის წაშლა?')) return;
-      appData.companies = appData.companies.filter(c => c.id !== id);
-      appData.devices = appData.devices.filter(d => d.companyId !== id);
-      if (appData.activeCompanyId === id) appData.activeCompanyId = appData.companies[0].id;
-      saveData();
-      initUI();
-      renderCompaniesList();
-      resetAllData();
-      resetAuditData();
     }
 
     initUI();
