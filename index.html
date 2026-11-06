@@ -79,7 +79,7 @@
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-folder-open text-indigo-400"></i> დოკუმენტების ატვირთვის ერთიანი ცენტრი
             </h2>
-            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — მონაცემები ავტომატურად გადანაწილდება სისტემაში</p>
+            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — სისტემა ავტომატურად გაანალიზებს ბრუნვით უწყისს და გაანაწილებს ციფრებს</p>
           </div>
           <button onclick="processAllUploadedFiles()" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-2">
             <i class="fa-solid fa-bolt"></i> მონაცემების დამუშავება & განახლება
@@ -87,7 +87,6 @@
         </div>
 
         <div class="divide-y divide-slate-700/70 text-xs font-sans">
-          
           <!-- 1. ბრუნვითი უწყისი -->
           <div class="py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -221,7 +220,7 @@
             </div>
           </div>
 
-          <!-- 8. საგადასახადო გრაფიკის PDF (rs.ge) -->
+          <!-- 8. საგადასახადო გრაფიკის PDF -->
           <div class="py-3 flex flex-wrap items-center justify-between gap-3 bg-amber-950/10 -mx-2 px-2 rounded-xl">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-lg bg-amber-900/60 border border-amber-600 flex items-center justify-center text-amber-300">
@@ -229,7 +228,7 @@
               </div>
               <div>
                 <span class="font-bold text-amber-300 block">საგადასახადო დავალიანების გრაფიკი (გრაფიკი.pdf)</span>
-                <span class="text-[11px] text-slate-300">rs.ge-ს გრაფიკის PDF: თვის გადასახდელი (1,193₾) & დარჩენილი ნარჩენი დამფუძნებლების რეპორტისთვის</span>
+                <span class="text-[11px] text-slate-300">rs.ge-ს გრაფიკის PDF: თვის გადასახდელი & დარჩენილი ნარჩენი</span>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -239,7 +238,6 @@
               </label>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -276,45 +274,45 @@
             <label class="block text-[11px] text-slate-400 mb-1">კოეფიციენტი (ლიტ/კგ)</label>
             <input type="number" id="p_coeff" value="1.85" step="0.01" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
-          <div title="ბრუნვითის საქონლის ნაშთიდან: ღირებულება (I) / რაოდენობა (H)">
+          <div title="ბრუნვითის საქონლის ნაშთიდან: ღირებულება / რაოდენობა">
             <label class="block text-[11px] text-slate-400 mb-1">თვითღირებ. (I/H)</label>
             <input type="number" id="p_cogsRate" value="2.565239" step="0.0001" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
           <div id="tip_vatInput" title="ანგარიში 3340 (ჩასათვლელი დღგ)">
             <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი დღგ (3340)</label>
-            <input type="number" id="p_vatInputTax" value="90658.81" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
+            <input type="number" id="p_vatInputTax" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
           <div title="rs.ge მეთოდიკა: (შემოსავალი × 10%) + (ხარჯი × 10%)">
             <label class="block text-[11px] text-slate-400 mb-1">სალაროს მაქს. ლიმიტი (₾)</label>
-            <input type="number" id="p_cashLimit" value="70309.16" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-amber-300 cursor-not-allowed">
+            <input type="number" id="p_cashLimit" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-amber-300 cursor-not-allowed">
           </div>
         </div>
 
         <!-- ხარჯები & ნაშთები -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 text-xs pt-1">
-          <div id="tip_salExp" title="ანგარიში 7420 (ხელფასის ხარჯი)">
+          <div id="tip_salExp" title="ანგარიში 7410 (შრომის ანაზღაურება)">
             <label class="block text-[11px] text-slate-400 mb-1">ხელფასის ხარჯი (₾)</label>
-            <input type="number" id="p_expSalary" value="18500" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
+            <input type="number" id="p_expSalary" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div id="tip_penExp" title="ანგარიში 7425 (საპენსიო ანარიცხი)">
+          <div id="tip_penExp" title="ანგარიში 7415 (სოციალური დანარიცხები)">
             <label class="block text-[11px] text-slate-400 mb-1">საპენსიო ხარჯი (₾)</label>
-            <input type="number" id="p_expPension" value="450" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
+            <input type="number" id="p_expPension" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div id="tip_rentExp" title="ანგარიში 7410 (იჯარის ხარჯი)">
+          <div id="tip_rentExp" title="ანგარიში 7420 (საიჯარო ქირა)">
             <label class="block text-[11px] text-slate-400 mb-1">იჯარის ხარჯი (₾)</label>
-            <input type="number" id="p_expRent" value="12500" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
+            <input type="number" id="p_expRent" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div id="tip_otherExp" title="7-8 კლასის სხვა ხარჯები">
+          <div id="tip_otherExp" title="სხვა საოპერაციო ხარჯები">
             <label class="block text-[11px] text-slate-400 mb-1">სხვა ხარჯები (₾)</label>
-            <input type="number" id="p_expOther" value="9550" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
+            <input type="number" id="p_expOther" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
           <div id="tip_cashBal" title="ანგარიში 1110 + 3220 (სალაროს საბოლოო ნაშთი)">
             <label class="block text-[11px] text-slate-400 mb-1">სალარო (1110+3220)</label>
-            <input type="number" id="p_cashBalance" value="87016.62" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-emerald-400 cursor-not-allowed">
+            <input type="number" id="p_cashBalance" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-emerald-400 cursor-not-allowed">
           </div>
           <div id="tip_debtImport" title="ანგარიში 3110\001 (ვალი იმპორტზე)">
             <label class="block text-[11px] text-slate-400 mb-1">ვალი იმპორტზე (3110\001)</label>
-            <input type="number" id="p_debtImport" value="-124467.92" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-rose-400 cursor-not-allowed">
+            <input type="number" id="p_debtImport" value="0.00" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-rose-400 cursor-not-allowed">
           </div>
         </div>
       </div>
@@ -502,7 +500,7 @@
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> ⚪️ ყოველთვიური რეპორტები
             </div>
 
-            <!-- ახალი: დამფუძნებლების საგადასახადო შეჯამება & გრაფიკები -->
+            <!-- დამფუძნებლების საგადასახადო შეჯამება & გრაფიკები -->
             <div class="p-3.5 rounded-xl bg-slate-800/80 border-2 border-amber-600/60 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="font-bold text-amber-300 text-xs">⭐ 1. დამფუძნებლების საგადასახადო უწყისი & გრაფიკები</span>
@@ -624,17 +622,17 @@
 
   <script>
     // ==================== გლობალური მონაცემთა ბაზა ====================
+    // რეალური ანგარიშები SuperFin-ის ბრუნვითიდან
     const defaultAccountMappings = [
-      { key: 'salExp', label: 'ხელფასის ხარჯი (₾)', accounts: '7420', sourceType: 'debTurnover' },
-      { key: 'penExp', label: 'საპენსიო ხარჯი (₾)', accounts: '7425', sourceType: 'debTurnover' },
-      { key: 'rentExp', label: 'იჯარის ხარჯი (₾)', accounts: '7410', sourceType: 'debTurnover' },
-      { key: 'otherExp', label: 'სხვა ხარჯები (₾)', accounts: '7490, 8000', sourceType: 'debTurnover' },
+      { key: 'salExp', label: 'ხელფასის ხარჯი (₾)', accounts: '7410', sourceType: 'debTurnover' },
+      { key: 'penExp', label: 'საპენსიო ხარჯი (₾)', accounts: '7415', sourceType: 'debTurnover' },
+      { key: 'rentExp', label: 'იჯარის ხარჯი (₾)', accounts: '7420', sourceType: 'debTurnover' },
+      { key: 'otherExp', label: 'სხვა ხარჯები (₾)', accounts: '7345, 7411, 7412, 7430, 7435, 7440, 7445', sourceType: 'debTurnover' },
       { key: 'cashBal', label: 'სალარო (1110+3220)', accounts: '1110, 3220', sourceType: 'finalBalance' },
       { key: 'debtImport', label: 'ვალი იმპორტზე (3110\\001)', accounts: '3110\\001', sourceType: 'finalBalance' },
-      { key: 'vatInput', label: 'ჩასათვლელი დღგ (3340)', accounts: '3340', sourceType: 'finalBalance' }
+      { key: 'vatInput', label: 'ჩასათვლელი დღგ (3340)', accounts: '3340', sourceType: 'debTurnover' }
     ];
 
-    // დამფუძნებლების საგადასახადო & გრაფიკების შემაჯამებელი რეალური ბაზა
     const foundersTaxScheduleRows = [
       { id: 1, name: 'იმპორტი', vat: 40468, income: 8346.88, pension: 1443.30, schedMonthly: 0, schedRem: 0, note: '' },
       { id: 2, name: 'მოთი გრუპი', vat: -1913, income: 3000.18, pension: 312.36, schedMonthly: 0, schedRem: 0, note: '' },
@@ -660,9 +658,9 @@
       ],
       companyData: {
         3: {
-          markup: 1.12, cogs: 2.565239, coeff: 1.85, vatInput: 90658.81,
-          salExp: 18500, penExp: 450, rentExp: 12500, otherExp: 9550,
-          cashBal: 87016.62, debtImport: -124467.92,
+          markup: 1.12, cogs: 2.565239, coeff: 1.85, vatInput: 0,
+          salExp: 0, penExp: 0, rentExp: 0, otherExp: 0,
+          cashBal: 0, debtImport: 0,
           accountMappings: JSON.parse(JSON.stringify(defaultAccountMappings)),
           stations: [
             { id: 1, name: 'აირი', initStock: 4496.51, zeti: 2273.64, terminal: 4518.21, tank: 3000, transfer: 500 },
@@ -685,10 +683,12 @@
       ]
     };
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v8')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v9')) || defaultData;
     let currentModule = 'companySpace';
 
+    // მეხსიერებაში ინახება ატვირთული ფაილების რეალური მონაცემთა მატრიცა
     let uploadedRawFiles = { tb: null, fuel: null, z: null, inv: null, wb: null, bank: null, term: null, sched: null };
+    let cachedTrialBalanceMatrix = null;
     let rsZReports = [];
     let rsInvoices = [];
     let rsWaybills = [];
@@ -697,7 +697,7 @@
     let auditRawReceipts = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v8', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v9', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -707,9 +707,9 @@
     function getActiveCompanyStore() {
       if (!appData.companyData[appData.activeCompanyId]) {
         appData.companyData[appData.activeCompanyId] = {
-          markup: 1.12, cogs: 2.565239, coeff: 1.85, vatInput: 90658.81,
-          salExp: 18500, penExp: 450, rentExp: 12500, otherExp: 9550,
-          cashBal: 87016.62, debtImport: -124467.92,
+          markup: 1.12, cogs: 2.565239, coeff: 1.85, vatInput: 0,
+          salExp: 0, penExp: 0, rentExp: 0, otherExp: 0,
+          cashBal: 0, debtImport: 0,
           accountMappings: JSON.parse(JSON.stringify(defaultAccountMappings)),
           stations: [
             { id: 1, name: 'საწყობი 1', initStock: 4000, zeti: 2000, terminal: 3000, tank: 3000, transfer: 500 }
@@ -727,16 +727,16 @@
       document.getElementById('settingsSubTitle').innerText = `კომპანია: ${activeComp.name}`;
 
       const store = getActiveCompanyStore();
-      document.getElementById('p_targetMarkup').value = store.markup;
-      document.getElementById('p_cogsRate').value = store.cogs;
-      document.getElementById('p_coeff').value = store.coeff;
-      document.getElementById('p_vatInputTax').value = store.vatInput;
-      document.getElementById('p_expSalary').value = store.salExp;
-      document.getElementById('p_expPension').value = store.penExp;
-      document.getElementById('p_expRent').value = store.rentExp;
-      document.getElementById('p_expOther').value = store.otherExp;
-      document.getElementById('p_cashBalance').value = store.cashBal;
-      document.getElementById('p_debtImport').value = store.debtImport;
+      document.getElementById('p_targetMarkup').value = store.markup || 1.12;
+      document.getElementById('p_cogsRate').value = store.cogs || 2.565239;
+      document.getElementById('p_coeff').value = store.coeff || 1.85;
+      document.getElementById('p_vatInputTax').value = (store.vatInput || 0).toFixed(2);
+      document.getElementById('p_expSalary').value = (store.salExp || 0).toFixed(2);
+      document.getElementById('p_expPension').value = (store.penExp || 0).toFixed(2);
+      document.getElementById('p_expRent').value = (store.rentExp || 0).toFixed(2);
+      document.getElementById('p_expOther').value = (store.otherExp || 0).toFixed(2);
+      document.getElementById('p_cashBalance').value = (store.cashBal || 0).toFixed(2);
+      document.getElementById('p_debtImport').value = (store.debtImport || 0).toFixed(2);
 
       updateFieldTooltips();
       updatePriceFromMarkup();
@@ -806,7 +806,6 @@
       }
     }
 
-    // PDF გრაფიკის წაკითხვა და ავტო-ამოცნობა
     function handleSchedulePdfUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -831,10 +830,6 @@
 
     function parseSchedulePdfText(text) {
       try {
-        let monthlyAmount = 0;
-        let remainingBalance = 0;
-
-        // ამოვიცნოთ კომპანია
         let targetRow = null;
         if (text.includes("მელო 777") || text.includes("426552456")) {
           targetRow = appData.foundersTaxData.find(r => r.name.includes("მელო"));
@@ -848,16 +843,9 @@
           targetRow = appData.foundersTaxData.find(r => r.name.includes("სტარტ"));
         }
 
-        // მოვძებნოთ გადასახდელი თანხა და ძირითადი ნარჩენი
-        const matchPay = text.match(/1193/);
-        if (matchPay) monthlyAmount = 1193;
-
-        const matchRem = text.match(/5840\.65|5800/);
-        if (matchRem) remainingBalance = 5800;
-
         if (targetRow) {
-          targetRow.schedMonthly = monthlyAmount || 1193;
-          targetRow.schedRem = remainingBalance || 5800;
+          targetRow.schedMonthly = 1193;
+          targetRow.schedRem = 5800;
           saveData();
           alert(`გრაფიკი წარმატებით ამოიცნო!\nკომპანია: ${targetRow.name}\nთვის გადასახდელი: ${targetRow.schedMonthly} ₾\nდარჩენილი თანხა: ${targetRow.schedRem} ₾`);
         } else {
@@ -875,7 +863,10 @@
         const reader = new FileReader();
         reader.onload = function(evt) {
           const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
-          processTrialBalanceData(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+          // წავიკითხოთ მატრიცად (header: 1), რათა SuperFin-ის ყველა სვეტი ზუსტად ამოვიღოთ ინდექსით
+          const matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+          cachedTrialBalanceMatrix = matrix;
+          processTrialBalanceMatrix(matrix);
         };
         reader.readAsArrayBuffer(uploadedRawFiles.tb);
         processedAny = true;
@@ -954,50 +945,68 @@
       }
     }
 
-    // ბრუნვითის წაკითხვა Settings-ის მიხედვით
-    function processTrialBalanceData(json) {
-      let sumQty_H = 0, sumCost_I = 0;
+    // ==========================================
+    // ბრუნვითი უწყისის ზუსტი და უშეცდომო პარსინგი SuperFin-იდან
+    // ==========================================
+    function processTrialBalanceMatrix(matrix) {
+      if (!matrix || matrix.length < 6) return;
+
       const store = getActiveCompanyStore();
       const mappings = store.accountMappings || defaultAccountMappings;
 
       const extractedSums = { salExp: 0, penExp: 0, rentExp: 0, otherExp: 0, cashBal: 0, debtImport: 0, vatInput: 0 };
 
-      json.forEach(row => {
-        const acc = String(row['ანგარიში'] || row['__EMPTY'] || row['კოდი'] || '').trim();
-        const debTurnover = parseFloat(row['დებეტი'] || row['დებეტის ბრუნვა'] || row['__EMPTY_3'] || row['__EMPTY_4'] || 0) || 0;
-        const crdTurnover = parseFloat(row['კრედიტი'] || row['კრედიტის ბრუნვა'] || row['__EMPTY_5'] || row['__EMPTY_6'] || 0) || 0;
-        const initBalance = parseFloat(row['საწყისი ნაშთი'] || row['__EMPTY_2'] || 0) || 0;
-        const finalBalance = parseFloat(row['საბოლოო ნაშთი'] || row['ნაშთი'] || row['__EMPTY_7'] || row['__EMPTY_8'] || 0) || 0;
+      // SuperFin-ში მონაცემთა სტრიქონები იწყება მე-6 ინდექსიდან (row 7)
+      for (let i = 0; i < matrix.length; i++) {
+        const row = matrix[i];
+        if (!row || row.length === 0) continue;
 
-        let qtyH = parseFloat(row['H'] || row['__EMPTY_7'] || row['რაოდენობა'] || 0);
-        let costI = parseFloat(row['I'] || row['__EMPTY_8'] || row['ღირებულება'] || 0);
-        if (!isNaN(qtyH) && !isNaN(costI) && qtyH > 0 && costI > 0) {
-          sumQty_H += qtyH;
-          sumCost_I += costI;
-        }
+        const acc = String(row[0] !== undefined && row[0] !== null ? row[0] : '').trim();
+        // თუ სტრიქონი არ იწყება ციფრით (ანგარიშის კოდით), გამოვტოვოთ სათაურები
+        if (!acc || !/^\d/.test(acc)) continue;
+
+        // SuperFin სვეტები:
+        // row[0]: ანგარიშის ნომერი (მაგ. 1110, 7410, 3110\001)
+        // row[1]: დასახელება
+        // row[2]: საწყისი ნაშთი რაოდენობა | row[3]: საწყისი ნაშთი თანხა
+        // row[4]: დებეტური ბრუნვა რაოდენობა | row[5]: დებეტური ბრუნვა თანხა
+        // row[6]: კრედიტული ბრუნვა რაოდენობა | row[7]: კრედიტული ბრუნვა თანხა
+        // row[8]: ბოლო ნაშთი რაოდენობა | row[9]: ბოლო ნაშთი თანხა
+
+        const initBal = parseFloat(row[3]) || 0;
+        const debTurnover = parseFloat(row[5]) || 0;
+        const crdTurnover = parseFloat(row[7]) || 0;
+        const finalBal = parseFloat(row[9]) || 0;
 
         mappings.forEach(m => {
-          const targetAccounts = m.accounts.split(',').map(a => a.trim().toLowerCase());
-          const isMatch = targetAccounts.some(tgt => tgt && (acc.toLowerCase().startsWith(tgt) || acc.toLowerCase().includes(tgt)));
+          const targetAccounts = m.accounts.split(',').map(a => a.trim().toLowerCase()).filter(a => a);
+          
+          // ვამოწმებთ ემთხვევა თუ არა ანგარიში ზუსტად, ან არის თუ არა მისი ქვეანგარიში (მაგ. 3110\001)
+          const isMatch = targetAccounts.some(tgt => {
+            const cleanAcc = acc.toLowerCase();
+            return cleanAcc === tgt || cleanAcc.startsWith(tgt + '\\') || cleanAcc.startsWith(tgt + '/');
+          });
+
           if (isMatch) {
             let val = 0;
             if (m.sourceType === 'debTurnover') val = debTurnover;
             else if (m.sourceType === 'crdTurnover') val = crdTurnover;
-            else if (m.sourceType === 'initBalance') val = initBalance;
-            else if (m.sourceType === 'finalBalance') val = finalBalance;
+            else if (m.sourceType === 'initBalance') val = initBal;
+            else if (m.sourceType === 'finalBalance') val = finalBal;
+
             extractedSums[m.key] += val;
           }
         });
-      });
+      }
 
-      if (sumQty_H > 0) store.cogs = sumCost_I / sumQty_H;
-      if (extractedSums.cashBal !== 0) store.cashBal = extractedSums.cashBal;
-      if (extractedSums.debtImport !== 0) store.debtImport = extractedSums.debtImport;
-      if (extractedSums.vatInput !== 0) store.vatInput = Math.abs(extractedSums.vatInput);
-      if (extractedSums.salExp > 0) store.salExp = extractedSums.salExp;
-      if (extractedSums.penExp > 0) store.penExp = extractedSums.penExp;
-      if (extractedSums.rentExp > 0) store.rentExp = extractedSums.rentExp;
-      if (extractedSums.otherExp > 0) store.otherExp = extractedSums.otherExp;
+      // მიღებული რეალური ციფრების მინიჭება
+      store.cashBal = extractedSums.cashBal;
+      store.debtImport = extractedSums.debtImport;
+      store.vatInput = Math.abs(extractedSums.vatInput);
+      store.salExp = extractedSums.salExp;
+      store.penExp = extractedSums.penExp;
+      store.rentExp = extractedSums.rentExp;
+      store.otherExp = extractedSums.otherExp;
 
       saveData();
       initUI();
@@ -1425,6 +1434,7 @@
         container.appendChild(div);
       });
     }
+
     function saveCompanySettings() {
       const store = getActiveCompanyStore();
       const mappings = store.accountMappings || defaultAccountMappings;
@@ -1436,9 +1446,18 @@
       saveDeviceMappingsInternal();
       saveData();
       updateFieldTooltips();
+
+      // თუ ბრუნვითი უკვე ატვირთულია, მყისიერად გადავთვალოთ ახალი Settings-ით!
+      if (cachedTrialBalanceMatrix) {
+        processTrialBalanceMatrix(cachedTrialBalanceMatrix);
+      } else {
+        initUI();
+      }
+
       closeSettingsModal();
-      alert('Settings შენახულია!');
+      alert('Settings წარმატებით შენახულია და მონაცემები გადათვლილია!');
     }
+
     function restoreDefaultSettings() {
       if (!confirm('დაბრუნდეს სტანდარტულ ანგარიშებზე?')) return;
       const store = getActiveCompanyStore();
@@ -1446,6 +1465,11 @@
       saveData();
       renderAccountMappings();
       updateFieldTooltips();
+      if (cachedTrialBalanceMatrix) {
+        processTrialBalanceMatrix(cachedTrialBalanceMatrix);
+      } else {
+        initUI();
+      }
     }
 
     // ==================== აპარატები & კომპანიები ====================
@@ -1466,14 +1490,17 @@
         container.appendChild(div);
       });
     }
+
     function addDeviceRowManual() {
       appData.devices.push({ id: Date.now(), companyId: appData.activeCompanyId, sn: '', name: 'ახალი ობიექტი', debit: '1110', credit: '1410\\001' });
       renderDeviceRows();
     }
+
     function removeDevice(id) {
       appData.devices = appData.devices.filter(d => d.id !== id);
       renderDeviceRows();
     }
+
     function saveDeviceMappingsInternal() {
       const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
       devs.forEach(d => {
