@@ -28,7 +28,7 @@
 
   <div class="max-w-7xl mx-auto space-y-6">
 
-    <!-- Header: მარცხნივ ლოგო & სათაური, მარჯვნივ განცალკევებით კომპანიის გადამრთველი & აპარატები -->
+    <!-- Header: მარცხნივ ლოგო & სათაური, მარჯვნივ განცალკევებით კომპანიის გადამრთველი & ⚙️ პარამეტრები (Settings) -->
     <header class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-wrap items-center justify-between gap-4 shadow-lg no-print">
       <div class="flex items-center gap-3">
         <button onclick="resetCurrentView()" title="გასუფთავება (Reset)" class="w-12 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 flex items-center justify-center text-white text-xl shadow-md transition cursor-pointer">
@@ -40,13 +40,13 @@
         </div>
       </div>
 
-      <!-- განცალკევებული მარჯვენა ზედა ბლოკი: შპს გადამრთველი & აპარატები -->
+      <!-- განცალკევებული მარჯვენა ზედა ბლოკი: შპს გადამრთველი & ⚙️ Settings -->
       <div class="flex items-center gap-2.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-700 shadow-inner">
         <button onclick="openCompanyModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl border border-indigo-400/40 flex items-center gap-2 transition shadow-md">
           <i class="fa-solid fa-building"></i> <span id="headerCompanyText">შპს გრინ ლაინ 888</span>
         </button>
-        <button onclick="openDeviceMapModal()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl border border-amber-400/40 flex items-center gap-2 transition shadow-md">
-          <i class="fa-solid fa-cash-register"></i> აპარატები
+        <button onclick="openSettingsModal()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl border border-amber-400/40 flex items-center gap-2 transition shadow-md" title="ანგარიშების კოდებისა და ნაშთების მართვა">
+          <i class="fa-solid fa-gear"></i> Settings
         </button>
       </div>
     </header>
@@ -78,17 +78,15 @@
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-folder-open text-indigo-400"></i> დოკუმენტების ატვირთვის ერთიანი ცენტრი
             </h2>
-            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — მონაცემები ავტომატურად განაწილდება პირად სივრცესა და რეპორტებში</p>
+            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — მონაცემები ავტომატურად გადანაწილდება Settings-ში გაწერილი ანგარიშების მიხედვით</p>
           </div>
           <button onclick="processAllUploadedFiles()" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-2">
             <i class="fa-solid fa-bolt"></i> მონაცემების დამუშავება & განახლება
           </button>
         </div>
 
-        <!-- ფაილების ვერტიკალური ჩამონათვალი (List View) -->
         <div class="divide-y divide-slate-700/70 text-xs font-sans">
           
-          <!-- 1. ბრუნვითი უწყისი -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-indigo-950/60 border border-indigo-800/60 flex items-center justify-center text-indigo-400 text-base">
@@ -96,7 +94,7 @@
               </div>
               <div>
                 <span class="font-bold text-slate-200 block text-xs">SuperFin ბრუნვითი უწყისი (.xlsx, .xls)</span>
-                <span class="text-[11px] text-slate-400">I/H თვითღირებულება, სალარო (1110+3220), ვალი იმპორტზე (3110\001), ხარჯები და ჩასათვლელი დღგ (3340)</span>
+                <span class="text-[11px] text-slate-400">იკითხება Settings-ში მითითებული ანგარიშებისა და ნაშთების (დებეტი/კრედიტი/ნაშთი) მიხედვით</span>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -108,7 +106,6 @@
             </div>
           </div>
 
-          <!-- 2. საწყობების მოძრაობა -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-emerald-950/60 border border-emerald-800/60 flex items-center justify-center text-emerald-400 text-base">
@@ -128,7 +125,6 @@
             </div>
           </div>
 
-          <!-- 3. rs.ge Z-ჩეკების რეესტრი -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-800/60 flex items-center justify-center text-amber-400 text-base">
@@ -148,7 +144,6 @@
             </div>
           </div>
 
-          <!-- 4. rs.ge ა/ფაქტურები -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-cyan-950/60 border border-cyan-800/60 flex items-center justify-center text-cyan-400 text-base">
@@ -168,7 +163,6 @@
             </div>
           </div>
 
-          <!-- 5. rs.ge ზედნადებები (მისამართებით) -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-rose-950/60 border border-rose-800/60 flex items-center justify-center text-rose-400 text-base">
@@ -188,7 +182,6 @@
             </div>
           </div>
 
-          <!-- 6. ბანკის ამონაწერი -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/60 flex items-center justify-center text-blue-400 text-base">
@@ -208,7 +201,6 @@
             </div>
           </div>
 
-          <!-- 7. ტერმინალის დეტალური ამონაწერი ბანკიდან -->
           <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/60 flex items-center justify-center text-purple-400 text-base">
@@ -216,7 +208,7 @@
               </div>
               <div>
                 <span class="font-bold text-slate-200 block text-xs">ტერმინალის დეტალური ამონაწერი ბანკიდან (.xlsx, .xls, .csv)</span>
-                <span class="text-[11px] text-slate-400">თითოეული POS ტერმინალის (TID) ტრანზაქციების დეტალური რეესტრი, საკომისიოსა და ობიექტების (1411) მიხედვით შედარება</span>
+                <span class="text-[11px] text-slate-400">თითოეული POS ტერმინალის (TID) ტრანზაქციების დეტალური რეესტრი და საკომისიოების კონტროლი</span>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -241,67 +233,96 @@
             <i class="fa-solid fa-building-user"></i>
             <span><span id="companySpaceName">შპს „გრინ ლაინ 888“</span> — პირადი ფინანსური პარამეტრები & კალკულატორი</span>
           </div>
-          <button onclick="calculatePnlReport()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
-            <i class="fa-solid fa-calculator"></i> გადათვლა & შენახვა
-          </button>
+          <div class="flex gap-2">
+            <button onclick="openSettingsModal()" class="px-3 py-1.5 bg-amber-600/80 hover:bg-amber-600 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
+              <i class="fa-solid fa-sliders"></i> ანგარიშების მართვა
+            </button>
+            <button onclick="calculatePnlReport()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs shadow flex items-center gap-1.5">
+              <i class="fa-solid fa-calculator"></i> გადათვლა & შენახვა
+            </button>
+          </div>
         </div>
 
         <p class="text-xs text-slate-400">
-          აქ ხედავთ და მართავთ არჩეული კომპანიის პირად პარამეტრებს. ხარჯები, სალარო, ვალი და ჩასათვლელი დღგ ავტომატურად ივსება ბრუნვითიდან და დაბლოკილია.
+          აქ ხედავთ და მართავთ არჩეული კომპანიის პირად პარამეტრებს. მიიტანეთ კურსორი ნებისმიერ გრაფასთან, რათა დაინახოთ მიბმული ანგარიშები და მონაცემის წყარო.
         </p>
 
-        <!-- პარამეტრების ველები -->
+        <!-- პარამეტრების ველები (ზედა რიგი - Tooltips-ით) -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 text-xs">
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">სასურველი ფასნამატი</label>
+          <div title="ფასნამატის კოეფიციენტი (მაგ. 1.12 ნიშნავს 12%-იან მოგების მარჟას თვითღირებულებაზე)">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              სასურველი ფასნამატი <i class="fa-solid fa-circle-info text-[9px] text-slate-500"></i>
+            </label>
             <input type="number" id="p_targetMarkup" value="1.12" step="0.01" oninput="updatePriceFromMarkup()" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-amber-300">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">სარეალიზაციო ფასი (₾)</label>
+          <div title="გამოითვლება: ფასნამატი × (თვითღირებულება × 1.18) / კოეფიციენტი (დამრგვალებული 2 ნიშნამდე)">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              სარეალიზაციო ფასი (₾) <i class="fa-solid fa-calculator text-[9px] text-emerald-500"></i>
+            </label>
             <input type="number" id="p_price" value="1.84" step="0.01" readonly class="w-full p-2 bg-slate-900/70 rounded-lg border border-slate-700 font-bold text-emerald-400 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">კოეფიციენტი (ლიტ/კგ)</label>
+          <div title="გაზის სიმკვრივის კოეფიციენტი ლიტრის კილოგრამში გადასაყვანად (სტანდარტულად: 1.85)">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              კოეფიციენტი (ლიტ/კგ) <i class="fa-solid fa-circle-info text-[9px] text-slate-500"></i>
+            </label>
             <input type="number" id="p_coeff" value="1.85" step="0.01" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">თვითღირებ. (I/H)</label>
+          <div title="ითვლება ბრუნვითი უწყისის საქონლის ნაშთიდან: ჯამური ღირებულება (I სვეტი) / ჯამური რაოდენობა (H სვეტი)">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              თვითღირებ. (I/H) <i class="fa-solid fa-circle-info text-[9px] text-cyan-400"></i>
+            </label>
             <input type="number" id="p_cogsRate" value="2.565239" step="0.0001" class="w-full p-2 bg-slate-900 rounded-lg border border-slate-700 font-bold text-slate-100">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ჩასათვლელი დღგ (3340)</label>
-            <input type="number" id="p_vatInputTax" value="90658.81" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed" title="ივსება ბრუნვითი უწყისის 3340 ანგარიშიდან">
+          <div id="tip_vatInput" title="Settings-ში მიბმული ანგარიში: 3340 | წყარო: საბოლოო ნაშთი">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              ჩასათვლელი დღგ <i class="fa-solid fa-lock text-[9px] text-indigo-400"></i>
+            </label>
+            <input type="number" id="p_vatInputTax" value="90658.81" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">სალაროს მაქს. ლიმიტი (₾)</label>
-            <input type="number" id="p_cashLimit" value="70309.16" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-amber-300 cursor-not-allowed" title="გამოითვლება rs.ge მეთოდური მითითებით: 10% შემოსავალი + 10% ხარჯი">
+          <div title="rs.ge ოფიციალური მეთოდური მითითება: (თვის შემოსავლის 10%) + (თვის ხარჯის 10%). ამ ზღვარს ზემოთ ნაშთი განიხილება დირექტორის სესხად!">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              სალაროს მაქს. ლიმიტი (₾) <i class="fa-solid fa-scale-balanced text-[9px] text-amber-400"></i>
+            </label>
+            <input type="number" id="p_cashLimit" value="70309.16" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-amber-300 cursor-not-allowed">
           </div>
         </div>
 
-        <!-- ბრუნვითიდან ამოკრეფილი ხარჯები & ნაშთები (ყველა დაბლოკილია!) -->
+        <!-- ბრუნვითიდან ამოკრეფილი ხარჯები & ნაშთები (ქვედა რიგი - დინამიური Tooltips-ით) -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 text-xs pt-1">
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ხელფასის ხარჯი (₾)</label>
+          <div id="tip_salExp" title="Settings-ში მიბმული ანგარიში: 7420 | წყარო: დებეტის ბრუნვა">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              ხელფასის ხარჯი (₾) <i class="fa-solid fa-tag text-[9px] text-slate-500"></i>
+            </label>
             <input type="number" id="p_expSalary" value="18500" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">საპენსიო ხარჯი (₾)</label>
+          <div id="tip_penExp" title="Settings-ში მიბმული ანგარიში: 7425 | წყარო: დებეტის ბრუნვა">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              საპენსიო ხარჯი (₾) <i class="fa-solid fa-tag text-[9px] text-slate-500"></i>
+            </label>
             <input type="number" id="p_expPension" value="450" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">იჯარის ხარჯი (₾)</label>
+          <div id="tip_rentExp" title="Settings-ში მიბმული ანგარიში: 7410 | წყარო: დებეტის ბრუნვა">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              იჯარის ხარჯი (₾) <i class="fa-solid fa-tag text-[9px] text-slate-500"></i>
+            </label>
             <input type="number" id="p_expRent" value="12500" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">სხვა ხარჯები (₾)</label>
+          <div id="tip_otherExp" title="Settings-ში მიბმული ანგარიში: 7490, 8000 | წყარო: დებეტის ბრუნვა">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              სხვა ხარჯები (₾) <i class="fa-solid fa-tag text-[9px] text-slate-500"></i>
+            </label>
             <input type="number" id="p_expOther" value="9550" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-slate-300 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">სალარო (1110+3220)</label>
+          <div id="tip_cashBal" title="Settings-ში მიბმული ანგარიში: 1110, 3220 | წყარო: საბოლოო ნაშთი">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              სალარო (1110+3220) <i class="fa-solid fa-tag text-[9px] text-emerald-400"></i>
+            </label>
             <input type="number" id="p_cashBalance" value="87016.62" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-emerald-400 cursor-not-allowed">
           </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ვალი იმპორტზე (3110\001)</label>
+          <div id="tip_debtImport" title="Settings-ში მიბმული ანგარიში: 3110\\001 | წყარო: საბოლოო ნაშთი">
+            <label class="block text-[11px] text-slate-400 mb-1 flex items-center gap-1">
+              ვალი იმპორტზე (3110\001) <i class="fa-solid fa-tag text-[9px] text-rose-400"></i>
+            </label>
             <input type="number" id="p_debtImport" value="-124467.92" readonly class="w-full p-2 bg-slate-900/80 rounded-lg border border-slate-700 font-bold text-rose-400 cursor-not-allowed">
           </div>
         </div>
@@ -348,7 +369,7 @@
           <h2 class="text-sm font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-scale-balanced text-cyan-400"></i> rs.ge რეესტრებისა და საბანკო ამონაწერის შედარება SuperFin-თან
           </h2>
-          <p class="text-xs text-slate-400">მონაცემები ავტომატურად იკითხება „დოკუმენტების ატვირთვის“ ერთიანი ცენტრიდან (მათ შორის ტერმინალის ამონაწერი)</p>
+          <p class="text-xs text-slate-400">მონაცემები ავტომატურად იკითხება „დოკუმენტების ატვირთვის“ ერთიანი ცენტრიდან</p>
         </div>
         <button onclick="runRsReconciliation()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
           <i class="fa-solid fa-arrows-split-up-and-left"></i> შედარების გაშვება
@@ -564,22 +585,53 @@
 
   </div>
 
-  <!-- აპარატების მოდალი -->
-  <div id="deviceMapModal" class="fixed inset-0 bg-black/75 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm no-print">
-    <div class="bg-slate-800 rounded-2xl max-w-3xl w-full p-6 border border-slate-700 shadow-2xl space-y-4">
+  <!-- ==================== ⚙️ SETTINGS MODAL (საბუღალტრო ანგარიშების & ნაშთების მართვა) ==================== -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/75 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm no-print">
+    <div class="bg-slate-800 rounded-2xl max-w-4xl w-full p-6 border border-slate-700 shadow-2xl space-y-4">
+      
       <div class="flex justify-between items-center pb-3 border-b border-slate-700">
         <div>
           <h3 class="text-sm font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-cash-register text-amber-400"></i> აპარატების ინდივიდუალური ქვეანგარიშები
+            <i class="fa-solid fa-gear text-amber-400"></i> საბუღალტრო ანგარიშებისა & პარამეტრების მართვა (Settings)
           </h3>
-          <p class="text-xs text-slate-400" id="deviceMapSubTitle">კომპანია: შპს გრინ ლაინ 888</p>
+          <p class="text-xs text-slate-400" id="settingsSubTitle">კომპანია: შპს გრინ ლაინ 888</p>
         </div>
-        <button onclick="closeDeviceMapModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="max-h-[350px] overflow-y-auto space-y-2 pr-1 custom-scroll" id="deviceRowsContainer"></div>
+
+      <!-- Settings ჩანართები -->
+      <div class="flex border-b border-slate-700 text-xs">
+        <button id="setTabAccountsBtn" onclick="switchSettingsTab('accounts')" class="px-4 py-2 font-bold border-b-2 border-amber-500 text-amber-400">
+          1. გრაფების & ანგარიშების მიბმა (Mapping)
+        </button>
+        <button id="setTabDevicesBtn" onclick="switchSettingsTab('devices')" class="px-4 py-2 font-bold text-slate-400 hover:text-white">
+          2. აპარატების ქვეანგარიშები
+        </button>
+      </div>
+
+      <!-- 1. გრაფების & ანგარიშების მიბმა -->
+      <div id="setTabAccounts" class="space-y-3">
+        <p class="text-[11px] text-slate-400">
+          მიუთითეთ თითოეული გრაფისთვის ანგარიშ(ებ)ის კოდი და მონაცემის წყარო (დებეტი, კრედიტი, საწყისი თუ საბოლოო ნაშთი):
+        </p>
+        <div class="max-h-[350px] overflow-y-auto space-y-2 pr-1 custom-scroll" id="accountMappingsContainer"></div>
+      </div>
+
+      <!-- 2. აპარატების ქვეანგარიშები -->
+      <div id="setTabDevices" class="space-y-3 hidden">
+        <div class="max-h-[320px] overflow-y-auto space-y-2 pr-1 custom-scroll" id="deviceRowsContainer"></div>
+        <button onclick="addDeviceRowManual()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg font-bold">
+          + აპარატის დამატება
+        </button>
+      </div>
+
       <div class="pt-3 flex justify-between items-center border-t border-slate-700">
-        <button onclick="addDeviceRowManual()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg font-bold">+ აპარატის დამატება</button>
-        <button onclick="saveDeviceMappings()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow">შენახვა</button>
+        <button onclick="restoreDefaultSettings()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs rounded-lg font-bold">
+          სტანდარტულზე დაბრუნება
+        </button>
+        <button onclick="saveCompanySettings()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow">
+          შენახვა & გამოყენება
+        </button>
       </div>
     </div>
   </div>
@@ -604,6 +656,16 @@
 
   <script>
     // ==================== გლობალური მონაცემთა ბაზა ====================
+    const defaultAccountMappings = [
+      { key: 'salExp', label: 'ხელფასის ხარჯი (₾)', accounts: '7420', sourceType: 'debTurnover' },
+      { key: 'penExp', label: 'საპენსიო ხარჯი (₾)', accounts: '7425', sourceType: 'debTurnover' },
+      { key: 'rentExp', label: 'იჯარის ხარჯი (₾)', accounts: '7410', sourceType: 'debTurnover' },
+      { key: 'otherExp', label: 'სხვა ხარჯები (₾)', accounts: '7490, 8000', sourceType: 'debTurnover' },
+      { key: 'cashBal', label: 'სალარო (1110+3220)', accounts: '1110, 3220', sourceType: 'finalBalance' },
+      { key: 'debtImport', label: 'ვალი იმპორტზე (3110\\001)', accounts: '3110\\001', sourceType: 'finalBalance' },
+      { key: 'vatInput', label: 'ჩასათვლელი დღგ (3340)', accounts: '3340', sourceType: 'finalBalance' }
+    ];
+
     const defaultData = {
       activeCompanyId: 3,
       selectedCompanyIds: [3],
@@ -625,6 +687,7 @@
           otherExp: 9550,
           cashBal: 87016.62,
           debtImport: -124467.92,
+          accountMappings: JSON.parse(JSON.stringify(defaultAccountMappings)),
           stations: [
             { id: 1, name: 'აირი', initStock: 4496.51, zeti: 2273.64, terminal: 4518.21, tank: 3000, transfer: 500 },
             { id: 2, name: 'გოგილო', initStock: 6710.61, zeti: 1951.36, terminal: 5958.10, tank: 5000, transfer: 1000 },
@@ -649,7 +712,7 @@
       ]
     };
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v6')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v7')) || defaultData;
     let currentModule = 'companySpace';
 
     let uploadedRawFiles = { tb: null, fuel: null, z: null, inv: null, wb: null, bank: null, term: null };
@@ -662,7 +725,7 @@
     let lastGeneratedAuditReports = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v6', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v7', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -682,10 +745,14 @@
           otherExp: 9550,
           cashBal: 87016.62,
           debtImport: -124467.92,
+          accountMappings: JSON.parse(JSON.stringify(defaultAccountMappings)),
           stations: [
             { id: 1, name: 'საწყობი 1', initStock: 4000, zeti: 2000, terminal: 3000, tank: 3000, transfer: 500 }
           ]
         };
+      }
+      if (!appData.companyData[appData.activeCompanyId].accountMappings) {
+        appData.companyData[appData.activeCompanyId].accountMappings = JSON.parse(JSON.stringify(defaultAccountMappings));
       }
       return appData.companyData[appData.activeCompanyId];
     }
@@ -695,6 +762,7 @@
       if (!activeComp) return;
       document.getElementById('headerCompanyText').innerText = activeComp.name;
       document.getElementById('companySpaceName').innerText = activeComp.name;
+      document.getElementById('settingsSubTitle').innerText = `კომპანია: ${activeComp.name}`;
 
       const store = getActiveCompanyStore();
       document.getElementById('p_targetMarkup').value = store.markup;
@@ -708,9 +776,29 @@
       document.getElementById('p_cashBalance').value = store.cashBal;
       document.getElementById('p_debtImport').value = store.debtImport;
 
+      updateFieldTooltips();
       renderCompanyCheckboxes();
       updatePriceFromMarkup();
       calculatePnlReport();
+    }
+
+    function updateFieldTooltips() {
+      const store = getActiveCompanyStore();
+      const maps = store.accountMappings || defaultAccountMappings;
+
+      const sourceNames = {
+        debTurnover: 'დებეტის ბრუნვა',
+        crdTurnover: 'კრედიტის ბრუნვა',
+        initBalance: 'საწყისი ნაშთი',
+        finalBalance: 'საბოლოო ნაშთი'
+      };
+
+      maps.forEach(m => {
+        const box = document.getElementById(`tip_${m.key}`);
+        if (box) {
+          box.title = `Settings-ში მიბმული ანგარიში: ${m.accounts} | წყარო: ${sourceNames[m.sourceType] || m.sourceType}`;
+        }
+      });
     }
 
     function switchModule(mod) {
@@ -852,17 +940,30 @@
       }
     }
 
+    // ბრუნვითი უწყისის ამოკითხვა Settings-ის მიხედვით!
     function processTrialBalanceData(json) {
       let sumQty_H = 0, sumCost_I = 0;
-      let cash1110 = 0, cash3220 = 0, debt3110_001 = 0, vat3340 = 0;
-      let expSal = 0, expPen = 0, expRent = 0, expOther = 0;
+      const store = getActiveCompanyStore();
+      const mappings = store.accountMappings || defaultAccountMappings;
+
+      const extractedSums = {
+        salExp: 0,
+        penExp: 0,
+        rentExp: 0,
+        otherExp: 0,
+        cashBal: 0,
+        debtImport: 0,
+        vatInput: 0
+      };
 
       json.forEach(row => {
         const acc = String(row['ანგარიში'] || row['__EMPTY'] || row['კოდი'] || '').trim();
-        const desc = String(row['დასახელება'] || row['__EMPTY_1'] || '').toLowerCase();
         const debTurnover = parseFloat(row['დებეტი'] || row['დებეტის ბრუნვა'] || row['__EMPTY_3'] || row['__EMPTY_4'] || 0) || 0;
+        const crdTurnover = parseFloat(row['კრედიტი'] || row['კრედიტის ბრუნვა'] || row['__EMPTY_5'] || row['__EMPTY_6'] || 0) || 0;
+        const initBalance = parseFloat(row['საწყისი ნაშთი'] || row['__EMPTY_2'] || 0) || 0;
         const finalBalance = parseFloat(row['საბოლოო ნაშთი'] || row['ნაშთი'] || row['__EMPTY_7'] || row['__EMPTY_8'] || 0) || 0;
 
+        // I/H სვეტები თვითღირებულებისთვის
         let qtyH = parseFloat(row['H'] || row['__EMPTY_7'] || row['რაოდენობა'] || 0);
         let costI = parseFloat(row['I'] || row['__EMPTY_8'] || row['ღირებულება'] || 0);
         if (!isNaN(qtyH) && !isNaN(costI) && qtyH > 0 && costI > 0) {
@@ -870,28 +971,31 @@
           sumCost_I += costI;
         }
 
-        if (acc === '1110') cash1110 = finalBalance;
-        if (acc === '3220') cash3220 = finalBalance;
-        if (acc.includes('3110\\001') || acc.includes('3110/001')) debt3110_001 = finalBalance;
-        if (acc === '3340' || acc.startsWith('3340')) vat3340 = finalBalance || debTurnover;
+        // Settings-ის მიხედვით თითოეული გრაფის შემოწმება
+        mappings.forEach(m => {
+          const targetAccounts = m.accounts.split(',').map(a => a.trim().toLowerCase());
+          const isMatch = targetAccounts.some(tgt => tgt && (acc.toLowerCase().startsWith(tgt) || acc.toLowerCase().includes(tgt)));
 
-        if (acc.startsWith('7') || acc.startsWith('8')) {
-          if (acc.includes('7420') || desc.includes('ხელფას')) expSal += debTurnover;
-          else if (acc.includes('7425') || desc.includes('საპენსიო')) expPen += debTurnover;
-          else if (acc.includes('7410') || desc.includes('იჯარ')) expRent += debTurnover;
-          else expOther += debTurnover;
-        }
+          if (isMatch) {
+            let val = 0;
+            if (m.sourceType === 'debTurnover') val = debTurnover;
+            else if (m.sourceType === 'crdTurnover') val = crdTurnover;
+            else if (m.sourceType === 'initBalance') val = initBalance;
+            else if (m.sourceType === 'finalBalance') val = finalBalance;
+
+            extractedSums[m.key] += val;
+          }
+        });
       });
 
-      const store = getActiveCompanyStore();
       if (sumQty_H > 0) store.cogs = sumCost_I / sumQty_H;
-      if (cash1110 !== 0 || cash3220 !== 0) store.cashBal = cash1110 + cash3220;
-      if (debt3110_001 !== 0) store.debtImport = debt3110_001;
-      if (vat3340 !== 0) store.vatInput = Math.abs(vat3340);
-      if (expSal > 0) store.salExp = expSal;
-      if (expPen > 0) store.penExp = expPen;
-      if (expRent > 0) store.rentExp = expRent;
-      if (expOther > 0) store.otherExp = expOther;
+      if (extractedSums.cashBal !== 0) store.cashBal = extractedSums.cashBal;
+      if (extractedSums.debtImport !== 0) store.debtImport = extractedSums.debtImport;
+      if (extractedSums.vatInput !== 0) store.vatInput = Math.abs(extractedSums.vatInput);
+      if (extractedSums.salExp > 0) store.salExp = extractedSums.salExp;
+      if (extractedSums.penExp > 0) store.penExp = extractedSums.penExp;
+      if (extractedSums.rentExp > 0) store.rentExp = extractedSums.rentExp;
+      if (extractedSums.otherExp > 0) store.otherExp = extractedSums.otherExp;
 
       saveData();
       initUI();
@@ -1018,6 +1122,93 @@
       }
 
       document.getElementById('p_cashLimit').value = calculatedCashLimit.toFixed(2);
+    }
+
+    // ==================== ⚙️ SETTINGS ლოგიკა ====================
+    function openSettingsModal() {
+      switchSettingsTab('accounts');
+      renderAccountMappings();
+      renderDeviceRows();
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    function switchSettingsTab(tab) {
+      const btnAcc = document.getElementById('setTabAccountsBtn');
+      const btnDev = document.getElementById('setTabDevicesBtn');
+      const tabAcc = document.getElementById('setTabAccounts');
+      const tabDev = document.getElementById('setTabDevices');
+
+      if (tab === 'accounts') {
+        btnAcc.className = "px-4 py-2 font-bold border-b-2 border-amber-500 text-amber-400";
+        btnDev.className = "px-4 py-2 font-bold text-slate-400 hover:text-white";
+        tabAcc.classList.remove('hidden');
+        tabDev.classList.add('hidden');
+      } else {
+        btnDev.className = "px-4 py-2 font-bold border-b-2 border-amber-500 text-amber-400";
+        btnAcc.className = "px-4 py-2 font-bold text-slate-400 hover:text-white";
+        tabDev.classList.remove('hidden');
+        tabAcc.classList.add('hidden');
+      }
+    }
+
+    function renderAccountMappings() {
+      const store = getActiveCompanyStore();
+      const mappings = store.accountMappings || defaultAccountMappings;
+      const container = document.getElementById('accountMappingsContainer');
+      container.innerHTML = '';
+
+      mappings.forEach((m, idx) => {
+        const div = document.createElement('div');
+        div.className = "p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs items-center";
+        div.innerHTML = `
+          <div class="sm:col-span-4 font-bold text-slate-200">${m.label}</div>
+          <div class="sm:col-span-4">
+            <input type="text" value="${m.accounts}" id="set_acc_${idx}" placeholder="მაგ.: 7420 ან 1110, 3220" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono text-xs">
+          </div>
+          <div class="sm:col-span-4">
+            <select id="set_src_${idx}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-200 text-xs font-sans">
+              <option value="debTurnover" ${m.sourceType === 'debTurnover' ? 'selected' : ''}>დებეტის ბრუნვა</option>
+              <option value="crdTurnover" ${m.sourceType === 'crdTurnover' ? 'selected' : ''}>კრედიტის ბრუნვა</option>
+              <option value="finalBalance" ${m.sourceType === 'finalBalance' ? 'selected' : ''}>საბოლოო ნაშთი</option>
+              <option value="initBalance" ${m.sourceType === 'initBalance' ? 'selected' : ''}>საწყისი ნაშთი</option>
+            </select>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function saveCompanySettings() {
+      const store = getActiveCompanyStore();
+      const mappings = store.accountMappings || defaultAccountMappings;
+
+      mappings.forEach((m, idx) => {
+        const accInp = document.getElementById(`set_acc_${idx}`);
+        const srcSel = document.getElementById(`set_src_${idx}`);
+        if (accInp && srcSel) {
+          m.accounts = accInp.value.trim();
+          m.sourceType = srcSel.value;
+        }
+      });
+
+      saveDeviceMappingsInternal();
+      saveData();
+      updateFieldTooltips();
+      closeSettingsModal();
+      alert('Settings და ანგარიშების პარამეტრები წარმატებით შეინახა ამ კომპანიისთვის!');
+    }
+
+    function restoreDefaultSettings() {
+      if (!confirm('ნამდვილად გსურთ სტანდარტულ ანგარიშებზე დაბრუნება?')) return;
+      const store = getActiveCompanyStore();
+      store.accountMappings = JSON.parse(JSON.stringify(defaultAccountMappings));
+      saveData();
+      renderAccountMappings();
+      updateFieldTooltips();
     }
 
     // ==================== 5. რეპორტების ცენტრი ====================
@@ -1306,7 +1497,52 @@
       XLSX.writeFile(wb, `Manager_Audit_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    // ==================== მოდალები ====================
+    // ==================== აპარატების შიდა მართვა Settings-ში ====================
+    function renderDeviceRows() {
+      const container = document.getElementById('deviceRowsContainer');
+      container.innerHTML = '';
+      const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
+      devs.forEach(d => {
+        const div = document.createElement('div');
+        div.className = "p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs items-center";
+        div.innerHTML = `
+          <div><input type="text" value="${d.sn}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold" id="dev_sn_${d.id}"></div>
+          <div><input type="text" value="${d.name}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100" id="dev_name_${d.id}"></div>
+          <div><input type="text" value="${d.debit}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="dev_deb_${d.id}"></div>
+          <div><input type="text" value="${d.credit}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono text-amber-300" id="dev_crd_${d.id}"></div>
+          <div class="flex justify-end"><button onclick="removeDevice(${d.id})" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addDeviceRowManual() {
+      appData.devices.push({ id: Date.now(), companyId: appData.activeCompanyId, sn: '', name: 'ახალი ობიექტი', debit: '1110', credit: '1410\\001' });
+      renderDeviceRows();
+    }
+
+    function removeDevice(id) {
+      appData.devices = appData.devices.filter(d => d.id !== id);
+      renderDeviceRows();
+    }
+
+    function saveDeviceMappingsInternal() {
+      const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
+      devs.forEach(d => {
+        const sn = document.getElementById(`dev_sn_${d.id}`);
+        const name = document.getElementById(`dev_name_${d.id}`);
+        const deb = document.getElementById(`dev_deb_${d.id}`);
+        const crd = document.getElementById(`dev_crd_${d.id}`);
+        if (sn && name && deb && crd) {
+          d.sn = sn.value.trim();
+          d.name = name.value.trim();
+          d.debit = deb.value.trim();
+          d.credit = crd.value.trim();
+        }
+      });
+    }
+
+    // ==================== მოდალები & კომპანიების მართვა ====================
     function openCompanyModal() {
       renderCompaniesList();
       document.getElementById('companyModal').classList.remove('hidden');
@@ -1352,57 +1588,6 @@
       if (appData.activeCompanyId === id) appData.activeCompanyId = appData.companies[0].id;
       saveData();
       initUI();
-    }
-
-    function openDeviceMapModal() {
-      renderDeviceRows();
-      document.getElementById('deviceMapModal').classList.remove('hidden');
-    }
-    function closeDeviceMapModal() {
-      document.getElementById('deviceMapModal').classList.add('hidden');
-    }
-    function renderDeviceRows() {
-      const container = document.getElementById('deviceRowsContainer');
-      container.innerHTML = '';
-      const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
-      devs.forEach(d => {
-        const div = document.createElement('div');
-        div.className = "p-3 rounded-xl bg-slate-900 border border-slate-700 grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs items-center";
-        div.innerHTML = `
-          <div><input type="text" value="${d.sn}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono font-bold" id="dev_sn_${d.id}"></div>
-          <div><input type="text" value="${d.name}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100" id="dev_name_${d.id}"></div>
-          <div><input type="text" value="${d.debit}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono" id="dev_deb_${d.id}"></div>
-          <div><input type="text" value="${d.credit}" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-slate-100 font-mono text-amber-300" id="dev_crd_${d.id}"></div>
-          <div class="flex justify-end"><button onclick="removeDevice(${d.id})" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div>
-        `;
-        container.appendChild(div);
-      });
-    }
-    function addDeviceRowManual() {
-      appData.devices.push({ id: Date.now(), companyId: appData.activeCompanyId, sn: '', name: 'ახალი ობიექტი', debit: '1110', credit: '1410\\001' });
-      renderDeviceRows();
-    }
-    function removeDevice(id) {
-      appData.devices = appData.devices.filter(d => d.id !== id);
-      renderDeviceRows();
-    }
-    function saveDeviceMappings() {
-      const devs = appData.devices.filter(d => d.companyId === appData.activeCompanyId);
-      devs.forEach(d => {
-        const sn = document.getElementById(`dev_sn_${d.id}`);
-        const name = document.getElementById(`dev_name_${d.id}`);
-        const deb = document.getElementById(`dev_deb_${d.id}`);
-        const crd = document.getElementById(`dev_crd_${d.id}`);
-        if (sn && name && deb && crd) {
-          d.sn = sn.value.trim();
-          d.name = name.value.trim();
-          d.debit = deb.value.trim();
-          d.credit = crd.value.trim();
-        }
-      });
-      saveData();
-      closeDeviceMapModal();
-      alert('აპარატების ქვეანგარიშები შენახულია!');
     }
 
     initUI();
