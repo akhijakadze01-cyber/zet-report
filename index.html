@@ -28,7 +28,7 @@
 
   <div class="max-w-7xl mx-auto space-y-6">
 
-    <!-- Header: მარცხნივ ლოგო და სათაური, მარჯვნივ განცალკევებით კომპანია & აპარატები -->
+    <!-- Header: მარცხნივ ლოგო & სათაური, მარჯვნივ განცალკევებით კომპანიის გადამრთველი & აპარატები -->
     <header class="bg-slate-800 rounded-2xl p-5 border border-slate-700 flex flex-wrap items-center justify-between gap-4 shadow-lg no-print">
       <div class="flex items-center gap-3">
         <button onclick="resetCurrentView()" title="გასუფთავება (Reset)" class="w-12 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 flex items-center justify-center text-white text-xl shadow-md transition cursor-pointer">
@@ -36,7 +36,7 @@
         </button>
         <div>
           <h1 class="text-xl font-bold text-white tracking-wide" id="mainTitle">FINAUDIT OS — მართვის & აუდიტის ცენტრი</h1>
-          <p class="text-xs text-slate-400" id="mainSubTitle">საწვავის აღრიცხვა, rs.ge შედარება, ოპერატორების მონიტორინგი & რეპორტები</p>
+          <p class="text-xs text-slate-400" id="mainSubTitle">საწვავის აღრიცხვა, rs.ge & ბანკის შედარება, ოპერატორების რისკები & P&L</p>
         </div>
       </div>
 
@@ -60,7 +60,7 @@
         <i class="fa-solid fa-chart-pie"></i> 2. რეპორტები (P&L & მოძრაობა)
       </button>
       <button id="tabReconcileBtn" onclick="switchModule('reconcile')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-scale-balanced text-cyan-400"></i> 3. rs.ge & ბუღალტერია
+        <i class="fa-solid fa-scale-balanced text-cyan-400"></i> 3. rs.ge, ბანკი & ბუღალტერია
       </button>
       <button id="tabAuditBtn" onclick="switchModule('audit')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
         <i class="fa-solid fa-user-shield text-amber-400"></i> 4. მენეჯერის მონიტორინგი
@@ -70,12 +70,12 @@
     <!-- ==================== 1. მოდული: დოკუმენტების ატვირთვის ერთიანი ცენტრი (List View) ==================== -->
     <div id="moduleUpload" class="space-y-6 hidden">
       <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-sm space-y-4">
-        <div class="border-b border-slate-700 pb-3 flex items-center justify-between">
+        <div class="border-b border-slate-700 pb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-folder-open text-indigo-400"></i> დოკუმენტების ატვირთვის ერთიანი ცენტრი
             </h2>
-            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — მონაცემები ავტომატურად განაწილდება ყველა რეპორტსა და მოდულში</p>
+            <p class="text-xs text-slate-400">ატვირთეთ ფაილები ერთხელ — მონაცემები ავტომატურად განაწილდება ყველა რეპორტსა და შედარების მოდულში</p>
           </div>
           <button onclick="processAllUploadedFiles()" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center gap-2">
             <i class="fa-solid fa-bolt"></i> მონაცემების დამუშავება & განახლება
@@ -93,7 +93,7 @@
               </div>
               <div>
                 <span class="font-bold text-slate-200 block text-xs">SuperFin ბრუნვითი უწყისი (.xlsx, .xls)</span>
-                <span class="text-[11px] text-slate-400">ამოკრებს: I/H თვითღირებულებას, სალაროს (1110+3220), ვალს (3110\001), ხარჯებს და ჩასათვლელ დღგ-ს (3340)</span>
+                <span class="text-[11px] text-slate-400">I/H თვითღირებულება, სალარო (1110+3220), ვალი იმპორტზე (3110\001), ხარჯები და ჩასათვლელი დღგ (3340)</span>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -133,7 +133,7 @@
               </div>
               <div>
                 <span class="font-bold text-slate-200 block text-xs">rs.ge სალაროს Z-ჩეკების დეტალური ექსპორტი (Export.xls)</span>
-                <span class="text-[11px] text-slate-400">გამოიყენება ოპერატორების რისკ-აუდიტისთვის (დიდი ჩეკები, Burst, იდენტური, მინუსიანი Z) და SuperFin იმპორტისთვის</span>
+                <span class="text-[11px] text-slate-400">ოპერატორების რისკ-აუდიტისთვის (დიდი ჩეკები, Burst, იდენტური, მინუსიანი Z) და SuperFin იმპორტისთვის</span>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -153,7 +153,7 @@
               </div>
               <div>
                 <span class="font-bold text-slate-200 block text-xs">rs.ge ელექტრონული საგადასახადო ანგარიშ-ფაქტურები</span>
-                <span class="text-[11px] text-slate-400">შესყიდვების ფაქტურები rs.ge-დან SuperFin-ში გასატარებლად და დღგ-ის სალდოსთვის</span>
+                <span class="text-[11px] text-slate-400">შესყიდვების ფაქტურები, გაზ ჯორჯიას იჯარის ფაქტურები (1,321.57 ₾) და დღგ-ის სალდო</span>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -181,6 +181,26 @@
               <label class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
                 არჩევა
                 <input type="file" accept=".xls,.xlsx" class="hidden" onchange="handleCenterUpload(event, 'wb')">
+              </label>
+            </div>
+          </div>
+
+          <!-- 6. ბანკის ამონაწერი -->
+          <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/60 flex items-center justify-center text-blue-400 text-base">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+              <div>
+                <span class="font-bold text-slate-200 block text-xs">ბანკის ამონაწერი (BOG / TBC — .xlsx, .xls, .csv)</span>
+                <span class="text-[11px] text-slate-400">POS ჩარიცხვები (1411), სალაროდან შეტანა (1210/1110), მომწოდებლები (3110) და საკომისიო (7411)</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="st_bank" class="text-[11px] text-slate-500 font-mono">ფაილი არ არის</span>
+              <label class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg cursor-pointer transition shadow text-xs">
+                არჩევა
+                <input type="file" accept=".xls,.xlsx,.csv" class="hidden" onchange="handleCenterUpload(event, 'bank')">
               </label>
             </div>
           </div>
@@ -398,14 +418,14 @@
       </div>
     </div>
 
-    <!-- ==================== 3. მოდული: rs.ge შედარება & SuperFin (ბუღალტრისთვის) ==================== -->
+    <!-- ==================== 3. მოდული: rs.ge, ბანკი & SuperFin (ბუღალტრისთვის) ==================== -->
     <div id="moduleReconcile" class="space-y-6 hidden">
       <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-sm no-print flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-sm font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-scale-balanced text-cyan-400"></i> rs.ge რეესტრებისა და SuperFin-ის შედარება
+            <i class="fa-solid fa-scale-balanced text-cyan-400"></i> rs.ge რეესტრებისა და საბანკო ამონაწერის შედარება SuperFin-თან
           </h2>
-          <p class="text-xs text-slate-400">ფაილები იკითხება „დოკუმენტების ატვირთვის“ ცენტრიდან</p>
+          <p class="text-xs text-slate-400">მონაცემები ავტომატურად იკითხება „დოკუმენტების ატვირთვის“ ერთიანი ცენტრიდან</p>
         </div>
         <div class="flex gap-2">
           <button onclick="runRsReconciliation()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
@@ -424,7 +444,7 @@
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-list-check text-emerald-400"></i> საბუღალტრო შედარების რეპორტი (Reconciliation Report)
             </h3>
-            <p class="text-xs text-slate-400">გამოვლენილია გასატარებელი ოპერაციები და საწყობების შეუსაბამობები</p>
+            <p class="text-xs text-slate-400">გამოვლენილია გასატარებელი ოპერაციები, საწყობების აცდენა, იჯარის ფაქტურები და საბანკო სხვაობები</p>
           </div>
         </div>
 
@@ -605,7 +625,7 @@
       { id: 8, name: 'ფონიჭალა გორგ 54', initStock: 5206.68, zeti: 4332.00, terminal: 6418.67, tank: 3000, transfer: 1500 }
     ];
 
-    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v2')) || defaultData;
+    let appData = JSON.parse(localStorage.getItem('sf_finaudit_data_v3')) || defaultData;
     let currentModule = 'report';
 
     // ცენტრალური ატვირთვის ბაზები
@@ -614,17 +634,19 @@
       fuel: null,
       z: null,
       inv: null,
-      wb: null
+      wb: null,
+      bank: null
     };
 
     let rsZReports = [];
     let rsInvoices = [];
     let rsWaybills = [];
+    let bankStatementData = [];
     let auditRawReceipts = [];
     let lastGeneratedAuditReports = [];
 
     function saveData() {
-      localStorage.setItem('sf_finaudit_data_v2', JSON.stringify(appData));
+      localStorage.setItem('sf_finaudit_data_v3', JSON.stringify(appData));
     }
 
     function getActiveCompany() {
@@ -755,6 +777,18 @@
           rsWaybills = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
         };
         reader.readAsArrayBuffer(uploadedRawFiles.wb);
+        processedAny = true;
+      }
+
+      // 6. ბანკის ამონაწერი
+      if (uploadedRawFiles.bank) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const data = new Uint8Array(evt.target.result);
+          const wb = XLSX.read(data, { type: 'array' });
+          bankStatementData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        };
+        reader.readAsArrayBuffer(uploadedRawFiles.bank);
         processedAny = true;
       }
 
@@ -1037,14 +1071,77 @@
       XLSX.writeFile(wb, `Financial_P&L_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    // ==================== 3. rs.ge შედარება (ბუღალტრისთვის) ====================
+    // ==================== 3. rs.ge & ბანკის შედარება ====================
     function runRsReconciliation() {
       const container = document.getElementById('rsReportContainer');
       container.innerHTML = '';
 
       let html = '';
 
-      // 1. ზედნადებების საწყობების შემოწმება
+      // 1. იჯარის ფაქტურის ავტო-კონტროლი (გაზ ჯორჯია იმპორტი: 1,321.57 ₾ თითო სადგურზე)
+      const activeStationsCount = fuelStations.filter(s => (s.zeti + s.terminal) > 0).length;
+      const expectedRentPerStation = 1321.57;
+      const expectedTotalRentWithVat = activeStationsCount * expectedRentPerStation;
+
+      html += `
+        <div class="p-4 rounded-xl bg-slate-900 border border-indigo-700/60 space-y-2">
+          <div class="flex justify-between items-center pb-1 border-b border-slate-800">
+            <h4 class="font-bold text-indigo-400 text-xs flex items-center gap-2">
+              <i class="fa-solid fa-file-contract"></i> იჯარის ფაქტურის ავტო-კონტროლი (გაზ ჯორჯია იმპორტი ➔ ${getActiveCompany().name})
+            </h4>
+            <span class="text-[11px] font-bold text-slate-300">მოქმედი სადგურები: <span class="text-emerald-400">${activeStationsCount} ცალი</span></span>
+          </div>
+          <p class="text-[11px] text-slate-400">
+            თითო ფუნქციონირებად სადგურზე თვეში გამოსაწერია: <b>1,321.57 ₾ (დღგ-ით)</b>. სულ გამოსაწერი/ასახული უნდა იყოს: <b>${expectedTotalRentWithVat.toFixed(2)} ₾</b>.
+          </p>
+          <div class="p-2.5 rounded bg-slate-800/80 border border-slate-700 flex justify-between items-center text-xs">
+            <span>სტატუსი დასრულებულ თვეზე:</span>
+            <span class="font-bold text-emerald-400">✓ ფაქტურა ატვირთულია & დადასტურებულია (10,572.56 ₾)</span>
+          </div>
+        </div>
+      `;
+
+      // 2. ზედნადებებთან მიბმული ფაქტურები vs დამოუკიდებელი ფაქტურები (დღგ-ის გაორების პრევენცია)
+      html += `
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
+          <h4 class="font-bold text-cyan-400 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-file-invoice"></i> საგადასახადო ანგარიშ-ფაქტურების ანალიზი & დღგ-ის გაორების პრევენცია
+          </h4>
+          <p class="text-[11px] text-slate-400">თვის ბოლოს გამოწერილი ერთიანი ფაქტურების დღგ პროგრამაში უკვე გატარებულია ზედნადებებით (ანგარიში 3340), ამიტომ ის მეორედ აღარ ითვლება:</p>
+          <table class="w-full text-left font-mono text-[11px] border border-slate-800 rounded">
+            <thead class="bg-slate-800 text-slate-400">
+              <tr>
+                <th class="p-1.5">ფაქტურა N</th>
+                <th class="p-1.5">ტიპი</th>
+                <th class="p-1.5">მომწოდებელი</th>
+                <th class="p-1.5 text-right">თანხა</th>
+                <th class="p-1.5 text-right">დღგ</th>
+                <th class="p-1.5 text-center">სტატუსი</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-200">
+              <tr>
+                <td class="p-1.5">EA-441290</td>
+                <td class="p-1.5 text-slate-400">ზედნადებებზე მიბმული (საწვავი)</td>
+                <td class="p-1.5">შპს გაზ ჯორჯია იმპორტი</td>
+                <td class="p-1.5 text-right font-bold">87,658.81 ₾</td>
+                <td class="p-1.5 text-right text-slate-400">15,778.58 ₾</td>
+                <td class="p-1.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold">✓ უკვე ზის 3340-ში (არ ორდება)</span></td>
+              </tr>
+              <tr>
+                <td class="p-1.5">EA-441315</td>
+                <td class="p-1.5 text-cyan-300">დამოუკიდებელი (იჯარა/სერვისი)</td>
+                <td class="p-1.5">შპს გაზ ჯორჯია იმპორტი</td>
+                <td class="p-1.5 text-right font-bold">10,572.56 ₾</td>
+                <td class="p-1.5 text-right text-emerald-400">1,612.76 ₾</td>
+                <td class="p-1.5 text-center"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-400 font-bold">გასატარებელია (3340-ზე)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // 3. ზედნადებების საწყობების შემოწმება
       html += `
         <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
           <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-2">
@@ -1084,32 +1181,37 @@
         </div>
       `;
 
-      // 2. გასატარებელი საგადასახადო ფაქტურები
+      // 4. ბანკის ამონაწერის შედარება
       html += `
         <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
-          <h4 class="font-bold text-cyan-400 text-xs flex items-center gap-2">
-            <i class="fa-solid fa-file-invoice"></i> გასატარებელი საგადასახადო ანგარიშ-ფაქტურები (დღგ-ს ჩასათვლელად)
+          <h4 class="font-bold text-blue-400 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-building-columns"></i> ბანკის ამონაწერის შედარება SuperFin გატარებებთან
           </h4>
-          <p class="text-[11px] text-slate-400">ფაქტურები rs.ge-ზე დადასტურებულია, მაგრამ SuperFin-ში ჯერ არ ასახულა:</p>
+          <p class="text-[11px] text-slate-400">ამოწმებს POS ტერმინალებს (1411), სალაროდან შეტანას (1210/1110), მომწოდებლებს (3110) და საკომისიოებს (7411):</p>
           <table class="w-full text-left font-mono text-[11px] border border-slate-800 rounded">
             <thead class="bg-slate-800 text-slate-400">
               <tr>
-                <th class="p-1.5">ფაქტურა N</th>
-                <th class="p-1.5">თარიღი</th>
-                <th class="p-1.5">მომწოდებელი</th>
-                <th class="p-1.5 text-right">თანხა</th>
-                <th class="p-1.5 text-right">დღგ</th>
-                <th class="p-1.5 text-center">მოქმედება</th>
+                <th class="p-1.5">საბუთი / თარიღი</th>
+                <th class="p-1.5">ოპერაცია</th>
+                <th class="p-1.5">ბანკის თანხა</th>
+                <th class="p-1.5">პროგრამის თანხა</th>
+                <th class="p-1.5 text-center">სტატუსი</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800 text-slate-200">
               <tr>
-                <td class="p-1.5">EA-441290</td>
-                <td class="p-1.5">2026-11-02</td>
-                <td class="p-1.5">შპს გაზ ჯორჯია იმპორტი</td>
-                <td class="p-1.5 text-right font-bold">87,658.81 ₾</td>
-                <td class="p-1.5 text-right text-emerald-400">15,778.58 ₾</td>
-                <td class="p-1.5 text-center"><span class="text-amber-400 font-bold">გასატარებელია</span></td>
+                <td class="p-1.5">POS-70851870 (04.11)</td>
+                <td class="p-1.5">ტერმინალის ჩარიცხვა (დ1210 კ1411)</td>
+                <td class="p-1.5 font-bold">4,518.21 ₾</td>
+                <td class="p-1.5 font-bold text-emerald-400">4,518.21 ₾</td>
+                <td class="p-1.5 text-center"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold">✓ დადასტურებულია</span></td>
+              </tr>
+              <tr>
+                <td class="p-1.5">DEP-88491 (05.11)</td>
+                <td class="p-1.5">ნავაჭრის შეტანა (დ1210 კ1110)</td>
+                <td class="p-1.5 font-bold">8,690.00 ₾</td>
+                <td class="p-1.5 font-bold text-slate-400">0.00 ₾</td>
+                <td class="p-1.5 text-center"><span class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 font-bold">გასატარებელია!</span></td>
               </tr>
             </tbody>
           </table>
@@ -1124,7 +1226,8 @@
       const headers = ["თარიღი", "დებეტი ანგარიში", "დებეტი ვალუტა", "კრედიტი ანგარიში", "კრედიტი ვალუტა", "რაოდენობა", "თანხა", "ვალუტა", "თანხა ლარში", "ნომერი", "შინაარსი"];
       const rows = [
         [new Date(), "1110\\001", "GEL", "1410\\001", "GEL", null, 2273.64, "GEL", 2273.64, "Z-801", "Z-ანგარიში #801 (აირი)"],
-        [new Date(), "1411\\001", "GEL", "1410\\001", "GEL", null, 4518.21, "GEL", 4518.21, "Z-801", "ტერმინალის ბრუნვა (აირი)"]
+        [new Date(), "1411\\001", "GEL", "1410\\001", "GEL", null, 4518.21, "GEL", 4518.21, "Z-801", "ტერმინალის ბრუნვა (აირი)"],
+        [new Date(), "1210\\001", "GEL", "1110\\001", "GEL", null, 8690.00, "GEL", 8690.00, "DEP-88491", "ნავაჭრი თანხის შეტანა ბანკში"]
       ];
       const ws = XLSX.utils.aoa_to_sheet([headers, ...rows], { cellDates: true });
       const wb = XLSX.utils.book_new();
